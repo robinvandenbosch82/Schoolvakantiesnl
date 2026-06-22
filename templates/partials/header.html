@@ -3,7 +3,7 @@
   <div class="topbar-in">
     <a class="brand" href="/">
       <span class="mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg>
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg>
       </span>
       Schoolvakanties<span style="color:var(--accent)">.nl</span>
     </a>
@@ -12,7 +12,7 @@
       <a class="{% if request.path == '/' %}on{% endif %}" href="/">Home</a>
       <button class="has-mega {% if request.path|slice:':8' == '/landen/' %}on{% endif %}" id="megaBtn" aria-expanded="false">
         Landen
-        <svg class="nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        <svg aria-hidden="true" focusable="false" class="nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <a class="{% if request.path == '/planner/' %}on{% endif %}" href="/planner/">Planner</a>
       <a class="{% if request.path == '/druktekaart/' %}on{% endif %}" href="/druktekaart/">Druktekaart</a>
@@ -62,7 +62,7 @@
           <a class="mq" href="/blog/"><span class="mq-ic">✎</span><span class="mq-tx"><b>Blog &amp; reistips</b><i>Slim weg met de kinderen</i></span></a>
         </div>
         <a class="mega-allbtn" href="/landen/">Alle landen bekijken
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       </div>
     </div>
@@ -71,9 +71,9 @@
   {# FULL-SCREEN MOBIEL MENU #}
   <div class="mobnav" id="mobnav" hidden>
     <div class="mobnav-top">
-      <a class="brand" href="/"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg></span>Schoolvakanties<span style="color:var(--accent)">.nl</span></a>
+      <a class="brand" href="/"><span class="mark"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg></span>Schoolvakanties<span style="color:var(--accent)">.nl</span></a>
       <button class="mobnav-x" id="mobnavX" aria-label="Sluiten">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <svg aria-hidden="true" focusable="false" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
     <div class="mobnav-body">
@@ -87,7 +87,7 @@
       </nav>
       <div class="mobnav-sec">
         <button class="mobnav-acc open" id="mobLandenBtn">Landen
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="mobnav-landen" id="mobLanden">
           {% for c in europe %}

@@ -9,7 +9,7 @@ sel_factors, sel_band_label, best_idx in de context, en weeks-data JSON in de pa
     </div>
     <div class="radar-detail">
       <div class="ring is-{{ sel.band }}" id="radarRing" data-score="{{ sel.score }}">
-        <svg width="132" height="132" viewBox="0 0 132 132">
+        <svg aria-hidden="true" focusable="false" width="132" height="132" viewBox="0 0 132 132">
           <circle cx="66" cy="66" r="56" fill="none" stroke="var(--line)" stroke-width="9"></circle>
           <circle id="radarArc" cx="66" cy="66" r="56" fill="none" stroke="var(--c)" stroke-width="9"
                   stroke-linecap="round" transform="rotate(-90 66 66)"></circle>
