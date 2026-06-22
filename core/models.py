@@ -806,3 +806,26 @@ class Reisweek(models.Model):
         if s >= 45:
             return "matig"
         return "druk"
+
+
+class Samenwerkingsaanvraag(models.Model):
+    """Een lead uit het samenwerken-formulier. Elke aanvraag wordt opgeslagen
+    (zodat er nooit één verloren gaat als de e-mail faalt) en best-effort
+    doorgemaild naar de partner-inbox."""
+    naam = models.CharField("Naam", max_length=120)
+    bedrijf = models.CharField("Bedrijf", max_length=160, blank=True)
+    email = models.EmailField("E-mail", max_length=254)
+    soort = models.CharField("Type samenwerking", max_length=80, blank=True)
+    bericht = models.TextField("Bericht")
+    ip = models.GenericIPAddressField("IP-adres", null=True, blank=True)
+    verwerkt = models.BooleanField("Verwerkt", default=False)
+    aangemaakt = models.DateTimeField("Ontvangen", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Samenwerkingsaanvraag"
+        verbose_name_plural = "Samenwerkingsaanvragen"
+        ordering = ["-aangemaakt"]
+        indexes = [models.Index(fields=["-aangemaakt"])]
+
+    def __str__(self):
+        return f"{self.naam} — {self.aangemaakt:%d-%m-%Y}"

@@ -216,6 +216,25 @@ PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # ──────────────────────────────────────────────────────────────────────────
+# E-mail — console in dev (mails verschijnen in de log), SMTP via env in prod.
+# Het samenwerken-formulier mailt best-effort; de lead wordt sowieso in de DB
+# opgeslagen, dus een ontbrekende/falende mailserver kost nooit een lead.
+# ──────────────────────────────────────────────────────────────────────────
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend" if DEBUG
+    else "django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", "True")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
+# Inbox waar samenwerking-leads heen gaan.
+PARTNER_INBOX = os.getenv("PARTNER_INBOX", f"partners@{SITE_DOMAIN}")
+
+# ──────────────────────────────────────────────────────────────────────────
 # Security hardening — only switches on outside DEBUG
 # ──────────────────────────────────────────────────────────────────────────
 SECURE_CONTENT_TYPE_NOSNIFF = True

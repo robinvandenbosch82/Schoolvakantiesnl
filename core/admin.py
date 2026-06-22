@@ -27,6 +27,7 @@ from .models import (
     Regio,
     Reisweek,
     Review,
+    Samenwerkingsaanvraag,
     Schoolvakantie,
     SectieTekst,
     SiteSettings,
@@ -325,3 +326,14 @@ class ReisweekAdmin(admin.ModelAdmin):
     @admin.display(description="Band")
     def band(self, obj):
         return obj.band
+
+
+@admin.register(Samenwerkingsaanvraag)
+class SamenwerkingsaanvraagAdmin(admin.ModelAdmin):
+    list_display = ("aangemaakt", "naam", "bedrijf", "soort", "email", "verwerkt")
+    list_filter = ("verwerkt", "soort", "aangemaakt")
+    list_editable = ("verwerkt",)
+    search_fields = ("naam", "bedrijf", "email", "bericht")
+    date_hierarchy = "aangemaakt"
+    # Inkomende leads zijn read-only data; alleen 'verwerkt' is een werkstatus.
+    readonly_fields = ("naam", "bedrijf", "email", "soort", "bericht", "ip", "aangemaakt")

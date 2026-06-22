@@ -398,30 +398,76 @@ SAMENWERKING_TYPES = [
 ]
 
 
+def _client_ip(request):
+    """Beste-gok client-IP, achter de proxy van Render (X-Forwarded-For)."""
+    xff = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
+
+def _mail_samenwerking(naam, bedrijf, email, soort, bericht):
+    """Best-effort doormailen van een lead. Faalt dit (geen/verkeerde mailserver),
+    dan loggen we het — de lead staat al in de DB, dus gaat nooit verloren."""
+    import logging
+    from django.core.mail import send_mail
+    body = (f"Naam: {naam}\nBedrijf: {bedrijf}\nE-mail: {email}\n"
+            f"Type samenwerking: {soort}\n\n{bericht}")
+    try:
+        send_mail(f"Samenwerkingsaanvraag — {naam}", body,
+                  settings.DEFAULT_FROM_EMAIL, [settings.PARTNER_INBOX],
+                  fail_silently=False)
+    except Exception:  # noqa: BLE001
+        logging.getLogger("core").warning(
+            "Samenwerking-mail mislukt (lead is wél opgeslagen).", exc_info=True)
+
+
 def samenwerken(request):
     verzonden = False
+    fout = ""
     if request.method == "POST":
-        naam = request.POST.get("naam", "").strip()
-        bedrijf = request.POST.get("bedrijf", "").strip()
-        email = request.POST.get("email", "").strip()
-        soort = request.POST.get("soort", "").strip()
-        bericht = request.POST.get("bericht", "").strip()
-        if naam and email and bericht:
-            from django.conf import settings
-            from django.core.mail import send_mail
-            body = (f"Naam: {naam}\nBedrijf: {bedrijf}\nE-mail: {email}\n"
-                    f"Type samenwerking: {soort}\n\n{bericht}")
-            try:
-                send_mail(
-                    f"Samenwerkingsaanvraag — {naam}", body,
-                    getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@schoolvakanties.nl"),
-                    ["partners@schoolvakanties.nl"], fail_silently=True)
-            except Exception:
-                pass
+        # Honeypot: bots vullen dit verborgen veld. Doe alsof het lukte en stop
+        # (geen lead opslaan, geen mail) — zo merkt de bot niets.
+        if request.POST.get("website", "").strip():
             verzonden = True
+        else:
+            from django.core.cache import cache
+            from django.core.exceptions import ValidationError
+            from django.core.validators import validate_email
+            from core.models import Samenwerkingsaanvraag
+
+            ip = _client_ip(request) or "?"
+            key = f"sw-lead:{ip}"
+            pogingen = cache.get(key, 0)
+            naam = request.POST.get("naam", "").strip()[:120]
+            bedrijf = request.POST.get("bedrijf", "").strip()[:160]
+            email = request.POST.get("email", "").strip()[:254]
+            soort = request.POST.get("soort", "").strip()
+            bericht = request.POST.get("bericht", "").strip()[:4000]
+            if soort not in SAMENWERKING_TYPES:
+                soort = ""
+            try:
+                validate_email(email)
+                email_ok = True
+            except ValidationError:
+                email_ok = False
+
+            if pogingen >= 5:
+                fout = ("Je hebt zojuist al een aanvraag verstuurd — probeer het over "
+                        "een uurtje opnieuw of mail ons direct.")
+            elif not (naam and bericht and email_ok):
+                fout = "Vul je naam, een geldig e-mailadres en een kort bericht in."
+            else:
+                Samenwerkingsaanvraag.objects.create(
+                    naam=naam, bedrijf=bedrijf, email=email, soort=soort,
+                    bericht=bericht, ip=_client_ip(request))
+                cache.set(key, pogingen + 1, 3600)
+                _mail_samenwerking(naam, bedrijf, email, soort, bericht)
+                verzonden = True
     return render(request, "pages/samenwerken.html", {
         "types": SAMENWERKING_TYPES,
         "verzonden": verzonden,
+        "fout": fout,
         "seo_title": "Samenwerken met Schoolvakanties.nl — partnerships & adverteren",
         "seo_description": "Bereik Nederlandse gezinnen op het moment dat ze hun vakantie plannen. "
                            "Reisbureau, hotel, creator of merk — ontdek de mogelijkheden om samen te werken.",

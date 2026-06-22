@@ -119,6 +119,9 @@
       {% else %}
       <form class="sw-form" method="post" action="#sw-contact">
         {% csrf_token %}
+        {% if fout %}<p class="sw-form-fout" role="alert">{{ fout }}</p>{% endif %}
+        {# honeypot: voor bots, verborgen voor mensen + screenreaders #}
+        <div class="sw-hp" aria-hidden="true"><label>Laat dit veld leeg<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="sw-field two">
           <label>Naam<input type="text" name="naam" placeholder="Je naam" required></label>
           <label>Bedrijf<input type="text" name="bedrijf" placeholder="Organisatie"></label>

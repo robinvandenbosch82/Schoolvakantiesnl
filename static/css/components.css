@@ -790,6 +790,9 @@
 .sw-field textarea{ resize:vertical; min-height:90px; }
 .sw-form .btn{ margin-top:4px; }
 .sw-form-note{ font-size:12px; color:var(--ink-4); line-height:1.45; }
+.sw-hp{ position:absolute !important; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.sw-form-fout{ background:var(--druk-soft); color:var(--druk-ink); border:1px solid oklch(88% 0.05 28);
+  border-radius:var(--r-sm); padding:11px 14px; font-size:13.5px; font-weight:600; }
 .sw-form-done{ align-items:center; text-align:center; justify-content:center; gap:10px; padding:44px 28px; }
 .sw-done-ic{ width:54px; height:54px; display:grid; place-items:center; border-radius:50%;
   background:var(--rustig-soft); color:var(--rustig-ink); }
