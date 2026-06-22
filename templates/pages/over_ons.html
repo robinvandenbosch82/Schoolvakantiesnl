@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block reviewbar %}{% endblock %}
+
+{% block content %}
+<div class="page overons">
+  <header class="oo-hero">
+    <span class="eye">Over ons</span>
+    <h1>De mensen achter Schoolvakanties.nl</h1>
+    <p class="lead">Sinds 2009 helpen we Nederlandse gezinnen om slim weg te gaan. Geen overgenomen lijstjes, maar officiële data, een vaste redactie en een drukte-model dat we zelf bouwden en onderhouden.</p>
+    <div class="oo-trust">
+      <div class="oo-trust-it"><strong>Sinds 2009</strong><span>actief &amp; onafhankelijk</span></div>
+      <div class="oo-trust-it"><strong>1 op 3</strong><span>NL gezinnen gebruikt ons</span></div>
+      <div class="oo-trust-it"><strong>Officiële bronnen</strong><span>Rijksoverheid · Éducation nationale · OpenHolidays · Nager.Date</span></div>
+      <div class="oo-trust-it"><strong>Handmatig</strong><span>gecontroleerd door de redactie</span></div>
+    </div>
+  </header>
+
+  <section class="land-block oo-missie">
+    <div class="section-head"><div><span class="eye">Onze missie</span><h2 style="margin-top:8px">Vakantieplannen zonder gedoe — en zonder verrassingen</h2></div></div>
+    <p class="oo-body">Schoolvakanties verschillen per regio, per land en per jaar. Dat maakt plannen lastig en drukte onvoorspelbaar. Wij brengen alle officiële data samen op één plek en vertalen die naar concreet advies: wanneer is het rustig, waar is het betaalbaar, en welke week past bij jouw gezin. Onafhankelijk, transparant en altijd herleidbaar naar de bron.</p>
+  </section>
+
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Onze redactie</span><h2 style="margin-top:8px">Wie schrijft en controleert</h2></div><p>Een vast team met aantoonbare ervaring in reizen, data en onderwijs.</p></div>
+    <div class="oo-team">
+      {% for e in experts %}
+        <article class="oo-expert">
+          <div class="oo-expert-head">
+            <span class="eeat-av" style="width:60px;height:60px;font-size:20px" aria-hidden="true">{{ e.mono }}</span>
+            <div>
+              <h3>{{ e.name }}</h3>
+              <span class="oo-expert-rol">{{ e.role }}</span>
+            </div>
+          </div>
+          <p class="oo-expert-bio">{{ e.bio }}</p>
+          {% if e.credentials_list %}
+          <ul class="eeat-cred">{% for c in e.credentials_list %}<li>{{ c }}</li>{% endfor %}</ul>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Werkwijze</span><h2 style="margin-top:8px">Hoe we onze data controleren</h2></div></div>
+    <div class="oo-werk">
+      <div class="oo-werk-step"><span class="oo-werk-n mono">01</span><h4>Officiële bron eerst</h4><p>Vakantie- en feestdagdata halen we rechtstreeks uit officiële bronnen: Rijksoverheid.nl (NL), de Éducation nationale (FR, zones A/B/C), de OpenHolidays-API en de Duitse KMK — met Nager.Date als kruiscontrole. Nooit uit overgenomen lijstjes.</p></div>
+      <div class="oo-werk-step"><span class="oo-werk-n mono">02</span><h4>Handmatig geverifieerd</h4><p>Elke datum wordt door de redactie tegen de officiële kalender gelegd voordat hij live gaat. Adviesweken markeren we duidelijk als advies.</p></div>
+      <div class="oo-werk-step"><span class="oo-werk-n mono">03</span><h4>Drukte berekend, niet gegokt</h4><p>De Slim-score combineert vakantie-overlap, verkeers- en boekingspatronen tot één getal — transparant en jaarlijks herijkt.</p></div>
+      <div class="oo-werk-step"><span class="oo-werk-n mono">04</span><h4>Continu bijgewerkt</h4><p>Zodra een overheid data wijzigt, passen we het aan. Onderaan elke pagina zie je wie controleerde en wanneer.</p></div>
+    </div>
+  </section>
+
+  <section class="land-block oo-onder">
+    <div class="oo-bronnen">
+      <span class="eye">Onze bronnen</span>
+      <ul>
+        {% for naam, wat in bronnen %}<li><strong>{{ naam }}</strong><span>{{ wat }}</span></li>{% endfor %}
+      </ul>
+    </div>
+    <div class="oo-contact">
+      <span class="eye">Contact &amp; correcties</span>
+      <p>Klopt er iets niet of mist er een datum? We horen het graag — correcties verwerken we doorgaans binnen een werkdag.</p>
+      <a class="btn" href="mailto:redactie@schoolvakanties.nl">redactie@schoolvakanties.nl</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

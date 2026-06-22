@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_js %}<script src="{% static 'js/europe-geo.js' %}?v=1" defer></script>{% endblock %}
+
+{% block content %}
+<div class="page" style="padding-top:14px">
+  <div class="kaart">
+    <div class="kaart-stage">
+      <svg viewBox="{{ map_vb }}" class="europe big" role="img" aria-label="Druktekaart Europa" id="bigMap"
+           data-map="big" preserveAspectRatio="xMidYMid meet">
+        <defs><radialGradient id="sea" cx="45%" cy="40%" r="75%">
+          <stop offset="0%" stop-color="oklch(97% 0.02 230)"></stop>
+          <stop offset="100%" stop-color="oklch(94% 0.022 235)"></stop>
+        </radialGradient></defs>
+        <rect x="0" y="0" width="100%" height="100%" rx="24" fill="url(#sea)"></rect>
+        {# Landvormen worden door site.js uit /static/js/europe-geo.js gerenderd. #}
+      </svg>
+    </div>
+
+    <aside class="kaart-panel">
+      <div class="kp-head">
+        <span class="eye">Druktekaart Europa</span>
+        <h2>Waar is het rustig?</h2>
+      </div>
+
+      <div class="kp-detail is-{{ sel_band }}" id="kpDetail">
+        <span class="kp-flag" id="kpFlag">{{ sel.flag }}</span>
+        <div class="kp-detail-info">
+          <strong id="kpName">{{ sel.name }}</strong>
+          <span class="kp-detail-band" id="kpBand">{% if sel.v0 < 45 %}Rustig{% elif sel.v0 < 70 %}Matig druk{% else %}Erg druk{% endif %}</span>
+        </div>
+        <span class="kp-detail-val mono" id="kpVal" style="color:var(--c-ink)">{{ sel.v0 }}</span>
+      </div>
+
+      <div class="kp-rank" id="kpRank">
+        {% for r in ranked0 %}
+          <button class="kp-row{% if r.code == sel.code %} on{% endif %}" data-code="{{ r.code }}">
+            <span class="flag">{{ r.flag }}</span>
+            <span class="nm">{{ r.name }}</span>
+            <span class="mini-bar"><i style="width:{{ r.v0 }}%;background:{{ r.color0 }}"></i></span>
+            <span class="pct mono">{{ r.v0 }}</span>
+          </button>
+        {% endfor %}
+      </div>
+
+      <div class="kp-tip">
+        <span class="kp-tip-ic">✓</span>
+        <p id="kpTip">Rustigste deze week: <strong>{{ ranked0.0.flag }} {{ ranked0.0.name }}</strong> ({{ ranked0.0.v0 }}/100).</p>
+      </div>
+
+      <div class="kp-legend">
+        <span><i style="background:var(--rustig)"></i> Rustig</span>
+        <span><i style="background:var(--matig)"></i> Matig</span>
+        <span><i style="background:var(--druk)"></i> Druk</span>
+      </div>
+    </aside>
+
+    <div class="kaart-slider">
+      <span class="ks-now mono" id="ksNow">WK {{ default_week.wk }} · {{ default_week.d1 }}</span>
+      <input type="range" min="0" max="{{ week_max }}" value="{{ default_idx }}" id="ksSlider">
+      <div class="ks-marks"><span>mei</span><span>jun</span><span>jul</span><span>aug</span><span>sep</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="weeks-data" type="application/json">{{ weeks_json|safe }}</script>
+<script id="countries-data" type="application/json">{{ countries_json|safe }}</script>
+<script id="live-data" type="application/json">{{ live_codes|safe }}</script>
+{% endblock %}

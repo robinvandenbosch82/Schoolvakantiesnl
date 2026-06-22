@@ -1,0 +1,213 @@
+/* === Schoolvakanties.nl v2 — Vakantie-zine === */
+
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* Zine palet — verzadigd, plakbaar */
+  --papier: oklch(94% 0.025 85);
+  --papier-2: oklch(91% 0.03 85);
+  --inkt: oklch(15% 0.02 250);
+  --inkt-soft: oklch(35% 0.02 250);
+
+  --geel: oklch(89% 0.17 95);
+  --geel-deep: oklch(72% 0.16 80);
+  --tomaat: oklch(64% 0.22 30);
+  --tomaat-deep: oklch(48% 0.19 28);
+  --zee: oklch(52% 0.16 240);
+  --zee-deep: oklch(36% 0.13 240);
+  --olijf: oklch(68% 0.14 130);
+  --olijf-deep: oklch(46% 0.12 135);
+  --rose: oklch(76% 0.12 15);
+
+  --display: "Caprasimo", "Georgia", serif;
+  --grotesk: "Bricolage Grotesque", -apple-system, system-ui, sans-serif;
+  --hand: "Caveat", cursive;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.v2-root {
+  font-family: var(--grotesk);
+  color: var(--inkt);
+  background: var(--papier);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
+  font-feature-settings: "ss01";
+}
+.v2-root * { box-sizing: border-box; }
+.v2-root h1, .v2-root h2, .v2-root h3, .v2-root h4 { margin: 0; line-height: 0.95; }
+.v2-root p { margin: 0; }
+.v2-root button { font-family: inherit; cursor: pointer; }
+
+/* Ruled paper background — horizontale lijntjes als schoolschrift */
+.ruled {
+  background-image:
+    linear-gradient(transparent 27px, oklch(80% 0.03 240 / 0.35) 27px, oklch(80% 0.03 240 / 0.35) 28px, transparent 28px);
+  background-size: 100% 28px;
+}
+
+/* Graph paper */
+.graph {
+  background-image:
+    linear-gradient(oklch(80% 0.03 240 / 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(80% 0.03 240 / 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Harde offset shadow — geen blur, gewoon een blok ernaast */
+.shadow-blok {
+  box-shadow: 6px 6px 0 var(--inkt);
+}
+.shadow-blok-sm {
+  box-shadow: 3px 3px 0 var(--inkt);
+}
+.shadow-rood {
+  box-shadow: 6px 6px 0 var(--tomaat);
+}
+
+/* Postzegel: getande rand */
+.postzegel {
+  background:
+    radial-gradient(circle at 7px 0, transparent 5px, currentColor 5.5px) repeat-x,
+    radial-gradient(circle at 7px 100%, transparent 5px, currentColor 5.5px) repeat-x,
+    radial-gradient(circle at 0 7px, transparent 5px, currentColor 5.5px) repeat-y,
+    radial-gradient(circle at 100% 7px, transparent 5px, currentColor 5.5px) repeat-y;
+  background-size: 14px 8px, 14px 8px, 8px 14px, 8px 14px;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  padding: 14px;
+}
+
+/* Plakband strip */
+.tape {
+  position: absolute;
+  background: oklch(89% 0.06 95 / 0.75);
+  border-left: 1px dashed oklch(75% 0.07 90 / 0.5);
+  border-right: 1px dashed oklch(75% 0.07 90 / 0.5);
+  width: 90px; height: 22px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Marker highlight — schuingestreept geel achter de tekst */
+.marker {
+  background-image: linear-gradient(105deg,
+    transparent 0%, var(--geel) 6%, var(--geel) 96%, transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.65em;
+  background-position: 0 80%;
+  padding: 0 0.1em;
+}
+.marker-tomaat {
+  background-image: linear-gradient(105deg,
+    transparent 0%, var(--tomaat) 6%, var(--tomaat) 96%, transparent 100%);
+  color: oklch(98% 0 0);
+  background-repeat: no-repeat;
+  background-size: 100% 0.95em;
+  background-position: 0 85%;
+  padding: 0 0.15em;
+}
+
+/* Stempel — ronde rotaty stamp */
+.stempel {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 3px double currentColor;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.1;
+  flex-direction: column;
+  padding: 8px;
+}
+.stempel-text { font-family: var(--display); font-size: 16px; letter-spacing: 0; }
+
+/* Doorgestreepte tekst */
+.streep {
+  position: relative;
+  color: var(--inkt-soft);
+}
+.streep::after {
+  content: "";
+  position: absolute; left: -3%; right: -3%; top: 52%;
+  height: 2px; background: var(--tomaat);
+  transform: rotate(-2deg);
+}
+
+/* Krant-knipsel rand — onregelmatig */
+.knipsel {
+  clip-path: polygon(
+    0 4%, 8% 0, 22% 3%, 38% 1%, 54% 4%, 72% 0, 88% 2%, 100% 5%,
+    98% 28%, 100% 48%, 99% 70%, 100% 92%,
+    88% 100%, 70% 97%, 50% 100%, 30% 98%, 12% 100%, 0 95%,
+    1% 70%, 0 50%, 2% 28%
+  );
+}
+
+/* Split-flap mechanical card */
+.flap {
+  background: var(--inkt);
+  color: var(--papier);
+  font-family: var(--display);
+  border-radius: 8px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: inset 0 -1px 0 oklch(40% 0.02 250),
+              4px 4px 0 var(--inkt);
+}
+.flap::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 1px; background: oklch(40% 0.02 250);
+  z-index: 2;
+}
+.flap-num {
+  z-index: 1;
+}
+
+/* Mono-eyebrow */
+.eye-v2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Knop — chunky met offset shadow */
+.knal-knop {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 20px;
+  background: var(--inkt);
+  color: var(--papier);
+  border: 2px solid var(--inkt);
+  border-radius: 0;
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  box-shadow: 4px 4px 0 var(--tomaat);
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+.knal-knop:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--tomaat);
+}
+.knal-knop.geel { background: var(--geel); color: var(--inkt); box-shadow: 4px 4px 0 var(--inkt); }
+.knal-knop.tomaat { background: var(--tomaat); color: var(--papier); box-shadow: 4px 4px 0 var(--inkt); }
+.knal-knop.outline { background: var(--papier); color: var(--inkt); box-shadow: 4px 4px 0 var(--inkt); }
+
+/* Klein papier-grain alleen voor het volledige zine-canvas */
+.v2-grain::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+  z-index: 30;
+}

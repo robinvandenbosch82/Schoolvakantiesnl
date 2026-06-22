@@ -1,0 +1,204 @@
+/* header.css — mega-menu, hamburger, full-screen mobiel menu, landen-chips.
+   Bouwt voort op de tokens uit tokens.css / styles.css. */
+
+/* topbar moet de mega-laag kunnen positioneren */
+.topbar{ position:sticky; }
+.nav button.has-mega{ display:inline-flex; align-items:center; gap:5px; }
+.nav .nav-chev{ color:var(--ink-3); transition:transform .2s; }
+.nav button.has-mega.open .nav-chev{ transform:rotate(180deg); }
+.nav button.has-mega.open{ background:var(--accent-soft); color:var(--accent-ink); }
+
+/* hamburger — alleen mobiel */
+.hamb{ display:none; width:42px; height:42px; border:1px solid var(--line-2); border-radius:12px;
+  background:var(--paper); box-shadow:var(--shadow-sm); cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px; }
+.hamb span{ display:block; width:18px; height:2px; border-radius:2px; background:var(--ink); }
+
+/* ---------- DESKTOP MEGA-MENU ---------- */
+.mega{ position:absolute; top:100%; left:0; right:0; z-index:55;
+  background:var(--paper); border-bottom:1px solid var(--line);
+  box-shadow:var(--shadow); animation:megaIn .18s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes megaIn{ from{ opacity:0; transform:translateY(-8px); } to{ opacity:1; transform:translateY(0); } }
+.mega-in{ max-width:var(--maxw); margin:0 auto; padding:26px 26px 28px;
+  display:grid; grid-template-columns:1.1fr 1.7fr 1fr; gap:34px; }
+.mega-col.side{ border-left:1px solid var(--line); padding-left:34px; }
+.mega-eye{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:14px; }
+
+.mega-pop{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.mega-all{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px 10px; }
+
+.ml-country{ display:flex; align-items:center; gap:10px; text-decoration:none;
+  padding:9px 11px; border-radius:var(--r-sm); color:var(--ink); cursor:pointer;
+  border:1px solid transparent; transition:background .14s, border-color .14s; }
+.ml-country:hover{ background:var(--accent-soft); border-color:var(--accent-line); }
+.ml-country.big{ padding:11px 12px; background:var(--bg-2); }
+.ml-country.big:hover{ background:var(--accent-soft); }
+.ml-flag{ font-size:19px; line-height:1; }
+.ml-name{ flex:1; font-size:14.5px; font-weight:600; letter-spacing:-0.01em; }
+.ml-status{ font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; text-transform:uppercase;
+  padding:3px 7px; border-radius:99px; font-weight:700; }
+.ml-status.live{ background:var(--rustig-soft); color:var(--rustig-ink); }
+.ml-status.soon{ background:var(--paper); color:var(--ink-3); border:1px solid var(--line-2); }
+.mega-all .ml-status{ display:none; }
+
+.mega-quick{ display:flex; flex-direction:column; gap:4px; }
+.mq{ display:flex; align-items:center; gap:12px; text-decoration:none; padding:10px 11px;
+  border-radius:var(--r-sm); cursor:pointer; transition:background .14s; }
+.mq:hover{ background:var(--bg-2); }
+.mq-ic{ width:38px; height:38px; flex:none; display:grid; place-items:center; font-size:18px;
+  border-radius:11px; background:var(--accent-soft); color:var(--accent-ink); }
+.mq-tx{ display:flex; flex-direction:column; gap:1px; }
+.mq-tx b{ font-size:14px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
+.mq-tx i{ font-size:12.5px; font-style:normal; color:var(--ink-3); }
+.mega-allbtn{ display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+  font-size:14px; font-weight:700; color:var(--accent-ink); text-decoration:none; cursor:pointer; }
+.mega-allbtn:hover{ gap:11px; }
+
+/* ---------- HOMEPAGE LANDEN-CHIPS (vervangt dropdown) ---------- */
+.dest-chips{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.dest-chip{ display:inline-flex; align-items:center; gap:8px; background:var(--paper);
+  border:1px solid var(--line-2); border-radius:99px; padding:8px 14px 8px 11px;
+  font-size:14px; font-weight:600; color:var(--ink-2); cursor:pointer; text-decoration:none;
+  box-shadow:var(--shadow-sm); transition:border-color .14s, color .14s, background .14s; }
+.dest-chip .fl{ font-size:17px; line-height:1; }
+.dest-chip:hover{ border-color:var(--accent-line); color:var(--ink); }
+.dest-chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 12px var(--accent-glow); }
+.dest-more{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700;
+  color:var(--accent-ink); text-decoration:none; cursor:pointer; padding:8px 6px; }
+.dest-more:hover{ gap:9px; }
+
+/* ---------- FULL-SCREEN MOBIEL MENU ---------- */
+.mobnav{ position:fixed; inset:0; z-index:200; background:var(--bg);
+  display:flex; flex-direction:column; animation:mobIn .22s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes mobIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+.mobnav-top{ display:flex; align-items:center; justify-content:space-between;
+  padding:16px 22px; border-bottom:1px solid var(--line); }
+.mobnav-x{ width:44px; height:44px; display:grid; place-items:center; border:1px solid var(--line-2);
+  border-radius:12px; background:var(--paper); color:var(--ink); cursor:pointer; }
+.mobnav-body{ flex:1; overflow-y:auto; padding:18px 22px 24px; }
+.mobnav-main{ display:flex; flex-direction:column; gap:2px; margin-bottom:18px; }
+.mobnav-main button{ text-align:left; background:none; border:none; padding:14px 12px;
+  font-size:21px; font-weight:700; letter-spacing:-0.02em; color:var(--ink); border-radius:var(--r-sm); }
+.mobnav-main button.on{ color:var(--accent-ink); background:var(--accent-soft); }
+
+.mobnav-sec{ border-top:1px solid var(--line); padding-top:12px; }
+.mobnav-acc{ width:100%; display:flex; align-items:center; justify-content:space-between;
+  background:none; border:none; padding:12px 12px; font-size:21px; font-weight:700;
+  letter-spacing:-0.02em; color:var(--ink); }
+.mobnav-acc svg{ color:var(--ink-3); transition:transform .2s; }
+.mobnav-acc.open svg{ transform:rotate(180deg); }
+.mobnav-landen{ display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:6px 0 4px; }
+.mobnav-land{ display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--ink);
+  padding:11px 12px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--paper); }
+.mobnav-land .ml-name{ font-size:14px; }
+.mobnav-land .ml-status{ display:none; }
+
+.mobnav-foot{ display:flex; gap:12px; padding:16px 22px calc(16px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line); background:var(--paper); }
+.mobnav-foot .btn{ flex:1; }
+.mobnav-foot .btn-ghost{ flex:none; }
+
+/* ---------- responsive switches ---------- */
+@media(max-width:860px){
+  .mega-in{ grid-template-columns:1fr 1fr; }
+  .mega-col.side{ grid-column:1 / -1; border-left:none; border-top:1px solid var(--line);
+    padding-left:0; padding-top:20px; margin-top:4px; }
+  .mega-quick{ flex-direction:row; flex-wrap:wrap; }
+  .mq{ flex:1; min-width:200px; }
+}
+@media(max-width:720px){
+  .nav{ display:none !important; }
+  .hamb{ display:flex; }
+  .hide-sm{ display:none; }
+  .mega{ display:none; }
+}
+@media(min-width:721px){
+  .mobnav{ display:none; }
+}
+@media(max-width:420px){
+  .mobnav-landen{ grid-template-columns:1fr; }
+}
+
+/* ===================================================================
+   CONTENT-BLOKKEN — homepage SEO-secties + landpagina extra
+   =================================================================== */
+
+/* regio-uitleg */
+.regio-col .rc-tag{ font-family:var(--mono); font-size:10px; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:700; display:block; margin-bottom:8px; }
+.reg-note{ margin-top:18px; background:var(--paper-2); border:1px solid var(--line);
+  border-radius:14px; padding:15px 18px; font-size:14px; line-height:1.6; color:var(--ink-2); max-width:80ch; }
+.reg-note strong{ color:var(--ink); }
+
+/* landen vergelijken — heat strips */
+.vergelijk{ padding:22px 24px; }
+.vg-axis{ display:grid; grid-template-columns:160px 1fr; gap:14px; margin-bottom:8px; }
+.vg-weeks{ display:flex; }
+.vw{ flex:1; text-align:center; font-family:var(--mono); font-size:10px; color:transparent; }
+.vw.show{ color:var(--ink-4); }
+.vg-row{ display:grid; grid-template-columns:160px 1fr auto; gap:14px; align-items:center; padding:7px 0; }
+.vg-name{ display:flex; align-items:center; gap:9px; font-size:14.5px; font-weight:700; letter-spacing:-0.01em; }
+.vg-name .fl{ font-size:18px; }
+.vg-strip{ display:flex; gap:2px; height:26px; }
+.vg-cell{ flex:1; border-radius:3px; }
+.vg-peak{ font-family:var(--mono); font-size:11px; color:var(--ink-3); text-align:right; line-height:1.3; }
+.vg-peak i{ display:block; font-style:normal; color:var(--ink-4); font-size:10px; }
+.vg-legend{ display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); flex-wrap:wrap; }
+.vg-scale{ display:flex; gap:3px; }
+.vg-scale i{ width:22px; height:12px; border-radius:3px; }
+.vg-cta{ margin-left:auto; }
+
+/* beste reisweken — score-bars */
+.brw{ padding:22px 24px 18px; }
+.brw-bars{ display:flex; gap:5px; align-items:flex-end; height:170px; }
+.brw-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; height:100%; }
+.brw-score{ font-family:var(--mono); font-size:11px; font-weight:700; color:var(--ink-3); }
+.brw-col.go .brw-score{ color:var(--rustig-ink, #11825e); }
+.brw-bar{ width:100%; max-width:30px; border-radius:5px 5px 2px 2px; background:var(--line-2); transition:height .2s; }
+.brw-col.go .brw-bar{ background:var(--rustig, #2bb38a); }
+.brw-col.mid .brw-bar{ background:oklch(78% 0.13 70); }
+.brw-col.no .brw-bar{ background:oklch(66% 0.17 35); }
+.brw-wk{ font-size:10px; color:var(--ink-4); }
+.brw-foot{ display:flex; gap:18px; margin-top:14px; padding-top:12px; border-top:1px solid var(--line); flex-wrap:wrap; }
+.brw-key{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-3); }
+.brw-key i{ width:12px; height:12px; border-radius:4px; }
+.brw-key i.go{ background:var(--rustig, #2bb38a); }
+.brw-key i.mid{ background:oklch(78% 0.13 70); }
+.brw-key i.no{ background:oklch(66% 0.17 35); }
+
+.brw-top{ display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; align-items:stretch; }
+.brw-pick{ display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--paper);
+  border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); }
+.bp-score{ width:42px; height:42px; flex:none; display:grid; place-items:center; border-radius:12px;
+  background:var(--rustig-soft, #d8f3e8); color:var(--rustig-ink, #11825e); font-family:var(--mono); font-weight:700; font-size:16px; }
+.bp-info{ display:flex; flex-direction:column; }
+.bp-wk{ font-size:14px; font-weight:700; }
+.bp-dt{ font-size:12px; color:var(--ink-3); }
+.brw-cta{ margin-left:auto; align-self:center; }
+
+/* weer per maand */
+.wm-seg{ margin-top:0; }
+.weer{ padding:22px 24px 16px; }
+.weer-grid{ display:flex; gap:6px; align-items:flex-end; height:180px; }
+.weer-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:6px; height:100%; position:relative; }
+.weer-col.zomer::before{ content:""; position:absolute; inset:-4px -2px 16px; border-radius:8px;
+  background:color-mix(in oklab, var(--accent) 8%, transparent); z-index:0; }
+.weer-val{ font-family:var(--mono); font-size:11.5px; font-weight:700; color:var(--ink-2); z-index:1; }
+.weer-track{ width:100%; max-width:34px; height:100%; display:flex; align-items:flex-end; z-index:1; }
+.weer-bar{ width:100%; border-radius:6px 6px 2px 2px; transition:height .25s; min-height:8px; }
+.weer-m{ font-size:11px; color:var(--ink-3); text-transform:capitalize; z-index:1; }
+.weer-meta{ display:flex; justify-content:space-between; gap:12px; margin-top:14px; padding-top:12px;
+  border-top:1px solid var(--line); flex-wrap:wrap; }
+.weer-unit{ font-size:11.5px; color:var(--ink-2); font-weight:700; }
+.weer-bron{ font-size:11px; color:var(--ink-4); }
+
+@media(max-width:760px){
+  .vg-axis, .vg-row{ grid-template-columns:118px 1fr; }
+  .vg-peak{ display:none; }
+  .vg-cta{ margin-left:0; width:100%; }
+  .brw-cta{ margin-left:0; width:100%; }
+  .brw-bars{ height:140px; }
+  .weer-grid{ height:150px; gap:3px; }
+  .weer-val{ font-size:10px; }
+}

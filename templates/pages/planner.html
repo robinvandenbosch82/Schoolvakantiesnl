@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}<style>
+  .planner-inputs.card{ flex-direction:column; align-items:stretch; gap:22px; }
+  .pl-row{ display:flex; flex-wrap:wrap; gap:16px 34px; align-items:flex-start; }
+  .pl-row .inp-block, .pl-row .stepper{ min-width:0; }
+  .regio-window{ display:block; margin-top:7px; font-size:12.5px; color:var(--ink-3); }
+  [data-regio-seg]{ vertical-align:middle; }
+  .waarheen{ margin-top:22px; }
+  .wh-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr));
+    gap:12px; margin-top:12px; }
+  .wh-card{ text-align:left; background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; padding:14px 16px; cursor:pointer; font:inherit;
+    display:flex; flex-direction:column; gap:11px; transition:border-color .14s, box-shadow .14s; }
+  .wh-card:hover{ border-color:var(--accent-line); }
+  .wh-card.on{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .wh-card-top{ display:flex; align-items:center; gap:9px; }
+  .wh-flag{ font-size:18px; line-height:1; }
+  .wh-nm{ font-weight:700; color:var(--ink); flex:1; min-width:0; }
+  .wh-score{ font-weight:800; font-size:19px; line-height:1; }
+  .wh-score.is-rustig{ color:var(--rustig); } .wh-score.is-matig{ color:var(--matig); }
+  .wh-score.is-druk{ color:var(--druk); }
+  .wh-meters{ display:flex; flex-direction:column; gap:6px; }
+  .wh-meter{ display:grid; grid-template-columns:34px 1fr; align-items:center; gap:9px; }
+  .wh-lab{ font-size:10px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.04em; }
+  .wh-card .mini-bar{ height:7px; background:var(--paper-2); border-radius:6px; overflow:hidden; }
+  .wh-card .mini-bar i{ display:block; height:100%; border-radius:6px; }
+  .wh-back{ font-size:11.5px; color:var(--accent-ink); font-weight:600; }
+  .wh-hint{ font-size:12.5px; color:var(--ink-3); }
+  .accent-ink{ color:var(--accent-ink); }
+</style>{% endblock %}
+
+{% block content %}
+<div class="page planner">
+  <div class="planner-head">
+    <span class="eye">Vakantieplanner · zomer {{ jaar }}</span>
+    <h1>Plan jullie slimste zomerweek.</h1>
+    <p class="lead">Kies je regio en bestemming — wij tonen <strong>wanneer</strong> binnen jóuw zomervakantie het slim is, én <strong>waarheen</strong> het die week rustig, betaalbaar en lekker weer is.</p>
+  </div>
+
+  {# INVOER #}
+  <div class="planner-inputs card">
+    <div class="pl-row">
+      {% if regio_windows %}
+      <div class="inp-block">
+        <span class="stepper-lab">Jouw regio</span>
+        <div class="seg" data-regio-seg>
+          {% for r in regio_windows %}
+            <button type="button" class="{% if forloop.first %}on{% endif %}" data-regio="{{ r.code }}" title="Zomervakantie {{ r.label }}">{{ r.naam }}</button>
+          {% endfor %}
+        </div>
+        <span class="regio-window mono" id="regioWindow"></span>
+      </div>
+      {% endif %}
+      <div class="stepper" data-stepper data-stepper-key="adults" data-min="1" data-max="9" data-value="2">
+        <span class="stepper-lab">Volwassenen</span>
+        <div class="stepper-ctl">
+          <button type="button" data-step="-1">−</button>
+          <span class="mono" data-value-display>2</span>
+          <button type="button" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="stepper" data-stepper data-stepper-key="kids" data-min="0" data-max="9" data-value="2">
+        <span class="stepper-lab">Kinderen</span>
+        <div class="stepper-ctl">
+          <button type="button" data-step="-1">−</button>
+          <span class="mono" data-value-display>2</span>
+          <button type="button" data-step="1">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="pl-row">
+      <div class="inp-block">
+        <span class="stepper-lab">Bestemming</span>
+        <div class="dest-chips">
+          {% for c in europe_popular|slice:":5" %}
+            <button type="button" class="dest-chip{% if forloop.first %} on{% endif %}" data-code="{{ c.code }}"><span class="fl">{{ c.flag }}</span>{{ c.name }}</button>
+          {% endfor %}
+          <a class="dest-more" href="/landen/">Alle landen →</a>
+        </div>
+      </div>
+    </div>
+    <div class="pl-row">
+      <div class="inp-block">
+        <span class="stepper-lab">Type vakantie</span>
+        <div class="seg" data-seg>
+          <button class="on" type="button">strand</button>
+          <button type="button">stad</button>
+          <button type="button">natuur</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# WANNEER — radar over jouw zomervenster #}
+  <div style="margin-top:22px">
+    {% include "partials/radar.html" %}
+  </div>
+
+  {# SLIM-VERTREKADVIES #}
+  <div class="advice card" id="advice">
+    <div class="advice-ic">⚑</div>
+    <div class="advice-txt">
+      <span class="eye">Slim-vertrekadvies</span>
+      <p class="advice-line" id="adviceLine">
+        Goede keuze — <strong>week {{ sel.wk }}</strong> hoort al bij de slimste weken.
+      </p>
+      <div class="advice-actions" id="adviceActions">
+        <a class="btn-ghost" style="padding:13px 20px;border-radius:14px" href="/druktekaart/">Waar is het dan rustig? →</a>
+      </div>
+    </div>
+  </div>
+
+  {# WAARHEEN — bestemmingen vergelijken voor de gekozen week #}
+  <div class="card waarheen" id="waarheen">
+    <div class="section-head">
+      <div>
+        <span class="eye">Waarheen die week?</span>
+        <h2 style="margin-top:8px">Slimste bestemmingen voor <span id="whWeek" class="accent-ink">jouw week</span></h2>
+      </div>
+      <p>Gerangschikt op rust + weer voor een <span id="whType">strand</span>vakantie. <span class="wh-hint">★ = scholen daar zijn alweer begonnen → extra rustig.</span></p>
+    </div>
+    <div class="wh-list" id="whList"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="weeks-data" type="application/json">{{ weeks_json|safe }}</script>
+<script id="dest-data" type="application/json">{{ dest_data_json|safe }}</script>
+<script id="regio-windows" type="application/json">{{ regio_windows_json|safe }}</script>
+<script id="dest-summer" type="application/json">{{ dest_summer_json|safe }}</script>
+{% endblock %}

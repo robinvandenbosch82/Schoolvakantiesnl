@@ -1,0 +1,57 @@
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="foot-logo">
+          <span class="mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg>
+          </span>
+          Schoolvakanties<span class="nl">.nl</span>
+        </div>
+        <p class="foot-desc">{{ site.footer_blurb }}</p>
+        <div class="foot-contact">
+          <a href="mailto:{{ site.email }}"><span class="lbl">Mail</span>{{ site.email }}</a>
+          {% if site.show_phone and site.phone %}<a href="tel:{{ site.phone }}"><span class="lbl">Telefoon</span>{{ site.phone }}</a>{% endif %}
+          {% if site.adres_plaats %}<a href="#"><span class="lbl">Adres</span>{{ site.adres_straat }}, {{ site.adres_plaats }}</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <h4>Populaire landen</h4>
+        <ul>
+          {% for c in europe_popular %}<li><a href="/landen/{{ c.slug }}/">{{ c.name }}</a></li>{% endfor %}
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h4>Slim plannen</h4>
+        <ul>
+          <li><a href="/planner/">Vakantieplanner</a></li>
+          <li><a href="/druktekaart/">Europese druktekaart</a></li>
+          <li><a href="/#radar">Reisweek-radar</a></li>
+          <li><a href="/blog/">Blog &amp; reistips</a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h4>Over ons</h4>
+        <ul>
+          <li><a href="/over-ons/">Over Schoolvakanties.nl</a></li>
+          <li><a href="/over-ons/">Onze redactie</a></li>
+          <li><a href="/over-ons/">Hoe we werken</a></li>
+          <li><a href="/over-ons/">Bronnen &amp; data</a></li>
+          <li><a href="/samenwerken/">Samenwerken</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span class="copy">© 2026 Schoolvakanties.nl — slim weg met het gezin</span>
+      <div class="foot-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Cookies</a>
+        <a href="#">Voorwaarden</a>
+      </div>
+    </div>
+  </div>
+</footer>

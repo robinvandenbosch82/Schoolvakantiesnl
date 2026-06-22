@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Schoolvakanties.nl v3 — Strategie &amp; Designrichting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* warme, rustige neutralen */
+  --bg: oklch(98.5% 0.006 95);
+  --paper: oklch(100% 0 0);
+  --paper-2: oklch(97% 0.008 95);
+  --line: oklch(91% 0.01 95);
+  --line-2: oklch(86% 0.012 95);
+  --ink: oklch(26% 0.02 285);
+  --ink-2: oklch(42% 0.018 285);
+  --ink-3: oklch(56% 0.015 285);
+
+  /* paars signaal */
+  --paars: oklch(56% 0.19 288);
+  --paars-2: oklch(64% 0.17 290);
+  --paars-soft: oklch(95% 0.03 290);
+  --paars-line: oklch(88% 0.05 290);
+
+  /* score-palet (kalm) */
+  --rustig: oklch(72% 0.13 162);
+  --rustig-soft: oklch(95% 0.04 162);
+  --matig: oklch(80% 0.13 85);
+  --matig-soft: oklch(95% 0.05 85);
+  --druk: oklch(66% 0.16 28);
+  --druk-soft: oklch(95% 0.04 28);
+
+  --sans: "Plus Jakarta Sans", -apple-system, system-ui, sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
+  --r: 18px;
+  --maxw: 1080px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); line-height:1.6;
+  -webkit-font-smoothing:antialiased; font-feature-settings:"ss01";
+}
+.eye{font-family:var(--mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--paars);}
+h1,h2,h3,h4{margin:0; line-height:1.08; font-weight:800; letter-spacing:-0.02em;}
+p{margin:0;}
+a{color:var(--paars); text-decoration:none;}
+
+/* ---- top bar ---- */
+.bar{
+  position:sticky; top:0; z-index:40;
+  background:color-mix(in oklab, var(--bg) 82%, transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.bar-in{max-width:var(--maxw); margin:0 auto; padding:14px 28px; display:flex; align-items:center; gap:14px;}
+.logo{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-0.02em;}
+.logo .dot{width:26px;height:26px;border-radius:9px;background:var(--paars);display:grid;place-items:center;color:#fff;font-size:14px;box-shadow:0 4px 12px oklch(56% 0.19 288 / .35);}
+.bar .tag{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.04em;}
+
+/* ---- hero ---- */
+.hero{max-width:var(--maxw); margin:0 auto; padding:64px 28px 30px;}
+.hero h1{font-size:clamp(38px,6vw,68px);}
+.hero .lead{font-size:clamp(17px,2.2vw,21px); color:var(--ink-2); max-width:62ch; margin-top:22px; line-height:1.5;}
+.pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px;}
+.pill{font-size:13px; font-weight:600; padding:7px 13px; border-radius:999px; background:var(--paper); border:1px solid var(--line-2); color:var(--ink-2);}
+.pill.on{background:var(--paars-soft); border-color:var(--paars-line); color:var(--paars);}
+
+/* ---- layout ---- */
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px 100px; display:grid; grid-template-columns:210px 1fr; gap:48px;}
+nav.toc{position:sticky; top:78px; align-self:start; font-size:13.5px;}
+nav.toc ol{list-style:none; margin:0; padding:0; counter-reset:s;}
+nav.toc li{counter-increment:s; margin:2px 0;}
+nav.toc a{display:flex; gap:10px; padding:7px 10px; border-radius:10px; color:var(--ink-2); font-weight:600;}
+nav.toc a::before{content:counter(s,decimal-leading-zero); font-family:var(--mono); font-size:11px; color:var(--ink-3); padding-top:2px;}
+nav.toc a:hover{background:var(--paper); color:var(--ink);}
+
+section.block{padding:46px 0; border-top:1px solid var(--line); scroll-margin-top:90px;}
+section.block:first-child{border-top:none;}
+section.block > .eye{margin-bottom:14px; display:block;}
+section.block h2{font-size:clamp(26px,3.4vw,34px); margin-bottom:8px;}
+section.block .intro{color:var(--ink-2); font-size:16.5px; max-width:64ch; margin-bottom:26px;}
+section.block h3{font-size:18px; margin:26px 0 10px;}
+section.block p{color:var(--ink-2); max-width:66ch; margin-bottom:12px;}
+section.block ul{margin:6px 0 14px; padding-left:0; list-style:none;}
+section.block li{position:relative; padding-left:22px; margin:7px 0; color:var(--ink-2); max-width:64ch;}
+section.block li::before{content:""; position:absolute; left:4px; top:11px; width:6px; height:6px; border-radius:2px; background:var(--paars);}
+strong{color:var(--ink); font-weight:700;}
+
+/* cards */
+.cards{display:grid; gap:16px; margin:18px 0;}
+.cards.c2{grid-template-columns:1fr 1fr;}
+.cards.c3{grid-template-columns:repeat(3,1fr);}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:20px 22px;}
+.card h4{font-size:15.5px; margin-bottom:8px; letter-spacing:-0.01em;}
+.card p{font-size:14px; margin:0; line-height:1.5;}
+.card .k{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); display:block; margin-bottom:10px;}
+
+/* steal / avoid */
+.sa{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;}
+.sa .box{border-radius:var(--r); padding:18px 20px; border:1px solid var(--line);}
+.sa .steal{background:var(--rustig-soft); border-color:oklch(86% 0.06 162);}
+.sa .avoid{background:var(--druk-soft); border-color:oklch(88% 0.05 28);}
+.sa h4{font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+.sa ul{margin:0;}
+.sa li{font-size:13.5px; margin:6px 0;}
+.sa .steal li::before{background:var(--rustig);}
+.sa .avoid li::before{background:var(--druk);}
+
+/* comparison table */
+.tbl{width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:13.5px; background:var(--paper); border:1px solid var(--line); border-radius:var(--r); overflow:hidden;}
+.tbl th,.tbl td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line);}
+.tbl th{font-size:11px; font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); background:var(--paper-2);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl td:first-child{font-weight:700; color:var(--ink);}
+
+/* flow */
+.flow{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:10px 0 18px;}
+.step{background:var(--paper); border:1px solid var(--line-2); border-radius:12px; padding:10px 14px; font-size:13px; font-weight:600;}
+.arrow{color:var(--paars); font-weight:700;}
+
+/* IA tree */
+.tree{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; font-family:var(--mono); font-size:13px; color:var(--ink-2); line-height:1.9;}
+.tree .root{color:var(--paars); font-weight:700;}
+.tree .lvl1{padding-left:20px;} .tree .lvl2{padding-left:44px; color:var(--ink-3);}
+
+/* score chips */
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 10px;}
+.chip{font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px;}
+.chip.r{background:var(--rustig-soft); color:oklch(45% 0.12 162);}
+.chip.m{background:var(--matig-soft); color:oklch(48% 0.12 75);}
+.chip.d{background:var(--druk-soft); color:oklch(48% 0.14 28);}
+
+/* feature callouts */
+.feat{display:grid; grid-template-columns:48px 1fr; gap:16px; padding:18px 0; border-top:1px dashed var(--line-2);}
+.feat:first-of-type{border-top:none;}
+.feat .ic{width:48px;height:48px;border-radius:14px;background:var(--paars-soft);display:grid;place-items:center;font-size:22px;}
+.feat h4{font-size:16px; margin-bottom:6px;}
+.feat p{font-size:14px; margin:0;}
+.star{display:inline-block; font-size:10px; font-family:var(--mono); letter-spacing:.1em; text-transform:uppercase; color:#fff; background:var(--paars); padding:3px 8px; border-radius:6px; vertical-align:middle; margin-left:8px;}
+
+/* swatches */
+.sw{display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 18px;}
+.swatch{width:96px;}
+.swatch .b{height:58px; border-radius:12px; border:1px solid var(--line-2);}
+.swatch .n{font-family:var(--mono); font-size:10px; color:var(--ink-3); margin-top:6px; display:block;}
+.type-spec{background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; margin:10px 0;}
+.type-spec .big{font-size:42px; font-weight:800; letter-spacing:-0.03em;}
+.type-spec .mid{font-size:20px; font-weight:600; margin-top:6px;}
+.type-spec .mono{font-family:var(--mono); font-size:14px; color:var(--ink-2); margin-top:8px;}
+
+.note{background:var(--paars-soft); border:1px solid var(--paars-line); border-radius:var(--r); padding:18px 22px; margin:22px 0; font-size:14.5px; color:var(--ink-2);}
+.note strong{color:var(--paars);}
+
+footer{max-width:var(--maxw); margin:0 auto; padding:30px 28px 80px; border-top:1px solid var(--line); color:var(--ink-3); font-size:13px;}
+
+@media(max-width:880px){
+  .wrap{grid-template-columns:1fr; gap:0;}
+  nav.toc{display:none;}
+  .cards.c2,.cards.c3,.sa{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="logo"><span class="dot">✦</span> Schoolvakanties.nl</div>
+    <span class="tag">v3 · strategie &amp; designrichting</span>
+  </div>
+</div>
+
+<header class="hero">
+  <span class="eye">Discovery · mei 2026</span>
+  <h1>Van databron naar<br>vakantieplanner voor gezinnen.</h1>
+  <p class="lead">Google en AI Overviews beantwoorden “wanneer is de zomervakantie?” inmiddels zelf. Onze winst zit in de vraag erna: <strong>“wat is de slimste week om met de kinderen weg te gaan?”</strong> Dit document legt de analyse, architectuur en designrichting vast — vóór er één scherm getekend wordt.</p>
+  <div class="pillrow">
+    <span class="pill on">Warm &amp; vriendelijk</span>
+    <span class="pill on">Wauw, maar rustig</span>
+    <span class="pill on">Vertrouwd voor gezinnen</span>
+    <span class="pill">Data eerst</span>
+    <span class="pill">Mobile-first</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <ol>
+      <li><a href="#concurrentie">Concurrentieanalyse</a></li>
+      <li><a href="#product">Productanalyse</a></li>
+      <li><a href="#ux">UX-analyse</a></li>
+      <li><a href="#positionering">Positionering</a></li>
+      <li><a href="#ia">Informatiearchitectuur</a></li>
+      <li><a href="#flows">Gebruikersflows</a></li>
+      <li><a href="#paginas">Paginastructuur</a></li>
+      <li><a href="#componenten">Componenten</a></li>
+      <li><a href="#features">Unieke features</a></li>
+      <li><a href="#design">Designrichting</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section class="block" id="concurrentie">
+      <span class="eye">01 · Wat werkt elders</span>
+      <h2>Concurrentieanalyse</h2>
+      <p class="intro">Geen enkele concurrent doet precies wat wij willen — maar elk type platform heeft één patroon dat wij kunnen lenen. Hieronder de oogst, per categorie, met steeds de les voor ons.</p>
+
+      <div class="cards c2">
+        <div class="card"><span class="k">Reisplanning · Flights, Skyscanner, Kayak, Momondo</span><h4>Prijs als tijdlijn, niet als lijst</h4><p>De prijs-grafiek over weken/maanden en “goedkoopste datum”-tips zijn de kern. Eén balkje per periode, kleur = goed/duur. Exact wat een gezin met flexibele weken nodig heeft.</p></div>
+        <div class="card"><span class="k">Accommodaties · Airbnb, Booking, Holidu, Interhome</span><h4>Warme cards + zachte rust</h4><p>Airbnb’s ronde cards, foto-eerst, vriendelijke microcopy en grote duim-vriendelijke knoppen. Booking’s urgentie/drukte-signalen — maar wij doseren die rustiger.</p></div>
+        <div class="card"><span class="k">Data-reisplatformen · Numbeo, WeatherSpark, Rome2Rio, Wanderlog</span><h4>Eén cijfer dat alles samenvat</h4><p>WeatherSpark’s klimaat-banden en Numbeo’s indexscores tonen: dichte data wordt pas bruikbaar als je ’m comprimeert tot één leesbare score + een grafiek eronder.</p></div>
+        <div class="card"><span class="k">Kalenders · Timeanddate, Office/Public Holidays</span><h4>Land-overlap is onontgonnen</h4><p>Deze sites tonen losse landen netjes, maar nooit naast elkáár. De vergelijking — wie heeft tegelijk vrij — is precies het gat dat wij kunnen pakken.</p></div>
+        <div class="card"><span class="k">Verkeer &amp; drukte · ANWB, TomTom, Maps</span><h4>Heatmap-taal die iedereen snapt</h4><p>Groen-oranje-rood voor drukte is universeel begrepen. ANWB’s “zwarte zaterdag”-vooruitblik bewijst: vakantiegangers plannen al rond drukte — alleen versnipperd.</p></div>
+        <div class="card"><span class="k">Moderne platformen · Linear, Notion, Stripe, Duolingo</span><h4>Premium = rust + één duidelijke actie</h4><p>Strakke spacing, zachte schaduwen, micro-animaties met betekenis, en per scherm precies één primaire keuze. Duolingo’s warmte + Stripe’s precisie = onze toon.</p></div>
+      </div>
+
+      <div class="sa">
+        <div class="box steal"><h4>✓ Lenen</h4><ul>
+          <li>Prijs/drukte als grafiek-over-tijd, niet als tabel</li>
+          <li>Eén samenvattende score (0–100) + grafiek eronder</li>
+          <li>Warme ronde cards, foto-eerst, grote knoppen (Airbnb)</li>
+          <li>Groen→rood drukte-heatmap (universeel begrepen)</li>
+          <li>Per scherm één primaire actie (Stripe/Linear)</li>
+          <li>Betekenisvolle micro-animatie, vriendelijke copy (Duolingo)</li>
+        </ul></div>
+        <div class="box avoid"><h4>✕ Vermijden</h4><ul>
+          <li>Rommel: stickers, plakband, grain, scrapbook (v2-les)</li>
+          <li>Editorial/tijdschrift-look die niet als tool voelt (v1-les)</li>
+          <li>Lange data-tabellen en losse landen-lijstjes</li>
+          <li>Agressieve urgentie/“nog 2 over!”-banners (Booking-stress)</li>
+          <li>Tekst boven de vouw; uitleg eerst, data daarna</li>
+          <li>Overheids-/schoolkalender-uitstraling</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="product">
+      <span class="eye">02 · Waar staan we</span>
+      <h2>Productanalyse</h2>
+      <p class="intro">Schoolvakanties.nl is nu een betrouwbare databron: vakantiedata per land, kennisbank, blogs. Precies die rol wordt door zoekmachines overgenomen.</p>
+
+      <h3>Het kernprobleem</h3>
+      <p>De waarde zat in het <em>antwoord</em> (“de zomervakantie 2026 start op…”). Google’s rich results en AI Overviews leveren dat antwoord nu zónder klik. Een databron die zijn data weggeeft, verliest zijn bestaansrecht. <strong>De uitweg is niet méér data, maar betekenis bovenop de data</strong> — advies, vergelijking en planning die een snippet niet kan geven.</p>
+
+      <h3>Jobs-to-be-done van het gezin</h3>
+      <div class="cards c2">
+        <div class="card"><span class="k">Functioneel</span><h4>“Plan onze gezinsvakantie zonder gedoe”</h4><p>Wanneer vrij, waar rustig, wat betaalbaar — in één overzicht, niet vijf tabbladen.</p></div>
+        <div class="card"><span class="k">Emotioneel</span><h4>“Geef me het gevoel dat ik het slim aanpak”</h4><p>Geen FOMO, wél het rustige vertrouwen dat dit de goede week is. Vakantie begint met voorpret, niet met stress.</p></div>
+        <div class="card"><span class="k">Sociaal</span><h4>“Iets om te delen met mijn partner/vriendengroep”</h4><p>Een score of kaart die je doorstuurt: ‘kijk, week 41 is veel slimmer’.</p></div>
+        <div class="card"><span class="k">Tijd</span><h4>“In 10 seconden inzicht, op mijn telefoon”</h4><p>70%+ mobiel. Het antwoord moet boven de vouw staan, met één duim te bedienen.</p></div>
+      </div>
+
+      <div class="note">De strategische kern in één zin: <strong>we ruilen ‘wanneer’ in voor ‘wanneer slim’.</strong> Dat is verdedigbaar tegen AI, want het vergt vergelijking, voorspelling en advies — geen feit dat je kunt scrapen.</div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="ux">
+      <span class="eye">03 · Hoe het moet voelen</span>
+      <h2>UX-analyse &amp; principes</h2>
+      <p class="intro">De brief geeft de marsroute: extreem snel, weinig klikken, direct inzicht, veel visualisatie, data eerst — uitleg daarna. Vertaald naar zeven principes.</p>
+      <div class="cards c3">
+        <div class="card"><span class="k">P1</span><h4>Antwoord boven de vouw</h4><p>Elke pagina opent met inzicht (een score, een kaart), niet met een uitlegparagraaf.</p></div>
+        <div class="card"><span class="k">P2</span><h4>Eén cijfer, dan detail</h4><p>Comprimeer drukte+prijs+weer+overlap tot één score. Detail is uitklapbaar, niet vooropgezet.</p></div>
+        <div class="card"><span class="k">P3</span><h4>Visueel vóór tekstueel</h4><p>Heatmap, tijdlijn, ring. Cijfers staan ín de visual, niet ernaast in een tabel.</p></div>
+        <div class="card"><span class="k">P4</span><h4>Duim-eerst</h4><p>Hit-targets ≥ 44px, sticky bottom-acties, swipebare weken. Mobiel is de hoofdvorm.</p></div>
+        <div class="card"><span class="k">P5</span><h4>Rust = vertrouwen</h4><p>Veel witruimte, zachte schaduw, geen urgentie-geschreeuw. Premium voelt kalm.</p></div>
+        <div class="card"><span class="k">P6</span><h4>Voorpret als emotie</h4><p>Warme taal en beeld. We plannen geen spreadsheet, we plannen een fijne tijd samen.</p></div>
+        <div class="card"><span class="k">P7</span><h4>SEO blijft het fundament</h4><p>Kennisbank/blog blijven, maar als ondersteuning ónder de tools — niet als hoofdgerecht.</p></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="positionering">
+      <span class="eye">04 · De nieuwe belofte</span>
+      <h2>Positionering</h2>
+      <p class="intro">Eén platform dat het hele “slim weg met de kinderen”-vraagstuk dekt — schoolvakanties, drukte, overlap, weer, prijs en planning.</p>
+      <table class="tbl">
+        <tr><th>Was (v0)</th><th>Wordt (v3)</th></tr>
+        <tr><td>Databron</td><td>Beslissingshulp &amp; planner</td></tr>
+        <tr><td>“Wanneer is het vakantie?”</td><td>“Wanneer is het slim weg te gaan?”</td></tr>
+        <tr><td>Losse landen-lijstjes</td><td>Landen naast elkaar: overlap &amp; drukte</td></tr>
+        <tr><td>Tekst &amp; tabellen</td><td>Scores, kaarten, tijdlijnen</td></tr>
+        <tr><td>Educatief / kalender</td><td>Premium, warm, gezinsgericht</td></tr>
+      </table>
+      <h3>Positioneringszin</h3>
+      <p><strong>Schoolvakanties.nl is de slimme reisplanner voor gezinnen: in één oogopslag zie je wanneer je het rustigst, voordeligst en fijnst met de kinderen weg kunt — voor heel Europa.</strong></p>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="ia">
+      <span class="eye">05 · De kaartenbak</span>
+      <h2>Informatiearchitectuur</h2>
+      <p class="intro">Tools bovenaan, kennis als fundament eronder. Platte structuur — alles in max. twee klikken bereikbaar.</p>
+      <div class="tree">
+        <div class="root">● Schoolvakanties.nl</div>
+        <div class="lvl1">├─ Slimme reisplanner <span style="color:var(--paars)">(héld-tool)</span></div>
+        <div class="lvl1">├─ Europese druktekaart</div>
+        <div class="lvl1">├─ Vakantie-overlap checker</div>
+        <div class="lvl1">├─ Landen</div>
+        <div class="lvl2">│ ├─ Duitsland (+ deelstaten)</div>
+        <div class="lvl2">│ ├─ Frankrijk · Italië · Spanje · …</div>
+        <div class="lvl2">│ └─ Nederland (regio noord/midden/zuid)</div>
+        <div class="lvl1">├─ Beste periodes voor gezinnen</div>
+        <div class="lvl1">├─ Kennisbank <span style="color:var(--ink-3)">(SEO-fundament)</span></div>
+        <div class="lvl1">└─ Blog</div>
+      </div>
+      <p>De tools zijn eersterangs navigatie. Kennisbank en blog blijven volledig intact voor SEO, maar verhuizen naar het fundament: ze ondersteunen de tools (“lees meer over de Duitse deelstaten”) in plaats van het hoofdmenu te vullen.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="flows">
+      <span class="eye">06 · De routes</span>
+      <h2>Gebruikersflows</h2>
+      <p class="intro">Drie kernreizen. Elk eindigt in inzicht binnen enkele stappen — geen formulieren, geen accounts.</p>
+
+      <h3>Flow A · “Wanneer kan ik het beste weg?”</h3>
+      <div class="flow"><span class="step">Home</span><span class="arrow">→</span><span class="step">Kies regio + maand</span><span class="arrow">→</span><span class="step">Reisweek-radar: weken gescoord</span><span class="arrow">→</span><span class="step">Beste week → bestemmingen</span></div>
+
+      <h3>Flow B · “Is het dan rustig in Italië?”</h3>
+      <div class="flow"><span class="step">Druktekaart Europa</span><span class="arrow">→</span><span class="step">Schuif door de weken</span><span class="arrow">→</span><span class="step">Klik land</span><span class="arrow">→</span><span class="step">Landenpagina + overlap met NL</span></div>
+
+      <h3>Flow C · “Hebben Duitsland en wij tegelijk vrij?”</h3>
+      <div class="flow"><span class="step">Overlap-checker</span><span class="arrow">→</span><span class="step">NL + Duitsland selecteren</span><span class="arrow">→</span><span class="step">Overlap-balken</span><span class="arrow">→</span><span class="step">Advies: vermijd / juist nu</span></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="block" id="paginas">
+      <span class="eye">07 · Wat staat waar</span>
+      <h2>Paginastructuur</h2>
+      <p class="intro">De vier schermen die we voor v3 ontwerpen, met hun secties van boven naar onder.</p>
+      <div class="cards c2">
+        <div class="card"><span class="k">Scherm 1</span><h4>Homepage</h4><p>① Hero met regio/maand-kiezer + directe reisweek-score · ② Reisweek-radar (week-balken) · ③ Mini-druktekaart Europa · ④ Populaire landen (warme cards) · ⑤ Beste periodes voor gezinnen · ⑥ Kennisbank/blog-fundament.</p></div>
+        <div class="card"><span class="k">Scherm 2</span><h4>Landenpagina — Duitsland</h4><p>① Header met overlap-met-NL score · ② Vakantiekalender + deelstaten-keuze · ③ Drukte-tijdlijn · ④ Beste reisweken · ⑤ Weer-band · ⑥ Gerelateerde kennisbank-artikelen.</p></div>
+        <div class="card"><span class="k">Scherm 3</span><h4>Vakantieplanner / beste-week</h4><p>① Invoer: wie reist mee, vanaf welke regio, welk type · ② Reisweek-radar met 0–100 scores · ③ Detail per week (drukte/prijs/weer/overlap) · ④ CTA naar bestemmingen.</p></div>
+        <div class="card"><span class="k">Scherm 4</span><h4>Europese druktekaart</h4><p>① Volledig scherm kaart, groen→rood per land · ② Week-slider onderaan (sticky) · ③ Klik-land = paneel met details · ④ Legenda + “rustigste land deze week”.</p></div>
+      </div>
+      <p>Plus <strong>mobiele varianten</strong> van home en de planner: zelfde inhoud, sticky bottom-acties, swipebare weken, één kolom.</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="block" id="componenten">
+      <span class="eye">08 · De bouwstenen</span>
+      <h2>Componentenbibliotheek</h2>
+      <p class="intro">Eén consistente set, herbruikbaar over alle schermen. Warm, rond, rustig.</p>
+      <div class="cards c3">
+        <div class="card"><h4>Score-ring</h4><p>0–100 reisweek-score in een ring met kleur-coding.</p></div>
+        <div class="card"><h4>Week-balk</h4><p>Eén week = één balk; hoogte/kleur = drukte of prijs.</p></div>
+        <div class="card"><h4>Drukte-heatmap</h4><p>Kaart of grid, groen→oranje→rood.</p></div>
+        <div class="card"><h4>Overlap-balken</h4><p>Landen als horizontale tijdbalken die overlappen.</p></div>
+        <div class="card"><h4>Bestemmings-card</h4><p>Foto-eerst, ronde hoeken, score-badge.</p></div>
+        <div class="card"><h4>Regio/maand-kiezer</h4><p>Segmented control + maandstrip, duim-vriendelijk.</p></div>
+        <div class="card"><h4>Weer-band</h4><p>WeatherSpark-achtige band per week.</p></div>
+        <div class="card"><h4>Deelstaat-selector</h4><p>Chips/kaartje voor Duitse Bundesländer.</p></div>
+        <div class="card"><h4>Sticky bottom-actie</h4><p>Mobiele primaire knop, altijd in beeld.</p></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="block" id="features">
+      <span class="eye">09 · Wat niemand heeft</span>
+      <h2>Unieke features</h2>
+      <p class="intro">Dit is de verdedigbare laag bovenop de data. Ik kies de <strong>Reisweek-radar</strong> als held-tool: de plek waar alles samenkomt in één begrijpelijke score.</p>
+
+      <div class="feat"><div class="ic">◎</div><div><h4>Reisweek-radar <span class="star">Held-tool</span></h4><p>Per week één <strong>Slim-score (0–100)</strong> die drukte, verwachte prijs, weer én vakantie-overlap combineert. Je ziet meteen welke week de slimste is — met de “waarom” eronder. Dit is het gezicht van v3.</p>
+      <div class="chips"><span class="chip r">Wk 37 · 88 slim</span><span class="chip m">Wk 30 · 54</span><span class="chip d">Wk 31 · 22 druk</span></div></div></div>
+
+      <div class="feat"><div class="ic">🗺</div><div><h4>Europese druktekaart</h4><p>Heatmap van heel Europa die je per week doorschuift. Direct zien wáár het rustig is wanneer — de visuele tegenhanger van de radar.</p></div></div>
+
+      <div class="feat"><div class="ic">⇄</div><div><h4>Vakantie-overlap checker</h4><p>Welke landen hebben tegelijk vrij? Overlap = drukte + hogere prijzen. Selecteer landen en zie de overlap als balken, met advies “vermijd” of “juist rustig”.</p></div></div>
+
+      <div class="feat"><div class="ic">♥</div><div><h4>Gezinsvriendelijkheid-score</h4><p>Per bestemming/week: hoe fijn is dit voor kinderen (weer, reistijd, drukte, voorzieningen)? Het emotionele kompas naast de rationele Slim-score.</p></div></div>
+
+      <div class="feat"><div class="ic">⚑</div><div><h4>Slim-vertrekadvies &amp; alternatieve weken</h4><p>“Een week later is 30% rustiger en goedkoper.” Concrete nudges naar de betere week — de kern van onze meerwaarde t.o.v. een zoeksnippet.</p></div></div>
+    </section>
+
+    <!-- 10 -->
+    <section class="block" id="design">
+      <span class="eye">10 · Hoe het eruitziet</span>
+      <h2>Designrichting v3</h2>
+      <p class="intro">Warm &amp; vriendelijk (Airbnb/Duolingo) met de precisie van Stripe/Linear. Wauw, maar rustig en vertrouwd. Zachte ronde cards, paars als signaal, veel lucht. Geen rommel, geen tijdschrift.</p>
+
+      <h3>Kleur</h3>
+      <div class="sw">
+        <div class="swatch"><div class="b" style="background:var(--bg)"></div><span class="n">bg · warm wit</span></div>
+        <div class="swatch"><div class="b" style="background:var(--ink)"></div><span class="n">inkt</span></div>
+        <div class="swatch"><div class="b" style="background:var(--paars)"></div><span class="n">paars · signaal</span></div>
+        <div class="swatch"><div class="b" style="background:var(--rustig)"></div><span class="n">rustig</span></div>
+        <div class="swatch"><div class="b" style="background:var(--matig)"></div><span class="n">matig</span></div>
+        <div class="swatch"><div class="b" style="background:var(--druk)"></div><span class="n">druk</span></div>
+      </div>
+      <p>Warm-witte achtergrond (geen klinisch wit, geen papier-crème). Paars als enige merk-signaal voor scores en primaire acties. Een kalm groen→amber→rood drukte-palet met gelijke chroma, zodat het rustig oogt en niet alarmeert.</p>
+
+      <h3>Typografie</h3>
+      <div class="type-spec">
+        <div class="big">Slim weg met de kinderen</div>
+        <div class="mid">Plus Jakarta Sans — vriendelijk, rond, premium</div>
+        <div class="mono">SPACE MONO · scores, labels, data — 88 slim · WK 37</div>
+      </div>
+      <p>Eén warme geometrische sans (Plus Jakarta Sans) voor alles van display tot UI — vriendelijk maar volwassen, niet de overgebruikte Inter/Roboto. Een mono (Space Mono) puur voor scores, weeknummers en datalabels, zodat data herkenbaar “precies” voelt.</p>
+
+      <h3>Vorm &amp; gevoel</h3>
+      <ul>
+        <li>Ronde hoeken (16–20px), zachte schaduwen — nooit harde offset-blokken</li>
+        <li>Foto-eerst bestemmings-cards (Airbnb-warmte)</li>
+        <li>Betekenisvolle micro-animatie: scores tellen op, balken groeien in</li>
+        <li>Veel witruimte; één primaire actie per scherm</li>
+        <li>Mobile-first: sticky bottom-acties, swipebare weken, ≥44px targets</li>
+      </ul>
+
+      <div class="note">Het wordt een <strong>klikbaar prototype met tweaks</strong> — je kunt straks live met kleuren, ronding en de toon spelen. <strong>Volgende stap:</strong> akkoord op deze richting? Dan bouw ik scherm 1 (homepage met de Reisweek-radar) als eerste, zodat we de look op het belangrijkste scherm bevestigen voordat ik de rest uitwerk.</div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  Schoolvakanties.nl v3 · Strategie &amp; designrichting · Discovery-fase — nog geen scherm-design. Reageer of geef akkoord, dan start ik met de homepage.
+</footer>
+
+</body>
+</html>

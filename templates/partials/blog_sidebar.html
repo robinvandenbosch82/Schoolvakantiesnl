@@ -1,0 +1,36 @@
+{# Blog-sidebar widgets. Verwacht: best_week, komend in de context. #}
+{% if best_week %}
+<div class="widget reisweek">
+  <h4>Slimste reisweek nu</h4>
+  <div class="rw-body">
+    <div class="ring is-{{ best_week.band }}" style="width:92px;height:92px;flex:0 0 92px;position:relative;display:grid;place-items:center;border:7px solid var(--c-soft);border-radius:50%">
+      <span class="mono" style="font-size:30px;font-weight:800;color:var(--c-ink)">{{ best_week.slim_score }}</span>
+    </div>
+    <div class="rw-info">
+      <span class="mono rw-wk">WEEK {{ best_week.weeknr }}</span>
+      <strong>{{ best_week.start_label }}</strong>
+      <span class="rw-note">rustig, betaalbaar &amp; mooi weer</span>
+    </div>
+  </div>
+  <a class="btn" style="width:100%" href="/planner/">Open de planner</a>
+</div>
+{% endif %}
+
+<div class="widget countdown">
+  <div class="widget-head"><h4>Aankomende vakanties</h4><span class="live-dot" title="Live via OpenHolidays"></span></div>
+  {% if komend %}
+    <ul class="cd-list">
+      {% for it in komend %}<li><span class="cd-naam">{{ it.naam }}</span><span class="cd-dagen mono">{{ it.dagen }} dagen</span></li>{% endfor %}
+    </ul>
+  {% else %}<div class="cd-skel">Niet beschikbaar</div>{% endif %}
+  <a class="widget-link" href="/landen/nederland/">Alle schoolvakanties →</a>
+</div>
+
+<div class="widget nieuwsbrief">
+  <h4>📬 Slim-weg nieuwsbrief</h4>
+  <p>Elke maand de slimste reisweken en rustige bestemmingen in je inbox.</p>
+  <form data-newsletter onsubmit="return false">
+    <input type="email" placeholder="jouw@email.nl" required>
+    <button class="btn" type="submit">Aanmelden</button>
+  </form>
+</div>

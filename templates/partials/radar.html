@@ -1,0 +1,54 @@
+{% comment %}Reisweek-radar — gedeeld door home & planner. Verwacht: weeks, sel,
+sel_factors, sel_band_label, best_idx in de context, en weeks-data JSON in de pagina.{% endcomment %}
+<div class="radar card rise" id="radar">
+  <div class="radar-top">
+    <div>
+      <span class="eye">Reisweek-radar</span>
+      <h3 class="radar-title">Wanneer is het slim weg?</h3>
+      <p class="radar-sub">Eén score per week — drukte, prijs, weer en overlap samen.</p>
+    </div>
+    <div class="radar-detail">
+      <div class="ring is-{{ sel.band }}" id="radarRing" data-score="{{ sel.score }}">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <circle cx="66" cy="66" r="56" fill="none" stroke="var(--line)" stroke-width="9"></circle>
+          <circle id="radarArc" cx="66" cy="66" r="56" fill="none" stroke="var(--c)" stroke-width="9"
+                  stroke-linecap="round" transform="rotate(-90 66 66)"></circle>
+        </svg>
+        <div class="ring-mid">
+          <span class="ring-val mono" id="radarVal">{{ sel.score }}</span>
+          <span class="ring-lab" id="radarLab">{{ sel_band_label }}</span>
+        </div>
+      </div>
+      <div class="radar-detail-txt">
+        <span class="mono dt-wk" id="radarWk">WEEK {{ sel.wk }}</span>
+        <span class="dt-date" id="radarDate">{{ sel.d1 }}</span>
+        <div class="factors" id="radarFactors">
+          {% for f in sel_factors %}
+            <div class="factor {{ f.cls }}">
+              <span class="factor-ic">{{ f.icon }}</span>
+              <span class="factor-lab">{{ f.label }}</span>
+              <span class="factor-bar"><i style="width:{{ f.value }}%"></i></span>
+              <span class="factor-val mono">{{ f.value }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="radar-chart" id="radarChart">
+    {% for w in weeks %}
+      <button class="wkbar is-{{ w.band }}{% if forloop.counter0 == best_idx %} on{% endif %}" data-idx="{{ forloop.counter0 }}" title="Week {{ w.wk }} · {{ w.score }}">
+        {% if forloop.counter0 == best_idx %}<span class="best-flag">★ slimste</span>{% endif %}
+        <span class="wkbar-track"><span class="wkbar-fill" style="height:{{ w.score }}%"></span></span>
+        <span class="wkbar-num mono">{{ w.wk }}</span>
+      </button>
+    {% endfor %}
+  </div>
+  <div class="radar-legend">
+    <span><i class="dot is-rustig"></i> Slim (70+)</span>
+    <span><i class="dot is-matig"></i> Redelijk</span>
+    <span><i class="dot is-druk"></i> Druk &amp; duur</span>
+    <span class="radar-hint">Tik op een week voor details</span>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+{# Rij blogkaarten. Verwacht: blogcards = lijst BlogArtikel. #}
+{% load static %}
+<div class="post-grid three">
+  {% for p in blogcards %}
+    <a class="post-card" href="/blog/{{ p.slug }}/">
+      <div class="post-img"><img src="{% if p.get_photo_url %}{{ p.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ p.slug }}.jpg{% endif %}" alt="{{ p.titel }}" loading="lazy"><span class="post-cat-ov"><span class="cat-chip cat-{{ p.categorie|lower|cut:' '|cut:'&' }}">{{ p.categorie }}</span></span></div>
+      <div class="post-card-body">
+        <h3>{{ p.titel }}</h3>
+        <p>{{ p.excerpt }}</p>
+        <div class="post-meta"><span>{{ p.datum }}</span><span>·</span><span>{{ p.leestijd }}</span></div>
+      </div>
+    </a>
+  {% endfor %}
+</div>

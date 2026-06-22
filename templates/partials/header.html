@@ -1,0 +1,107 @@
+{% load static %}
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg>
+      </span>
+      Schoolvakanties<span style="color:var(--accent)">.nl</span>
+    </a>
+
+    <nav class="nav">
+      <a class="{% if request.path == '/' %}on{% endif %}" href="/">Home</a>
+      <button class="has-mega {% if request.path|slice:':8' == '/landen/' %}on{% endif %}" id="megaBtn" aria-expanded="false">
+        Landen
+        <svg class="nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <a class="{% if request.path == '/planner/' %}on{% endif %}" href="/planner/">Planner</a>
+      <a class="{% if request.path == '/druktekaart/' %}on{% endif %}" href="/druktekaart/">Druktekaart</a>
+      <a class="{% if request.path|slice:':6' == '/blog/' %}on{% endif %}" href="/blog/">Blog</a>
+      <a class="{% if request.path == '/over-ons/' %}on{% endif %}" href="/over-ons/">Over ons</a>
+      <a class="{% if request.path == '/samenwerken/' %}on{% endif %}" href="/samenwerken/">Samenwerken</a>
+    </nav>
+
+    <div class="right">
+      <a class="btn-ghost hide-sm" href="/planner/">Plan je reisweek</a>
+      <button class="hamb" id="hambBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+
+  {# DESKTOP MEGA-MENU #}
+  <div class="mega" id="mega" hidden>
+    <div class="mega-in">
+      <div class="mega-col feat">
+        <div class="mega-eye">Populaire landen</div>
+        <div class="mega-pop">
+          {% for c in europe_popular %}
+            <a class="ml-country big" href="/landen/{{ c.slug }}/">
+              <span class="ml-flag">{{ c.flag }}</span>
+              <span class="ml-name">{{ c.name }}</span>
+              <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="mega-col">
+        <div class="mega-eye">Alle landen in Europa</div>
+        <div class="mega-all">
+          {% for c in europe %}
+            <a class="ml-country" href="/landen/{{ c.slug }}/">
+              <span class="ml-flag">{{ c.flag }}</span>
+              <span class="ml-name">{{ c.name }}</span>
+              <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="mega-col side">
+        <div class="mega-eye">Slim plannen</div>
+        <div class="mega-quick">
+          <a class="mq" href="/planner/"><span class="mq-ic">◎</span><span class="mq-tx"><b>Vakantieplanner</b><i>Slimste reisweken per gezin</i></span></a>
+          <a class="mq" href="/druktekaart/"><span class="mq-ic">🗺</span><span class="mq-tx"><b>Europese druktekaart</b><i>Heel Europa, week voor week</i></span></a>
+          <a class="mq" href="/blog/"><span class="mq-ic">✎</span><span class="mq-tx"><b>Blog &amp; reistips</b><i>Slim weg met de kinderen</i></span></a>
+        </div>
+        <a class="mega-allbtn" href="/landen/">Alle landen bekijken
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# FULL-SCREEN MOBIEL MENU #}
+  <div class="mobnav" id="mobnav" hidden>
+    <div class="mobnav-top">
+      <a class="brand" href="/"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg></span>Schoolvakanties<span style="color:var(--accent)">.nl</span></a>
+      <button class="mobnav-x" id="mobnavX" aria-label="Sluiten">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="mobnav-body">
+      <nav class="mobnav-main">
+        <a href="/">Home</a>
+        <a href="/planner/">Planner</a>
+        <a href="/druktekaart/">Druktekaart</a>
+        <a href="/blog/">Blog</a>
+        <a href="/over-ons/">Over ons</a>
+        <a href="/samenwerken/">Samenwerken</a>
+      </nav>
+      <div class="mobnav-sec">
+        <button class="mobnav-acc open" id="mobLandenBtn">Landen
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="mobnav-landen" id="mobLanden">
+          {% for c in europe %}
+            <a class="mobnav-land" href="/landen/{{ c.slug }}/">
+              <span class="ml-flag">{{ c.flag }}</span>
+              <span class="ml-name">{{ c.name }}</span>
+              <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="mobnav-foot">
+      <a class="btn lg" href="/planner/">Open de planner</a>
+    </div>
+  </div>
+</header>

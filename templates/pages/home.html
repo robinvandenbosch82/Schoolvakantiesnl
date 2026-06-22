@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_js %}<script src="{% static 'js/europe-geo.js' %}?v=1" defer></script>{% endblock %}
+
+{% block content %}
+{# ───────── HERO ───────── #}
+<section class="page hero">
+  <div class="hero-grid">
+    <div class="rise">
+      <span class="eye">Slimme reisplanner voor gezinnen</span>
+      <h1 style="margin-top:14px">Ga weg wanneer het <span class="accent-word">rustig, betaalbaar en fijn</span> is.</h1>
+      <p class="lead">Kies je bestemming en maand — wij tonen meteen de slimste weken om met de kinderen op pad te gaan. Drukte, prijs, weer en schoolvakanties, in één score.</p>
+
+      <div class="picker">
+        <span class="picker-lab">Bestemming</span>
+        <div class="dest-chips">
+          {% for c in europe_popular|slice:":6" %}
+            <a class="dest-chip{% if forloop.first %} on{% endif %}" href="/landen/{{ c.slug }}/"><span class="fl">{{ c.flag }}</span>{{ c.name }}</a>
+          {% endfor %}
+          <a class="dest-more" href="/landen/">Alle landen →</a>
+        </div>
+      </div>
+
+      <div class="picker" style="margin-top:14px">
+        <span class="picker-lab">Maand</span>
+        <div class="seg" id="maandSeg">
+          <button data-maand="mei">mei</button>
+          <button data-maand="jun">jun</button>
+          <button data-maand="jul">jul</button>
+          <button data-maand="aug">aug</button>
+          <button class="on" data-maand="sep">sep</button>
+        </div>
+      </div>
+    </div>
+
+    {# ── HELD: Reisweek-radar ── #}
+    <div class="radar card rise" id="radar">
+      <div class="radar-top">
+        <div>
+          <span class="eye">Reisweek-radar</span>
+          <h3 class="radar-title">Wanneer is het slim weg?</h3>
+          <p class="radar-sub">Eén score per week — drukte, prijs, weer en overlap samen.</p>
+        </div>
+        <div class="radar-detail">
+          <div class="ring is-{{ sel.band }}" id="radarRing" data-score="{{ sel.score }}">
+            <svg width="132" height="132" viewBox="0 0 132 132">
+              <circle cx="66" cy="66" r="56" fill="none" stroke="var(--line)" stroke-width="9"></circle>
+              <circle id="radarArc" cx="66" cy="66" r="56" fill="none" stroke="var(--c)" stroke-width="9"
+                      stroke-linecap="round" transform="rotate(-90 66 66)"></circle>
+            </svg>
+            <div class="ring-mid">
+              <span class="ring-val mono" id="radarVal">{{ sel.score }}</span>
+              <span class="ring-lab" id="radarLab">{{ sel_band_label }}</span>
+            </div>
+          </div>
+          <div class="radar-detail-txt">
+            <span class="mono dt-wk" id="radarWk">WEEK {{ sel.wk }}</span>
+            <span class="dt-date" id="radarDate">{{ sel.d1 }}</span>
+            <div class="factors" id="radarFactors">
+              {% for f in sel_factors %}
+                <div class="factor {{ f.cls }}">
+                  <span class="factor-ic">{{ f.icon }}</span>
+                  <span class="factor-lab">{{ f.label }}</span>
+                  <span class="factor-bar"><i style="width:{{ f.value }}%"></i></span>
+                  <span class="factor-val mono">{{ f.value }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="radar-chart" id="radarChart">
+        {% for w in weeks %}
+          <button class="wkbar is-{{ w.band }}{% if forloop.counter0 == best_idx %} on{% endif %}" data-idx="{{ forloop.counter0 }}" title="Week {{ w.wk }} · {{ w.score }}">
+            {% if forloop.counter0 == best_idx %}<span class="best-flag">★ slimste</span>{% endif %}
+            <span class="wkbar-track"><span class="wkbar-fill" style="height:{{ w.score }}%"></span></span>
+            <span class="wkbar-num mono">{{ w.wk }}</span>
+          </button>
+        {% endfor %}
+      </div>
+      <div class="radar-legend">
+        <span><i class="dot is-rustig"></i> Slim (70+)</span>
+        <span><i class="dot is-matig"></i> Redelijk</span>
+        <span><i class="dot is-druk"></i> Druk &amp; duur</span>
+        <span class="radar-hint">Tik op een week voor details</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn lg" href="/planner/">Open de planner
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn-ghost" style="padding:16px 24px;font-size:16px;border-radius:16px" href="/druktekaart/">Bekijk druktekaart</a>
+    </div>
+  </div>
+</section>
+
+{# ───────── MINI DRUKTEKAART ───────── #}
+<section class="page section">
+  <div class="minimap">
+    <div class="map-wrap">
+      <svg viewBox="{{ map_vb }}" class="europe" role="img" aria-label="Druktekaart Europa" id="europeMap"
+           data-map="mini" preserveAspectRatio="xMidYMid meet">
+        <defs><radialGradient id="sea" cx="45%" cy="40%" r="75%">
+          <stop offset="0%" stop-color="oklch(97% 0.02 230)"></stop>
+          <stop offset="100%" stop-color="oklch(94% 0.022 235)"></stop>
+        </radialGradient></defs>
+        <rect x="0" y="0" width="100%" height="100%" rx="24" fill="url(#sea)"></rect>
+        {# Landvormen worden door site.js uit /static/js/europe-geo.js gerenderd. #}
+      </svg>
+      <div class="wkslider">
+        <span class="wknow" id="mapWkLabel">WK {{ default_week.wk }} · {{ default_week.d1 }}</span>
+        <input type="range" min="0" max="{{ weeks|length|add:'-1' }}" value="{{ default_idx }}" id="mapSlider">
+      </div>
+    </div>
+    <div class="map-side">
+      <div class="section-head" style="margin-bottom:4px">
+        <div><span class="eye">Druktekaart</span><h2 style="font-size:24px;margin-top:8px">Waar is het rustig?</h2></div>
+      </div>
+      <p style="color:var(--ink-3);font-size:14px;margin:0 0 6px">Schuif door de weken en zie meteen welke landen rustig blijven.</p>
+      <div class="map-rank" id="mapRank">
+        {% for r in ranked0 %}
+          <div class="map-rank-row" data-code="{{ r.code }}">
+            <span class="flag">{{ r.flag }}</span>
+            <span class="nm">{{ r.name }}</span>
+            <span class="mini-bar"><i style="width:{{ r.v0 }}%;background:{{ r.color0 }}"></i></span>
+            <span class="pct">{{ r.v0 }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <a class="btn-ghost" style="margin-top:6px;align-self:flex-start" href="/druktekaart/">Open volledige kaart →</a>
+    </div>
+  </div>
+</section>
+
+{# ───────── BESTEMMINGEN ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Bestemmingen</span><h2 style="margin-top:8px">Slim &amp; gezinsvriendelijk</h2></div>
+    <p>Gescoord op rust, reistijd, weer en hoe fijn het is met kinderen.</p>
+  </div>
+  <div class="dest-grid">
+    {% for d in bestemmingen %}
+      <article class="dest">
+        <a href="{% if d.land %}/landen/{{ d.land.slug }}/{% else %}/landen/{% endif %}">
+        <div class="dest-img">
+          <img src="{% if d.get_photo_url %}{{ d.get_photo_url }}{% else %}{% static 'img/dest/' %}{{ d.slug }}.jpg{% endif %}" alt="{{ d.get_photo_alt }}" loading="lazy">
+          <div class="dest-badge {% if d.slim_score >= 70 %}is-rustig{% elif d.slim_score >= 45 %}is-matig{% else %}is-druk{% endif %}">
+            <span class="bdot" style="background:var(--c)">{{ d.slim_score }}</span>
+            <span class="blab">Slim-score</span>
+          </div>
+          <span class="dest-tag">{{ d.tag }}</span>
+        </div>
+        <div class="dest-body">
+          <div class="nm">{{ d.naam }}</div>
+          <div class="ld">{{ d.land_naam }}</div>
+          <div class="row"><span class="heart">♥</span> Gezinsscore {{ d.gezin_score }}/100</div>
+        </div>
+        </a>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+{# ───────── TIPS ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Voor gezinnen</span><h2 style="margin-top:8px">Slim plannen, minder gedoe</h2></div>
+  </div>
+  <div class="tipbar">
+    <div class="tip"><span class="ic">🗓</span><div><h4>Reis net buiten de piek</h4><p>Een week voor of na de drukste week is vaak 30% rustiger én goedkoper.</p></div></div>
+    <div class="tip"><span class="ic">⇄</span><div><h4>Check de overlap</h4><p>Als NL én Duitsland tegelijk vrij zijn, stijgen prijzen en drukte snel.</p></div></div>
+    <div class="tip"><span class="ic">☀</span><div><h4>Weeg het weer mee</h4><p>September geeft vaak nog zomers weer met half zoveel toeristen.</p></div></div>
+  </div>
+</section>
+
+{# ───────── LAATSTE NIEUWS / BLOG ───────── #}
+{% if latest_blog %}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Laatste nieuws</span><h2 style="margin-top:8px">Reistips &amp; vakantienieuws</h2></div>
+    <p><a href="/blog/" class="link-meer">Alle artikelen →</a></p>
+  </div>
+  {% include "partials/blogcards.html" with blogcards=latest_blog %}
+</section>
+{% endif %}
+
+{# ───────── SEO: REGIO'S ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Hoe het werkt</span><h2 style="margin-top:8px">Zo werken de Nederlandse schoolvakanties</h2></div>
+    <p>Nederland verdeelt de zomervakantie over drie regio's, zodat niet heel het land tegelijk de weg op gaat.</p>
+  </div>
+  {% if nl %}<p class="land-intro" style="margin-bottom:22px">{{ nl.intro }}</p>{% endif %}
+  <div class="regio-cols">
+    {% for r in nl_regios %}
+      <div class="regio-col" style="border-top:3px solid var(--accent)">
+        <span class="rc-tag" style="color:var(--accent)">Regio {{ forloop.counter }}</span>
+        <h3>{{ r.naam }}-Nederland</h3>
+        <p>{{ r.uitleg }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="reg-note"><strong>Verplicht vs. advies.</strong> De mei-, zomer- en kerstvakantie staan wettelijk vast voor het hele land. De voorjaars- en herfstvakantie zijn adviesdata — scholen mogen hiervan afwijken, dus check altijd de schoolgids.</div>
+</section>
+
+{# ───────── SEO: VERGELIJK ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Vergelijk</span><h2 style="margin-top:8px">Nederland vs. de buurlanden</h2></div>
+    <p>Reizen Duitsland, België en Frankrijk tegelijk met ons? Hoe meer overlap, hoe drukker en duurder.</p>
+  </div>
+  <div class="vergelijk card">
+    <div class="vg-axis">
+      <span class="vg-name-h"></span>
+      <div class="vg-weeks">
+        {% for w in weeks %}<span class="{% if forloop.counter0|divisibleby:3 %}vw show{% else %}vw{% endif %}">{{ w.wk }}</span>{% endfor %}
+      </div>
+    </div>
+    {% for c in vergelijk %}
+      <div class="vg-row">
+        <span class="vg-name"><span class="fl">{{ c.flag }}</span>{{ c.name }}</span>
+        <div class="vg-strip">
+          {% for cell in c.cells %}<span class="vg-cell" style="background:{{ cell.color }}" title="drukte {{ cell.v }}"></span>{% endfor %}
+        </div>
+        {% if c.peak %}<span class="vg-peak">piek wk {{ c.peak.wk }}<i>{{ c.peak.d1 }}</i></span>{% endif %}
+      </div>
+    {% endfor %}
+    <div class="vg-legend">
+      <span class="eye" style="margin:0">Drukte</span>
+      <span class="mono" style="font-size:11px;color:var(--ink-3)">rustig → druk</span>
+      <a class="btn-ghost vg-cta" href="/druktekaart/">Open de Europese druktekaart →</a>
+    </div>
+  </div>
+</section>
+
+{# ───────── SEO: FEESTDAGEN ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Vrije dagen · 2026</span><h2 style="margin-top:8px">Officiële feestdagen 2026</h2></div>
+    <p>Plak een vrije dag aan het weekend en je hebt zonder verlof al een lang weekend weg.</p>
+  </div>
+  <div class="feest">
+    {% for f in nl_feestdagen %}
+      <div class="feest-row">
+        <span class="feest-day">{{ f.dag }}</span>
+        <span class="feest-info"><span class="nm">{{ f.naam }}</span><span class="dt">{{ f.datum }}</span></span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{# ───────── SEO: FAQ ───────── #}
+<section class="page section">
+  <div class="section-head">
+    <div><span class="eye">Veelgestelde vragen</span><h2 style="margin-top:8px">Vragen over de schoolvakanties</h2></div>
+  </div>
+  <div class="faq">
+    {% for q in faq %}
+      <details class="faq-item">
+        <summary><span>{{ q.question }}</span><span class="faq-ic" aria-hidden="true">+</span></summary>
+        <p>{{ q.answer }}</p>
+      </details>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script id="weeks-data" type="application/json">{{ weeks_json|safe }}</script>
+<script id="countries-data" type="application/json">{{ countries_json|safe }}</script>
+{% endblock %}

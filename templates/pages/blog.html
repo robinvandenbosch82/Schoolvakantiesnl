@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block reviewbar %}{% endblock %}
+
+{% block content %}
+<div class="page blog">
+  <div class="blog-head">
+    <span class="eye">Blog &amp; reisinspiratie</span>
+    <h1>Slim weg met het gezin</h1>
+    <p class="lead">Praktische tips, rustige bestemmingen en alles over slim plannen rond de schoolvakanties.</p>
+  </div>
+
+  {% if featured %}
+  <a class="feat-post" href="/blog/{{ featured.slug }}/">
+    <div class="feat-img"><img src="{% if featured.get_photo_url %}{{ featured.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ featured.slug }}.jpg{% endif %}" alt="{{ featured.titel }}"><span class="feat-badge">Uitgelicht</span></div>
+    <div class="feat-body">
+      <span class="cat-chip cat-{{ featured.categorie|lower|cut:' '|cut:'&' }}">{{ featured.categorie }}</span>
+      <h2>{{ featured.titel }}</h2>
+      <p>{{ featured.excerpt }}</p>
+      <div class="post-meta">{% if featured.author %}<span>{{ featured.author.name }}</span><span>·</span>{% endif %}<span>{{ featured.datum }}</span><span>·</span><span>{{ featured.leestijd }}</span></div>
+    </div>
+  </a>
+  {% endif %}
+
+  <div class="blog-layout">
+    <div>
+      <div class="blog-filters" id="blogFilters">
+        <button class="on" data-cat="Alle">Alle</button>
+        {% for c in cats %}<button data-cat="{{ c }}">{{ c }}</button>{% endfor %}
+      </div>
+      <div class="post-grid" id="postGrid">
+        {% for p in posts %}
+          <a class="post-card" href="/blog/{{ p.slug }}/" data-cat="{{ p.categorie }}">
+            <div class="post-img"><img src="{% if p.get_photo_url %}{{ p.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ p.slug }}.jpg{% endif %}" alt="{{ p.titel }}" loading="lazy"><span class="post-cat-ov"><span class="cat-chip cat-{{ p.categorie|lower|cut:' '|cut:'&' }}">{{ p.categorie }}</span></span></div>
+            <div class="post-card-body">
+              <h3>{{ p.titel }}</h3>
+              <p>{{ p.excerpt }}</p>
+              <div class="post-meta"><span>{{ p.datum }}</span><span>·</span><span>{{ p.leestijd }}</span></div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    <aside class="blog-side">
+      {% include "partials/blog_sidebar.html" %}
+    </aside>
+  </div>
+</div>
+{% endblock %}

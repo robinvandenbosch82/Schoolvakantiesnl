@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Schoolvakanties.nl — v3</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="components.css" />
+<link rel="stylesheet" href="header.css" />
+<link rel="stylesheet" href="blog.css" />
+<link rel="stylesheet" href="activities.css" />
+<style>
+  /* accent-vars afgeleid van één --accent zodat tweaks werken */
+  :root{
+    --accent-2: color-mix(in oklab, var(--accent) 78%, white);
+    --accent-ink: color-mix(in oklab, var(--accent) 72%, black);
+    --accent-soft: color-mix(in oklab, var(--accent) 11%, var(--bg));
+    --accent-line: color-mix(in oklab, var(--accent) 28%, var(--bg));
+    --accent-glow: color-mix(in oklab, var(--accent) 42%, transparent);
+  }
+  /* placeholder scherm */
+  .stub{ max-width:var(--maxw); margin:0 auto; padding:80px 26px; text-align:center; }
+  .stub .ic{ width:72px; height:72px; border-radius:22px; background:var(--accent-soft); display:grid; place-items:center; font-size:32px; margin:0 auto 22px; }
+  .stub h2{ font-size:30px; margin-bottom:12px; }
+  .stub p{ color:var(--ink-3); max-width:46ch; margin:0 auto 24px; font-size:16px; }
+  .stub .chips{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .stub .chips span{ font-size:13px; font-weight:600; padding:8px 14px; border-radius:99px; background:var(--paper); border:1px solid var(--line-2); color:var(--ink-2); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js"></script>
+<script src="landdata.js"></script>
+<script src="holidays-service.js"></script>
+<script src="blogdata.js"></script>
+<script src="experts.js"></script>
+<script src="viator.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="components/Radar.jsx"></script>
+<script type="text/babel" src="components/EuropeMap.jsx"></script>
+<script type="text/babel" src="components/CountryPicker.jsx"></script>
+<script type="text/babel" src="components/Header.jsx"></script>
+<script type="text/babel" src="components/Activities.jsx"></script>
+<script type="text/babel" src="components/HomeSecties.jsx"></script>
+<script type="text/babel" src="components/Home.jsx"></script>
+<script type="text/babel" src="components/LandExtra.jsx"></script>
+<script type="text/babel" src="components/Planner.jsx"></script>
+<script type="text/babel" src="components/Land.jsx"></script>
+<script type="text/babel" src="components/Kaart.jsx"></script>
+<script type="text/babel" src="components/Mobiel.jsx"></script>
+<script type="text/babel" src="components/Eeat.jsx"></script>
+<script type="text/babel" src="components/Blog.jsx"></script>
+<script type="text/babel" src="components/OverOns.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#7b54e8",
+  "radius": "zacht",
+  "warmte": "warm",
+  "anim": true
+}/*EDITMODE-END*/;
+
+const RADIUS_MAP = {
+  "strak":  { sm: "8px",  r: "12px", lg: "16px", xl: "22px" },
+  "zacht":  { sm: "12px", r: "18px", lg: "26px", xl: "34px" },
+  "rond":   { sm: "16px", r: "24px", lg: "34px", xl: "44px" },
+};
+const WARMTE_MAP = {
+  "warm": { bg: "oklch(98.6% 0.006 95)", bg2: "oklch(97% 0.008 90)" },
+  "koel": { bg: "oklch(98.8% 0.004 250)", bg2: "oklch(97.4% 0.006 250)" },
+};
+
+function Stub({ id, goTo }) {
+  const meta = {
+    land:   { ic: "🇩🇪", t: "Landenpagina — Duitsland", p: "Vakantiekalender per deelstaat, overlap met NL en de beste reisweken. Dit scherm bouw ik na akkoord op de homepage-look.", chips: ["16 deelstaten", "Overlap met NL", "Drukte-tijdlijn", "Weer-band"] },
+    planner:{ ic: "◎", t: "Vakantieplanner", p: "De Reisweek-radar in het groot: vul in wie meereist en vanaf welke regio, en krijg de slimste weken met advies.", chips: ["Slim-score 0–100", "Per week detail", "Alternatieve weken", "Naar bestemmingen"] },
+    kaart:  { ic: "🗺", t: "Europese druktekaart", p: "De kaart op volledig scherm: schuif door de weken en zie heel Europa groen→rood kleuren. Klik een land voor details.", chips: ["Volledig scherm", "Week-slider", "Klik = detail", "Rustigste land"] },
+    mobiel: { ic: "📱", t: "Mobiele weergave", p: "Home en planner als mobiel ontwerp: sticky bottom-acties, swipebare weken, één kolom.", chips: ["Home", "Planner", "Sticky acties", "Swipe weken"] },
+  }[id];
+  return (
+    <div className="stub rise">
+      <div className="ic">{meta.ic}</div>
+      <h2>{meta.t}</h2>
+      <p>{meta.p}</p>
+      <div className="chips">{meta.chips.map(function(c){ return <span key={c}>{c}</span>; })}</div>
+      <div style={{ marginTop: 28 }}>
+        <button className="btn" onClick={function(){ goTo("home"); }}>← Terug naar de homepage</button>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [route, setRoute] = useState("home");
+
+  // pas tweaks toe op :root
+  useEffect(function () {
+    const root = document.documentElement;
+    root.style.setProperty("--accent", t.accent);
+    const rad = RADIUS_MAP[t.radius] || RADIUS_MAP.zacht;
+    root.style.setProperty("--r-sm", rad.sm);
+    root.style.setProperty("--r", rad.r);
+    root.style.setProperty("--r-lg", rad.lg);
+    root.style.setProperty("--r-xl", rad.xl);
+    const w = WARMTE_MAP[t.warmte] || WARMTE_MAP.warm;
+    root.style.setProperty("--bg", w.bg);
+    root.style.setProperty("--bg-2", w.bg2);
+    root.classList.toggle("no-anim", !t.anim);
+  }, [t]);
+
+  function goTo(id) { setRoute(id); window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+  return (
+    <div className="app">
+      <window.Header route={route} goTo={goTo} />
+
+      {route === "home" ? <window.Home goTo={goTo} />
+        : route === "planner" ? <window.Planner goTo={goTo} />
+        : route === "land" ? <window.Land goTo={goTo} />
+        : route === "kaart" ? <window.Kaart goTo={goTo} />
+        : route === "blog" ? <window.Blog goTo={goTo} />
+        : route === "over" ? <window.OverOns goTo={goTo} />
+        : route === "mobiel" ? <window.Mobiel goTo={goTo} />
+        : <Stub id={route} goTo={goTo} />}
+
+      {route !== "blog" && route !== "over" && route !== "mobiel"
+        ? <window.EEAT.ReviewBar onOver={function(){ goTo("over"); }} />
+        : null}
+
+      <footer className="foot">
+        <div className="foot-in">
+          <div className="foot-top">
+            <div className="foot-brand">
+              <div className="foot-logo">
+                <span className="mark">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M9 20v-5h6v5"/></svg>
+                </span>
+                Schoolvakanties<span className="nl">.nl</span>
+              </div>
+              <p className="foot-desc">Slim weg met het gezin. Schoolvakanties, feestdagen en de drukste reisweken van heel Europa — overzichtelijk op één plek.</p>
+              <div className="foot-contact">
+                <a href="mailto:hallo@schoolvakanties.nl"><span className="lbl">Mail</span>hallo@schoolvakanties.nl</a>
+                <a href="tel:+31302001234"><span className="lbl">Telefoon</span>030 - 200 12 34</a>
+                <a href="#"><span className="lbl">Adres</span>Oudegracht 12, Utrecht</a>
+              </div>
+            </div>
+
+            <div className="foot-col">
+              <h4>Populaire landen</h4>
+              <ul>
+                {[
+                  { c: "nl", n: "Nederland" }, { c: "de", n: "Duitsland" },
+                  { c: "be", n: "België" }, { c: "fr", n: "Frankrijk" },
+                  { c: "es", n: "Spanje" }, { c: "it", n: "Italië" },
+                  { c: "at", n: "Oostenrijk" }, { c: "pt", n: "Portugal" },
+                ].map(function (l) {
+                  return <li key={l.c}><button onClick={function(){ goTo("land"); }}>{l.n}</button></li>;
+                })}
+              </ul>
+            </div>
+
+            <div className="foot-col">
+              <h4>Slim plannen</h4>
+              <ul>
+                <li><button onClick={function(){ goTo("planner"); }}>Vakantieplanner</button></li>
+                <li><button onClick={function(){ goTo("kaart"); }}>Europese druktekaart</button></li>
+                <li><button onClick={function(){ goTo("home"); }}>Reisweek-radar</button></li>
+                <li><button onClick={function(){ goTo("blog"); }}>Blog & reistips</button></li>
+                <li><button onClick={function(){ goTo("mobiel"); }}>Mobiele weergave</button></li>
+              </ul>
+            </div>
+
+            <div className="foot-col">
+              <h4>Over ons</h4>
+              <ul>
+                <li><button onClick={function(){ goTo("over"); }}>Over Schoolvakanties.nl</button></li>
+                <li><button onClick={function(){ goTo("over"); }}>Onze redactie</button></li>
+                <li><button onClick={function(){ goTo("over"); }}>Hoe we werken</button></li>
+                <li><button onClick={function(){ goTo("over"); }}>Bronnen &amp; data</button></li>
+                <li><button onClick={function(){ goTo("over"); }}>Contact</button></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="foot-bottom">
+            <span className="copy">© 2026 Schoolvakanties.nl — slim weg met het gezin</span>
+            <div className="foot-legal">
+              <a href="#">Privacy</a>
+              <a href="#">Cookies</a>
+              <a href="#">Voorwaarden</a>
+            </div>
+            <span className="foot-ver">v3 · prototype</span>
+          </div>
+        </div>
+      </footer>
+
+      <TweaksPanel>
+        <TweakSection label="Sfeer" />
+        <TweakColor label="Accentkleur" value={t.accent}
+          options={["#7b54e8", "#5b6ef5", "#11a07a", "#ff6a4d"]}
+          onChange={function (v) { setTweak("accent", v); }} />
+        <TweakRadio label="Hoekstijl" value={t.radius}
+          options={["strak", "zacht", "rond"]}
+          onChange={function (v) { setTweak("radius", v); }} />
+        <TweakRadio label="Achtergrond" value={t.warmte}
+          options={["warm", "koel"]}
+          onChange={function (v) { setTweak("warmte", v); }} />
+        <TweakToggle label="Micro-animatie" value={t.anim}
+          onChange={function (v) { setTweak("anim", v); }} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Schoolvakanties.nl v2 — Het Vakantie-zine</title>
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="tokens-v2.css" />
+  <style>
+    body { margin: 0; background: #e8e3d6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="components-v2/HomepageV2.jsx"></script>
+  <script type="text/babel" src="components-v2/BestemmingV2.jsx"></script>
+  <script type="text/babel" src="components-v2/PlannerV2.jsx"></script>
+  <script type="text/babel" src="components-v2/MobileV2.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    function App() {
+      return (
+        <DesignCanvas>
+          <DCSection
+            id="v2-desktop"
+            title="v2 · Het Vakantie-zine"
+            subtitle="Brutalist editorial almanak — postzegels, plakband, split-flap, marker-highlights, harde offset-shadows. Caprasimo + Bricolage + Caveat."
+          >
+            <DCArtboard id="hp-v2" label="01 · Homepage v2" width={1440} height={4800}>
+              <HomepageV2 />
+            </DCArtboard>
+            <DCArtboard id="best-v2" label="02 · Bestemming v2 — Toscane" width={1440} height={2900}>
+              <BestemmingV2 />
+            </DCArtboard>
+            <DCArtboard id="plan-v2" label="03 · Planner v2" width={1440} height={1500}>
+              <PlannerV2 />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="v2-mobile"
+            title="v2 · Mobiel — zine-app"
+            subtitle="Stickers, stempels, harde shadows. Bewust onstabieler dan v1."
+          >
+            <DCArtboard id="mob-home-v2" label="04 · Mobiele home v2" width={414} height={868}>
+              <MobileHomeV2 />
+            </DCArtboard>
+            <DCArtboard id="mob-nav-v2" label="05 · Mobiele nav v2" width={414} height={868}>
+              <MobileNavV2 />
+            </DCArtboard>
+          </DCSection>
+        </DesignCanvas>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

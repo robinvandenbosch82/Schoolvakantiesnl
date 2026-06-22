@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Schoolvakanties.nl — Voorpret</title>
+  <link rel="stylesheet" href="tokens.css" />
+  <style>
+    body { margin: 0; background: #f0eee9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="components/Homepage.jsx"></script>
+  <script type="text/babel" src="components/Druktekalender.jsx"></script>
+  <script type="text/babel" src="components/Bestemming.jsx"></script>
+  <script type="text/babel" src="components/Planner.jsx"></script>
+  <script type="text/babel" src="components/Mobile.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    function App() {
+      return (
+        <DesignCanvas>
+          <DCSection
+            id="intro"
+            title="Schoolvakanties.nl — Voorpret"
+            subtitle="Editorial × product · seizoensdynamisch · SEO-modulair · 5 artboards"
+          >
+            <DCArtboard id="homepage" label="01 · Homepage — desktop" width={1440} height={3360}>
+              <Homepage />
+            </DCArtboard>
+            <DCArtboard id="druktekalender" label="02 · Druktekalender" width={1440} height={2050}>
+              <Druktekalender />
+            </DCArtboard>
+            <DCArtboard id="bestemming" label="03 · Bestemming · editorial" width={1440} height={4400}>
+              <Bestemming />
+            </DCArtboard>
+            <DCArtboard id="planner" label="04 · Vakantieplanner" width={1440} height={1650}>
+              <Planner />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="mobile"
+            title="Mobiel — app-feel"
+            subtitle="Swipebaar · bento · social-screenshot-waardig"
+          >
+            <DCArtboard id="mobile-home" label="05 · Mobiele home" width={414} height={868}>
+              <MobileHome />
+            </DCArtboard>
+            <DCArtboard id="mobile-nav" label="06 · Mobiele navigatie" width={414} height={868}>
+              <MobileNav />
+            </DCArtboard>
+          </DCSection>
+        </DesignCanvas>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  .year-switch { display:flex; align-items:center; gap:6px; }
+  .year-switch .ys-lab { font-size:12px; color:var(--ink-3); font-weight:600; margin-right:4px; }
+  .year-switch a { font-family:var(--mono); font-size:13px; font-weight:700; padding:6px 12px;
+    border-radius:10px; border:1px solid var(--line-2); background:var(--paper); color:var(--ink-2); }
+  .year-switch a.on { background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
+  .year-switch a:hover { border-color:var(--accent-line); }
+  /* NL-vertaling achter een vakantienaam */
+  .vak-nl { font-weight:600; font-size:0.78em; color:var(--accent-ink); opacity:.85; letter-spacing:0; }
+  /* info-icoon + tooltip (feestdagen én officieuze dagen) */
+  .feest-row, .off-chip { position:relative; }
+  .feest-i { position:relative; flex:0 0 auto; width:20px; height:20px; border-radius:50%; border:1px solid var(--line-2);
+    background:var(--paper); color:var(--ink-3); font-size:11px; font-weight:700; font-style:italic;
+    line-height:1; cursor:pointer; display:grid; place-items:center; margin-left:auto; align-self:center; }
+  .officieus .off-chip { padding-right:32px; }
+  .off-chip .feest-i { position:absolute; top:50%; right:8px; transform:translateY(-50%); margin:0; width:18px; height:18px; font-size:10px; }
+  /* provincie-chips in het NL-regio-overzicht */
+  .prov-chips { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
+  .prov-chip { font-size:12.5px; font-weight:600; padding:4px 10px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent-ink); border:1px solid var(--accent-line); }
+  .rc-note { font-size:13px; color:var(--ink-3); }
+  .feest-i:hover, .feest-i.open { background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
+  .feest-i::after { content:attr(data-tip); position:absolute; right:0; bottom:calc(100% + 8px); z-index:30;
+    width:max-content; max-width:260px; padding:10px 12px; border-radius:12px; background:var(--ink);
+    color:var(--paper); font-size:12.5px; font-weight:500; font-style:normal; line-height:1.45; text-align:left;
+    box-shadow:var(--shadow-lg); opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity .15s, transform .15s; pointer-events:none; }
+  .feest-i:hover::after, .feest-i.open::after { opacity:1; visibility:visible; transform:translateY(0); }
+  .feest-note { margin:14px 2px 0; font-size:13px; color:var(--ink-3); }
+  .vak-soon { padding:18px 20px; background:var(--paper-2); border:1px solid var(--line);
+    border-radius:var(--r); font-size:14.5px; color:var(--ink-2); line-height:1.55; max-width:70ch; }
+  .vak-soon strong { color:var(--ink); }
+  /* Frankrijk: zonekaart + legenda */
+  .fr-zones-intro { margin:0 0 18px; max-width:62ch; }
+  .fr-zones-intro p { color:var(--ink-2); }
+  .fr-zones { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:26px;
+    align-items:center; margin:0 0 30px; padding:22px; border:1px solid var(--line);
+    border-radius:var(--r-md); background:var(--paper); }
+  .fr-zones-map { min-width:0; }
+  .fr-zone-map { width:100%; height:auto; display:block; }
+  .fr-zone-map path { transition:filter .2s ease; }
+  .fr-zone-map path:hover { filter:brightness(0.94); }
+  .fr-zones-legenda { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+  .fzl-item { display:flex; gap:12px; align-items:flex-start; }
+  .fzl-chip { flex:0 0 auto; width:30px; height:30px; border-radius:9px; color:#fff;
+    font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; }
+  .fzl-tx { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .fzl-tx b { font-size:15px; }
+  .fzl-reg { font-size:13px; color:var(--ink-2); }
+  .fzl-st { font-size:12.5px; color:var(--ink-3); }
+  @media (max-width:720px){ .fr-zones { grid-template-columns:1fr; gap:18px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include "partials/breadcrumb.html" %}
+<div class="page land">
+
+  {# CONTROLS #}
+  <div class="land-controls">
+    <a class="btn-ghost" href="/landen/">← Alle landen</a>
+    {% if beschikbare_jaren|length > 1 %}
+    <div class="year-switch">
+      <span class="ys-lab">Plan vooruit</span>
+      {% for y in beschikbare_jaren %}<a class="{% if y == jaar %}on{% endif %}" href="?jaar={{ y }}">{{ y }}</a>{% endfor %}
+    </div>
+    {% endif %}
+    <span class="live-badge live"><i></i>Live via {{ bron_kort }}</span>
+  </div>
+
+  {# HERO #}
+  <div class="land-hero">
+    <div class="land-hero-main">
+      <span class="land-flag">{{ land.vlag }}</span>
+      <div>
+        <span class="eye">Schoolvakanties &amp; vrije dagen · {{ jaar }}</span>
+        <h1>{{ land.naam }}</h1>
+        {% if land.intro %}<p class="land-sub">{{ land.intro }}</p>{% else %}<p class="land-sub">Alle schoolvakanties en feestdagen van {{ land.naam }} in {{ jaar }} — overzichtelijk op één plek.</p>{% endif %}
+        {% if vooruitblik %}<p class="vooruitblik">📅 Eerstvolgende vakantie in {{ land.naam }}: <strong>{{ vooruitblik.naam }}</strong> — nog <strong>{{ vooruitblik.dagen }} dagen</strong>.</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# SCHOOLVAKANTIES PER PERIODE #}
+  {% if periods %}
+  <section class="land-block">
+    <div class="section-head">
+      <div><span class="eye">Alle schoolvakanties {{ jaar }}</span><h2 style="margin-top:8px">Schoolvakanties {{ land.naam }} {{ jaar }}</h2></div>
+      <p>Per {{ deel_label|lower }} de exacte periode en weeknummers.</p>
+    </div>
+    {% if land.iso_code == 'FR' %}
+    <div class="fr-zones-intro">
+      <p>Frankrijk spreidt de vakanties over drie <strong>zones</strong> (A, B en C) plus Corsica, om de drukte op de weg en bij de wintersport te spreiden. Welke zone voor jou geldt, hangt af van de <strong>région</strong> waar je heen gaat:</p>
+    </div>
+    {% include "partials/france_zones.html" %}
+    {% endif %}
+    <div class="vakgrid">
+      {% for p in periods %}
+        <div class="vakblok{% if p.rows|length > 5 %} wide{% endif %}">
+          <div class="vakblok-head">
+            <div><h3>{{ p.naam }}{% if p.nl_naam %} <span class="vak-nl">· {{ p.nl_naam }}</span>{% endif %}</h3>{% if p.alias %}<span class="alias">{{ p.alias }}</span>{% endif %}</div>
+            {% if p.status %}<span class="status{% if p.verplicht %} verplicht{% endif %}">{{ p.status }}</span>{% endif %}
+          </div>
+          <table class="ftable">
+            <thead><tr><th>{{ deel_label }}</th><th>Periode</th><th>Weken</th></tr></thead>
+            <tbody>
+              {% for r in p.rows %}
+                <tr><td>{{ r.regio }}</td><td>{{ r.periode }}</td><td><span class="wk">{{ r.weken }}</span></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if p.note %}<p class="note">{{ p.note }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% else %}
+  <section class="land-block">
+    <div class="section-head">
+      <div><span class="eye">Schoolvakanties</span><h2 style="margin-top:8px">Schoolvakanties {{ land.naam }}</h2></div>
+    </div>
+    <div class="vak-soon">
+      <strong>Binnenkort.</strong> Voor {{ land.naam }} tonen we hieronder al de officiële feestdagen. De schoolvakanties verschillen hier per regio of gemeente en hebben nog geen centrale, betrouwbare bron — die voegen we toe zodra die beschikbaar is.
+    </div>
+  </section>
+  {% endif %}
+
+  {# OFFICIËLE FEESTDAGEN #}
+  <section class="land-block">
+    <div class="section-head">
+      <div><span class="eye">Vrije dagen</span><h2 style="margin-top:8px">Officiële feestdagen {{ land.naam }} {{ jaar }}</h2></div>
+      <p>Landelijke vrije dagen — handig voor een lang weekend of midweek.</p>
+    </div>
+    <div class="feest">
+      {% for f in feestdagen %}
+        <div class="feest-row">
+          <span class="feest-day">{{ f.dag }}</span>
+          <span class="feest-info"><span class="nm">{{ f.naam }}</span><span class="dt">{{ f.datum }}</span></span>
+          {% if f.uitleg %}<button class="feest-i" type="button" aria-label="Uitleg over {{ f.naam }}" data-tip="{{ f.uitleg }}">i</button>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% if regio_feest_aantal %}<p class="feest-note">Daarnaast gelden er nog {{ regio_feest_aantal }} regionale of lokale vrije dagen (per {{ deel_label|lower }} of gemeente) die niet in heel {{ land.naam }} vrij zijn.</p>{% endif %}
+  </section>
+
+  {# BESTE REISWEKEN #}
+  <section class="land-block">
+    <div class="section-head">
+      <div><span class="eye">Slim plannen</span><h2 style="margin-top:8px">Beste weken voor een reis naar {{ land.naam }}</h2></div>
+      <p>Slim-score per week: drukte, prijs, weer en overlap gewogen tot één cijfer. Hoger = slimmer.</p>
+    </div>
+    <div class="brw card">
+      <div class="brw-bars">
+        {% for w in brw %}
+          <div class="brw-col {% if w.band == 'rustig' %}go{% elif w.band == 'matig' %}mid{% else %}no{% endif %}">
+            <span class="brw-score">{{ w.score }}</span>
+            <div class="brw-bar" style="height:{% widthratio w.score brw_max 100 %}%"></div>
+            <span class="brw-wk mono">{{ w.wk }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="brw-foot">
+        <span class="brw-key"><i class="go"></i>Slim (rustig &amp; voordelig)</span>
+        <span class="brw-key"><i class="mid"></i>Matig</span>
+        <span class="brw-key"><i class="no"></i>Druk &amp; duur</span>
+      </div>
+    </div>
+    <div class="brw-top">
+      {% for t in brw_top %}
+        <div class="brw-pick">
+          <span class="bp-score">{{ t.score }}</span>
+          <div class="bp-info"><span class="bp-wk">Week {{ t.wk }}</span><span class="bp-dt">vanaf {{ t.d1 }}</span></div>
+        </div>
+      {% endfor %}
+      <a class="btn brw-cta" href="/planner/">Plan met de vakantieplanner
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  {# WEER PER MAAND (temperatuur) #}
+  {% if weer_rows %}
+  <section class="land-block">
+    <div class="section-head">
+      <div><span class="eye">Klimaat</span><h2 style="margin-top:8px">Weer per maand in {{ land.naam }}</h2></div>
+    </div>
+    <div class="weer card">
+      <div class="weer-grid">
+        {% for w in weer_rows %}
+          <div class="weer-col{% if w.zomer %} zomer{% endif %}">
+            <span class="weer-val">{{ w.temp|floatformat:0 }}°</span>
+            <div class="weer-track"><div class="weer-bar" style="height:{{ w.h }}%;background:{{ w.color }}"></div></div>
+            <span class="weer-m mono">{{ w.m }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="weer-meta">
+        <span class="weer-unit mono">Temperatuur · °C</span>
+        {% if land.weer_bron %}<span class="weer-bron mono">{{ land.weer_bron }}</span>{% endif %}
+      </div>
+    </div>
+    {% if land.weer_beste %}<div class="reg-note"><strong>Beste reismaanden.</strong> {{ land.weer_beste }}</div>{% endif %}
+  </section>
+  {% endif %}
+
+  {# STUDIEDAGEN #}
+  {% if land.studiedagen_uitleg %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Roostervrij</span><h2 style="margin-top:8px">Officiële vrije schooldagen</h2></div></div>
+    <div class="studie"><p class="studie-txt">{{ land.studiedagen_uitleg }}</p></div>
+  </section>
+  {% endif %}
+
+  {# OFFICIEUZE FEESTDAGEN #}
+  {% if officieus %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Goed om te weten</span><h2 style="margin-top:8px">Officieuze feestdagen</h2></div><p>Geen vrije dag, wél druk: vaak een uitje of dagje weg.</p></div>
+    <div class="officieus">
+      {% for o in officieus %}
+        <div class="off-chip"><span class="oc-txt"><span class="oc-nm">{% if o.emoji %}{{ o.emoji }} {% endif %}{{ o.naam }}</span><span class="oc-dt">{{ o.datum }}</span></span>{% if o.uitleg %}<button class="feest-i" type="button" aria-label="Uitleg over {{ o.naam }}" data-tip="{{ o.uitleg }}">i</button>{% endif %}</div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {# REGIO-INDELING #}
+  {% if land.iso_code == 'NL' or land.regio_info or regios %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Regio-indeling</span><h2 style="margin-top:8px">{% if land.iso_code == 'DE' %}Hoe is Duitsland ingedeeld?{% elif land.iso_code == 'NL' %}Welke regio is mijn provincie?{% else %}De regio's van {{ land.naam }}{% endif %}</h2></div>{% if regios and land.iso_code != 'NL' %}<p>{{ regios|length }} regio's met (deels) eigen schoolvakanties.</p>{% endif %}</div>
+    {% if land.iso_code == 'NL' %}
+      <div class="regio-cols">
+        {% for r in nl_regio_overzicht %}
+        <div class="regio-col">
+          <h3>{{ r.naam }}-Nederland</h3>
+          {% if r.provincies %}<div class="prov-chips">{% for p in r.provincies %}<span class="prov-chip">{{ p }}</span>{% endfor %}</div>{% endif %}
+          {% if r.uitleg %}<p class="rc-note">{{ r.uitleg }}</p>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="reg-note"><strong>Gelderland en Flevoland</strong> zijn over meerdere regio's verdeeld: de meeste Gelderse gemeenten vallen onder Midden of Zuid, de Flevolandse vooral onder Noord. Twijfel je? De gemeente bepaalt; check bij twijfel de schoolgids.</div>
+    {% else %}
+      {% if land.regio_info %}<p class="land-intro" style="margin-bottom:18px">{{ land.regio_info }}</p>{% endif %}
+      {% if regios %}
+        <div class="officieus">
+          {% for r in regios %}<div class="off-chip"><span class="oc-txt"><span class="oc-nm">{{ r.naam }}</span>{% if r.korte_naam and r.korte_naam != r.naam %}<span class="oc-dt">{{ r.korte_naam }}</span>{% endif %}</span></div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {# FAQ #}
+  {% if faq %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Veelgestelde vragen</span><h2 style="margin-top:8px">Vragen over schoolvakanties in {{ land.naam }}</h2></div></div>
+    <div class="faq">
+      {% for q in faq %}
+        <details class="faq-item"><summary><span>{{ q.question }}</span><span class="faq-ic" aria-hidden="true">+</span></summary><p>{{ q.answer }}</p></details>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {# BLOG OVER DIT LAND #}
+  {% if land_blog %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Lees ook</span><h2 style="margin-top:8px">Blog over {{ land.naam }}</h2></div><p><a href="/blog/">Alle artikelen →</a></p></div>
+    {% include "partials/blogcards.html" with blogcards=land_blog %}
+  </section>
+  {% endif %}
+
+  {% if land.bron %}<p class="bronregel">{{ land.bron }}{% if land.bijgewerkt %} <span class="bron-upd">Bijgewerkt {{ land.bijgewerkt }}.</span>{% endif %}</p>{% endif %}
+
+  <div style="text-align:center;margin:20px 0 10px">
+    <a class="btn" href="/planner/">Plan jullie slimste reisweek</a>
+  </div>
+</div>
+{% endblock %}

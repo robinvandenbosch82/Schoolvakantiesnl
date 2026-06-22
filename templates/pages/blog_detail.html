@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block reviewbar %}{% endblock %}
+
+{% block content %}
+{% include "partials/breadcrumb.html" %}
+<div class="page blogdetail">
+  <a class="back-link" href="/blog/">← Alle artikelen</a>
+
+  <header class="art-head">
+    <span class="cat-chip cat-{{ post.categorie|lower|cut:' '|cut:'&' }}">{{ post.categorie }}</span>
+    <h1>{{ post.titel }}</h1>
+    <div class="post-meta">
+      {% if post.author %}<span>{{ post.author.name }}{% if post.author.role %} · {{ post.author.role }}{% endif %}</span><span>·</span>{% endif %}
+      <span>{{ post.datum }}</span><span>·</span><span>{{ post.leestijd }}</span>
+    </div>
+  </header>
+
+  {% if post.get_photo_url %}<div class="art-hero"><img src="{{ post.get_photo_url }}" alt="{{ post.titel }}"></div>{% endif %}
+
+  <div class="art-layout">
+    <article class="art-body">
+      {{ post.body_html|safe }}
+
+      <div class="art-share">
+        <span>Deel dit artikel</span>
+        <div class="share-btns">
+          <a aria-label="Deel op X" href="https://twitter.com/intent/tweet?url={{ canonical_url|urlencode }}" target="_blank" rel="noopener">𝕏</a>
+          <a aria-label="Deel op Facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}" target="_blank" rel="noopener">f</a>
+          <a aria-label="Deel via WhatsApp" href="https://wa.me/?text={{ canonical_url|urlencode }}" target="_blank" rel="noopener">✆</a>
+        </div>
+      </div>
+
+      {% if post.author %}
+      <div class="widget" style="display:flex;gap:16px;align-items:flex-start;margin-top:8px">
+        <div class="ml-flag" style="font-size:30px">{% if post.author.mono %}<span class="mono" style="display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:var(--accent-soft);color:var(--accent-ink);font-weight:800">{{ post.author.mono }}</span>{% endif %}</div>
+        <div>
+          <strong>{{ post.author.name }}</strong> · <span style="color:var(--ink-3)">{{ post.author.role }}</span>
+          {% if post.author.bio %}<p style="color:var(--ink-2);font-size:14px;margin-top:6px">{{ post.author.bio }}</p>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </article>
+
+    <aside class="art-side">
+      {% if post.toc %}
+      <div class="widget toc">
+        <h4>In dit artikel</h4>
+        <ol>{% for t in post.toc %}<li>{{ t }}</li>{% endfor %}</ol>
+      </div>
+      {% endif %}
+      {% include "partials/blog_sidebar.html" %}
+    </aside>
+  </div>
+
+  {% if related %}
+  <section class="related">
+    <h2>Lees ook</h2>
+    <div class="post-grid three">
+      {% for p in related %}
+        <a class="post-card" href="/blog/{{ p.slug }}/">
+          <div class="post-img"><img src="{% if p.get_photo_url %}{{ p.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ p.slug }}.jpg{% endif %}" alt="{{ p.titel }}" loading="lazy"><span class="post-cat-ov"><span class="cat-chip cat-{{ p.categorie|lower|cut:' '|cut:'&' }}">{{ p.categorie }}</span></span></div>
+          <div class="post-card-body">
+            <h3>{{ p.titel }}</h3>
+            <div class="post-meta"><span>{{ p.datum }}</span><span>·</span><span>{{ p.leestijd }}</span></div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

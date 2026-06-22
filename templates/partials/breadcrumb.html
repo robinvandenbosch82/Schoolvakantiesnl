@@ -1,0 +1,9 @@
+{# Zichtbaar kruimelpad. Verwacht: crumbs = [{naam, url}], laatste = huidige pagina. #}
+{% if crumbs %}
+<nav class="crumbs page" aria-label="Kruimelpad">
+  {% for c in crumbs %}
+    {% if forloop.last %}<span aria-current="page">{{ c.naam }}</span>
+    {% else %}<a href="{{ c.url }}">{{ c.naam }}</a><span class="crumb-sep" aria-hidden="true">›</span>{% endif %}
+  {% endfor %}
+</nav>
+{% endif %}
