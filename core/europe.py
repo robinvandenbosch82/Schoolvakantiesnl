@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import math
 import re
+from functools import lru_cache
 
 # (code, naam, vlag, populair)
 _EUROPE = [
@@ -90,13 +91,16 @@ def prijs_curve(drukte, overlap, niveau):
             for d, o in zip(drukte, overlap)]
 
 
+@lru_cache(maxsize=None)
 def drukte_profile(peak, spread, base, n):
-    out = []
-    for i in range(n):
-        dist = abs(i - peak)
-        v = base + (100 - base) * math.exp(-(dist * dist) / (2 * spread * spread))
-        out.append(round(v))
-    return out
+    """Gauss-drukteprofiel rond de piekweek (0–100 per week). Gememoized: de invoer
+    komt uit de constante _PROFILES, dus elk uniek profiel wordt één keer berekend
+    i.p.v. per request (country_drukte roept dit 25× aan). Geeft een tuple terug —
+    immutable, dus veilig om tussen requests te delen."""
+    return tuple(
+        round(base + (100 - base) * math.exp(-((i - peak) ** 2) / (2 * spread * spread)))
+        for i in range(n)
+    )
 
 
 def country_drukte(weeks):

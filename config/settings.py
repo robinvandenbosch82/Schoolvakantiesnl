@@ -188,7 +188,15 @@ mimetypes.add_type("image/avif", ".avif", strict=True)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ──────────────────────────────────────────────────────────────────────────
-# Caching — LocMem in dev (swap for Redis in production)
+# Caching — LocMem (per-proces). Gebruikt voor de rate-limiter van het lead-form.
+#
+# Cachingstrategie (bewust): GEEN full-page cache. De content verandert zelden
+# (data ververst wekelijks via cron) maar wordt actief in de admin bewerkt — een
+# page-cache zou wijzigingen vertraagd tonen, en LocMem is per-worker (niet
+# gedeeld over de 3 gunicorn-workers). De zware, constante berekening (drukte-
+# profielen) is gememoized op functieniveau (europe.drukte_profile, lru_cache),
+# wat staleness-vrij is. Full-page/fragment-caching pas toevoegen zodra er een
+# gemeten bottleneck is én een gedeelde cache (Redis) draait.
 # ──────────────────────────────────────────────────────────────────────────
 CACHES = {
     "default": {
