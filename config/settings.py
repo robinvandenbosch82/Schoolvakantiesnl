@@ -1,13 +1,13 @@
 """
-Django settings for Motorverzekering.nl.
+Django settings for Schoolvakanties.nl.
 
-Standalone Django site (eigen domein) for the niche motor-insurance
-authority. Conventions are shared with the sibling projects cruises.nl and
-vliegtickets.com: 100% server-side rendering, env-driven secrets, WhiteNoise
-for static files, and security hardening that only switches on in production.
+Standalone Django site (eigen domein): schoolvakanties + feestdagen per land,
+vakantieplanner en druktekaart. Conventies gedeeld met de zustersites
+(cruises.nl / vliegtickets.com): 100% server-side rendering, env-driven secrets,
+WhiteNoise voor statics, en security-hardening die alleen buiten DEBUG aanstaat.
 
-Secrets NEVER live in this file — they are read from the environment (.env in
-development, real env vars in production). See .env.example.
+Secrets staan NOOIT in dit bestand — ze komen uit de omgeving (.env in dev, echte
+env-vars in productie). Zie .env.example.
 """
 
 import os
