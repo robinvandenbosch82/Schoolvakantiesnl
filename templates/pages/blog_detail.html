@@ -17,7 +17,7 @@
     </div>
   </header>
 
-  {% if post.get_photo_url %}<div class="art-hero"><img src="{{ post.get_photo_url }}" alt="{{ post.titel }}"></div>{% endif %}
+  <div class="art-hero"><img src="{% if post.get_photo_url %}{{ post.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ post.slug }}.jpg{% endif %}" alt="{{ post.titel }}"></div>
 
   <div class="art-layout">
     <article class="art-body">

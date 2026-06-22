@@ -114,6 +114,10 @@ class Command(BaseCommand):
             if not thumb:
                 m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', content)
                 thumb = m.group(1) if m else ""
+            # Is de afbeelding al lokaal gedownload (static/img/blog/<slug>.jpg)?
+            # Dan die laten winnen: photo_url leeg, template gebruikt de static-versie.
+            if (settings.BASE_DIR / "static" / "img" / "blog" / f"{slug}.jpg").exists():
+                thumb = ""
 
             cats = [c.text for c in it.findall("category")
                     if c.get("domain") == "category" and c.text]
