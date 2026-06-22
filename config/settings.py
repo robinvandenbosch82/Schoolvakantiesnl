@@ -281,3 +281,29 @@ LOGGING = {
     },
     "root": {"handlers": ["console", "error_file"], "level": "INFO"},
 }
+
+# ──────────────────────────────────────────────────────────────────────────
+# Sentry — error tracking (web + management commands/cron). Env-guarded: zonder
+# SENTRY_DSN gebeurt er niets, dus dev/tests draaien ook zonder het pakket.
+# send_default_pii=False: geen IP's/cookies naar Sentry (privacy/AVG).
+# ──────────────────────────────────────────────────────────────────────────
+SENTRY_DSN = os.getenv("SENTRY_DSN", "").strip()
+if SENTRY_DSN:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.django import DjangoIntegration
+
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            integrations=[DjangoIntegration()],
+            environment=os.getenv("SENTRY_ENVIRONMENT", "development" if DEBUG else "production"),
+            release=os.getenv("RENDER_GIT_COMMIT", "").strip() or None,
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.0")),
+            send_default_pii=False,
+        )
+    except ImportError:
+        import logging
+
+        logging.getLogger("core").warning(
+            "SENTRY_DSN is gezet maar sentry-sdk is niet geïnstalleerd — "
+            "voeg het toe aan requirements.txt.")
