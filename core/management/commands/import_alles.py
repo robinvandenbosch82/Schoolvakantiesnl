@@ -2,13 +2,14 @@
 Eén commando dat de hele dataketen in de juiste volgorde draait. Geschikt voor
 de cron / scheduled task:
 
-  1. import_openholidays  — feestdagen (alle landen) + schoolvakanties (behalve
-                            NL/FR/DE, die door de nationale bron worden gedekt).
-  2. import_nationaal     — schoolvakanties NL (Rijksoverheid), FR (zones),
-                            DE (ferien-api.de) — leidend, en ruimt oude
-                            OpenHolidays-rijen op.
-  3. check_feestdagen     — kruiscontrole van de feestdagen tegen Nager.Date
-                            (alleen rapport; voeg --fill toe om gaten te vullen).
+  1. import_openholidays   — feestdagen (alle landen) + schoolvakanties (behalve
+                             NL/FR, die door de nationale bron worden gedekt).
+  2. import_nationaal      — schoolvakanties NL (Rijksoverheid) + FR (zones),
+                             leidend, en ruimt oude OpenHolidays-rijen op.
+  3. import_feestdaglanden — feestdagen-only landen (NO/DK/FI/GB/GR) via Nager.Date,
+                             die OpenHolidays niet dekt.
+  4. check_feestdagen      — kruiscontrole van de feestdagen tegen Nager.Date
+                             (alleen rapport; voeg --fill toe om gaten te vullen).
 
     python manage.py import_alles
     python manage.py import_alles --fill
@@ -35,10 +36,12 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        self.stdout.write(self.style.MIGRATE_HEADING("\n[1/3] OpenHolidays …"))
+        self.stdout.write(self.style.MIGRATE_HEADING("\n[1/4] OpenHolidays …"))
         call_command("import_openholidays")
-        self.stdout.write(self.style.MIGRATE_HEADING("\n[2/3] Nationale bronnen (NL/FR/DE) …"))
+        self.stdout.write(self.style.MIGRATE_HEADING("\n[2/4] Nationale bronnen (NL/FR) …"))
         call_command("import_nationaal")
-        self.stdout.write(self.style.MIGRATE_HEADING("\n[3/3] Kruiscontrole Nager.Date …"))
+        self.stdout.write(self.style.MIGRATE_HEADING("\n[3/4] Feestdagen-only landen (Nager.Date) …"))
+        call_command("import_feestdaglanden")
+        self.stdout.write(self.style.MIGRATE_HEADING("\n[4/4] Kruiscontrole Nager.Date …"))
         call_command("check_feestdagen", fill=opts["fill"])
         self.stdout.write(self.style.SUCCESS("\nVolledige import klaar."))

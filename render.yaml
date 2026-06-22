@@ -59,18 +59,19 @@ services:
           name: schoolvakanties-db
           property: connectionString
 
-  # ── Wekelijkse OpenHolidays-import (cron) ───────────────────────────────
-  # Houdt de vakantie- en feestdagdata vers (idempotent; respecteert in de admin
-  # vergrendelde rijen). Maandag 04:00 UTC.
+  # ── Wekelijkse data-import (cron) ───────────────────────────────────────
+  # Houdt álle vakantie-/feestdagdata vers: OpenHolidays + nationale bronnen
+  # (NL/FR) + feestdagen-only landen (Nager) + gaten aanvullen. Idempotent;
+  # respecteert in de admin vergrendelde rijen. Maandag 04:00 UTC.
   - type: cron
-    name: openholidays-import
+    name: data-import
     runtime: python
     plan: starter
     region: frankfurt
     branch: main
     schedule: "0 4 * * 1"
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python manage.py import_openholidays"
+    startCommand: "python manage.py import_alles --fill"
     envVars:
       - fromGroup: schoolvakanties-env
       - key: DATABASE_URL

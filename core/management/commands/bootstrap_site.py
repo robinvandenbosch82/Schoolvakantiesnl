@@ -25,27 +25,36 @@ class Command(BaseCommand):
     def handle(self, *args, **opts):
         from core.models import Land
 
-        # 1) Vakantie-/feestdagdata uit OpenHolidays (best-effort: nooit de deploy breken).
+        # 1) Volledige vakantie-/feestdagdata (best-effort: nooit de deploy breken).
+        #    import_alles = OpenHolidays + nationale bronnen (NL/FR) + feestdagen-only
+        #    landen (NO/DK/FI/GB/GR via Nager) + kruiscontrole met --fill.
         if not opts["skip_import"]:
             try:
-                self.stdout.write("OpenHolidays importeren…")
-                call_command("import_openholidays")
+                self.stdout.write("Vakantie-/feestdagdata importeren (import_alles)…")
+                call_command("import_alles", fill=True)
             except Exception as exc:  # noqa: BLE001
                 self.stderr.write(self.style.WARNING(
                     f"Import overgeslagen (API niet bereikbaar?): {exc}. "
                     "De cron/handmatige run vult dit later."))
         if not Land.objects.exists():
             self.stderr.write(self.style.WARNING(
-                "Nog geen landen in de DB — draai later `manage.py import_openholidays`."))
+                "Nog geen landen in de DB — draai later `manage.py import_alles`."))
 
-        # 2) Redactionele data (landintro's, weer, bestemmingen, reisweken, experts, blog, FAQ).
+        # 2) Redactionele data (landintro's, weer, bestemmingen, reisweken, experts, FAQ).
         self.stdout.write("Redactionele data seeden…")
         call_command("seed_schoolvakanties")
 
-        # 3) Page-rijen synchroniseren met de routing-registry.
+        # 3) Blog uit de WordPress-export in de repo (best-effort).
+        try:
+            self.stdout.write("Blog importeren (WordPress-export)…")
+            call_command("import_wp_blog")
+        except Exception as exc:  # noqa: BLE001
+            self.stderr.write(self.style.WARNING(f"Blogimport overgeslagen: {exc}."))
+
+        # 4) Page-rijen synchroniseren met de routing-registry.
         call_command("sync_pages")
 
-        # 4) Superuser uit env (DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL).
+        # 5) Superuser uit env (DJANGO_SUPERUSER_USERNAME/PASSWORD/EMAIL).
         self._ensure_superuser()
 
         self.stdout.write(self.style.SUCCESS("bootstrap_site klaar."))

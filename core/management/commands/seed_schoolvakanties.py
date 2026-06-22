@@ -361,27 +361,11 @@ class Command(BaseCommand):
         self._seed_bestemmingen()
         self._seed_experts()
         self._seed_faq()
-        self._seed_blog()
+        # NB: de blog wordt NIET meer geseed. De echte artikelen komen uit de
+        # WordPress-export via `manage.py import_wp_blog` (anders verschijnen de
+        # oude demo-posts naast de echte). De BLOG_POSTS/BLOG_LAND-constanten
+        # hierboven zijn bewust verouderd en ongebruikt (op te ruimen bij P2-cleanup).
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
-
-    def _seed_blog(self):
-        n = 0
-        for i, (slug, titel, cat, excerpt, auteur, datum, leestijd, featured, toc, body) in enumerate(BLOG_POSTS):
-            author = Expert.objects.filter(name=auteur).first()
-            post, created = BlogArtikel.objects.get_or_create(
-                slug=slug,
-                defaults={"titel": titel, "categorie": cat, "excerpt": excerpt,
-                          "author": author, "datum": datum, "leestijd": f"{leestijd} min",
-                          "featured": featured, "toc": toc, "body_html": _blocks_to_html(body),
-                          "order": i, "active": True})
-            n += int(created)
-            # Koppel landen (idempotent; vult ook bestaande artikelen aan).
-            codes = BLOG_LAND.get(slug, [])
-            if codes:
-                landen = Land.objects.filter(iso_code__in=codes)
-                if landen:
-                    post.landen.set(landen)
-        self.stdout.write(f"Blog: {n} artikelen aangemaakt, landkoppelingen bijgewerkt.")
 
     def _seed_faq(self):
         n = 0

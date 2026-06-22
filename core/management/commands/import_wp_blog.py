@@ -13,6 +13,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.text import slugify
 
@@ -27,8 +28,9 @@ NS = {
 MND_NL = ["", "januari", "februari", "maart", "april", "mei", "juni", "juli",
           "augustus", "september", "oktober", "november", "december"]
 
-DEFAULT_FILE = ("C:/Users/robin/Downloads/"
-                "schoolvakantiesopzoekenperland.WordPress.2026-06-22.xml")
+# De WXR-export staat in de repo zodat de import ook op de server (Render) kan
+# draaien; lokaal overschrijfbaar met --file.
+DEFAULT_FILE = str(settings.BASE_DIR / "deploy" / "data" / "wp_blog_export.xml")
 
 
 def _txt(el, path):
