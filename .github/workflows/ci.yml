@@ -1,0 +1,29 @@
+name: CI
+
+# Draait de Django-systeemcheck + testsuite op elke push en pull request,
+# zodat een regressie zichtbaar wordt vóór een deploy naar Render.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: "True"                # sqlite + geen manifest-static; geen prod-secrets nodig
+      SECRET_KEY: ci-dummy-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Dependencies installeren
+        run: pip install -r requirements.txt
+      - name: Django systeemcheck
+        run: python manage.py check
+      - name: Migraties controleren (geen ontbrekende)
+        run: python manage.py makemigrations --check --dry-run
+      - name: Tests
+        run: python manage.py test -v2
