@@ -1,16 +1,16 @@
 """
-XML sitemap for Google Search Console.
+XML-sitemap voor Google Search Console.
 
-Three sections, all forced onto the canonical production domain (SITE_ORIGIN)
-and https — so the URLs are identical to the page canonicals regardless of how
-the sitemap is fetched (www/non-www/dev host):
+Drie secties, allemaal gepind op de canonical productie-host (SITE_ORIGIN) + https,
+zodat de URL's identiek zijn aan de on-page rel=canonical, ongeacht hoe de sitemap
+wordt opgehaald (www/non-www/dev-host):
 
-  * pages   — the design/landing pages from the PAGES registry + the premie tool,
-              with admin-editable <lastmod>; noindex pages are excluded.
-  * hubs    — the per-content-type overview pages.
-  * content — every published ContentPagina (imported knowledge base).
+  * static — de vaste pagina's (home, landen, planner, druktekaart, blog,
+             over-ons, samenwerken).
+  * landen — elke actieve Land (/landen/<slug>/), met <lastmod> = laatste import.
+  * blog   — elk gepubliceerd BlogArtikel (/blog/<slug>/).
 
-Reachable at /sitemap.xml and advertised in robots.txt.
+Bereikbaar op /sitemap.xml en geadverteerd in robots.txt.
 """
 from urllib.parse import urlparse
 
@@ -18,12 +18,10 @@ from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
-from .views import PAGES
-
 
 class _CanonicalSitemap(Sitemap):
-    """Base that pins every URL to SITE_ORIGIN's host + https, instead of the
-    request host. Keeps sitemap URLs equal to the on-page rel=canonical."""
+    """Basis die elke URL pint op SITE_ORIGIN's host + https i.p.v. de request-host.
+    Houdt de sitemap-URL's gelijk aan de on-page rel=canonical."""
     protocol = "https"
 
     def get_urls(self, page=1, site=None, protocol=None):
@@ -36,64 +34,60 @@ class _CanonicalSitemap(Sitemap):
         return super().get_urls(page=page, site=_Site(), protocol=self.protocol)
 
 
-class PageSitemap(_CanonicalSitemap):
-    def __init__(self):
-        # Cross-reference the editable Page model for <lastmod> and noindex.
-        from .models import Page as PageModel
-        try:
-            rows = PageModel.objects.values_list("key", "updated_at", "noindex")
-            self._lastmods = {k: u for k, u, _ in rows}
-            self._noindex = {k for k, _, n in rows if n}
-        except Exception:
-            self._lastmods, self._noindex = {}, set()
+class StaticViewSitemap(_CanonicalSitemap):
+    """De vaste, niet-data-gedreven pagina's. (url-naam, priority, changefreq)."""
+    ROUTES = [
+        ("home", 1.0, "weekly"),
+        ("landen", 0.9, "weekly"),
+        ("planner", 0.8, "weekly"),
+        ("druktekaart", 0.8, "weekly"),
+        ("blog", 0.7, "weekly"),
+        ("over_ons", 0.4, "monthly"),
+        ("samenwerken", 0.4, "monthly"),
+    ]
 
     def items(self):
-        # Never advertise a page we tell Google not to index.
-        return [p for p in PAGES if p.name not in self._noindex]
+        return self.ROUTES
 
-    def location(self, page):
-        return reverse(page.name)
+    def location(self, item):
+        return reverse(item[0])
 
-    def priority(self, page):
-        return page.sitemap_priority
+    def priority(self, item):
+        return item[1]
 
-    def changefreq(self, page):
-        return page.sitemap_changefreq
-
-    def lastmod(self, page):
-        return self._lastmods.get(page.name)
+    def changefreq(self, item):
+        return item[2]
 
 
-class HubSitemap(_CanonicalSitemap):
+class LandSitemap(_CanonicalSitemap):
     changefreq = "weekly"
-    priority = 0.7
+    priority = 0.8
 
     def items(self):
-        from .hubs import HUBS
-        return HUBS
+        from .models import Land
+        return list(Land.objects.filter(actief=True).order_by("order", "naam"))
 
-    def location(self, hub):
-        return "/" + hub["path"]
+    def location(self, land):
+        return reverse("land_detail", kwargs={"slug": land.slug})
+
+    def lastmod(self, land):
+        return land.imported_at
 
 
-class ContentPaginaSitemap(_CanonicalSitemap):
+class BlogSitemap(_CanonicalSitemap):
     changefreq = "monthly"
     priority = 0.6
-    limit = 5000  # well under the 50k cap; future-proofs paging
 
     def items(self):
-        from .models import ContentPagina
-        return ContentPagina.objects.filter(published=True).order_by("slug")
+        from .models import BlogArtikel
+        return list(BlogArtikel.objects.filter(active=True).order_by("-order"))
 
-    def location(self, obj):
-        return obj.get_absolute_url()
-
-    def lastmod(self, obj):
-        return obj.imported_at
+    def location(self, post):
+        return reverse("blog_detail", kwargs={"slug": post.slug})
 
 
 SITEMAPS = {
-    "pages": PageSitemap,
-    "hubs": HubSitemap,
-    "content": ContentPaginaSitemap,
+    "static": StaticViewSitemap,
+    "landen": LandSitemap,
+    "blog": BlogSitemap,
 }
