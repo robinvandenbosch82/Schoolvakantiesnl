@@ -846,8 +846,11 @@ def land_legacy_redirect(request, slug):
 
 
 def blog_datum_redirect(request, jaar, maand, dag, slug):
-    """Oude WordPress datum-URL /blog/jjjj/mm/dd/<slug>/ -> /blog/<slug>/."""
-    return redirect(f"/blog/{slug}/", permanent=True)
+    """Oude WordPress datum-URL /blog/jjjj/mm/dd/<slug>/ -> /blog/<slug>/.
+    Bestaat het artikel niet (meer), val terug op het blogoverzicht i.p.v. 404."""
+    if BlogArtikel.objects.filter(slug=slug, active=True).exists():
+        return redirect(f"/blog/{slug}/", permanent=True)
+    return redirect("/blog/", permanent=True)
 
 
 def kennisbank_redirect(request, rest):
