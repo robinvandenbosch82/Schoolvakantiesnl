@@ -50,12 +50,24 @@ class PageRenderTests(TestCase):
         self.assertChrome(self.client.get("/samenwerken/"))
 
     def test_land_live(self):
-        self.assertChrome(self.client.get("/landen/nederland/"))
+        self.assertChrome(self.client.get("/nederland/"))
+
+    def test_land_legacy_redirect(self):
+        # Oude dev-URL /landen/<slug>/ -> 301 root /<slug>/.
+        resp = self.client.get("/landen/nederland/")
+        self.assertEqual(resp.status_code, 301)
+        self.assertEqual(resp.headers["Location"], "/nederland/")
+
+    def test_kennisbank_redirect(self):
+        # Kennisbankartikelen bestaan nu niet -> 301 naar de landhome.
+        resp = self.client.get("/kennisbank/nederland/wanneer-zomervakantie/")
+        self.assertEqual(resp.status_code, 301)
+        self.assertEqual(resp.headers["Location"], "/nederland/")
 
     def test_land_seo(self):
         """Landpagina: keyword-H1, kerngegevens-tabel en verrijkte JSON-LD
         (WebPage + BreadcrumbList + FAQPage uit de afgeleide FAQ)."""
-        resp = self.client.get("/landen/nederland/")
+        resp = self.client.get("/nederland/")
         self.assertContains(resp, "<h1>Schoolvakanties Nederland 2026</h1>")
         self.assertContains(resp, 'class="kern-tabel"')
         self.assertContains(resp, '"@type": "WebPage"')
@@ -70,7 +82,7 @@ class PageRenderTests(TestCase):
         (a11y / SEO). Beschermt tegen regressies in de heading-hiërarchie."""
         import re
         routes = ["/", "/planner/", "/druktekaart/", "/blog/", "/over-ons/",
-                  "/samenwerken/", "/landen/", "/landen/nederland/", "/blog/testpost/"]
+                  "/samenwerken/", "/landen/", "/nederland/", "/blog/testpost/"]
         for r in routes:
             html = self.client.get(r).content.decode()
             levels = [int(m.group(1)) for m in re.finditer(r"<h([1-6])\b", html)]
@@ -83,13 +95,13 @@ class PageRenderTests(TestCase):
 
     def test_land_binnenkort(self):
         # 'duitsland' staat in de landenlijst maar niet als actief Land in de test-DB
-        # -> nette binnenkort-pagina (200), geen 404.
-        resp = self.client.get("/landen/duitsland/")
+        # -> nette binnenkort-pagina (200) op root, geen 404.
+        resp = self.client.get("/duitsland/")
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "Binnenkort")
 
     def test_land_onbekend_404(self):
-        self.assertEqual(self.client.get("/landen/atlantis/").status_code, 404)
+        self.assertEqual(self.client.get("/atlantis/").status_code, 404)
 
     def test_robots_txt(self):
         resp = self.client.get("/robots.txt")

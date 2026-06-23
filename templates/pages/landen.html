@@ -8,7 +8,7 @@
   </div>
   <div class="landen-grid">
     {% for c in europe %}
-      <a class="landtegel{% if not c.live %} soon{% endif %}" href="/landen/{{ c.slug }}/">
+      <a class="landtegel{% if not c.live %} soon{% endif %}" href="/{{ c.slug }}/">
         <span class="lt-flag">{{ c.flag }}</span>
         <span class="lt-name">{{ c.name }}</span>
         <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>

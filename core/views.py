@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from . import europe
 from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, Regio,
@@ -809,20 +809,76 @@ def _land_webpage_node(land, url, jaar, reviewer, beschrijving):
     return node
 
 
+# Losse root-slugs die 301 naar een bestaande pagina moeten (oude live-URL's).
+# VK-naties bundelen we op /engeland/ (waar het meeste verkeer + de zoekterm zit).
+ROOT_REDIRECTS = {
+    "schotland": "/engeland/", "wales": "/engeland/", "noord-ierland": "/engeland/",
+    "contact": "/samenwerken/",
+    "schooltijden-en-extra-vrije-dagen-op-school": "/",
+}
+
+# Geïndexeerde landen die we (nog) niet als data hebben, maar wél op hun oude slug
+# moeten blijven bestaan (binnenkort-pagina i.p.v. 404). Slug -> (naam, vlag).
+EXTRA_SOON = {
+    "rusland": ("Rusland", "🇷🇺"),
+    "servie": ("Servië", "🇷🇸"),
+    "ijsland": ("IJsland", "🇮🇸"),
+    "cyprus": ("Cyprus", "🇨🇾"),
+    "bosnie-en-herzegovina": ("Bosnië en Herzegovina", "🇧🇦"),
+    "monaco": ("Monaco", "🇲🇨"),
+}
+
+# Kennisbank gebruikte soms een afwijkende landslug.
+_KB_LAND_ALIAS = {"tjechie": "tsjechie"}
+
+
+def _bekende_landslugs():
+    """Alle slugs die als root-landpagina bestaan (actief + nav + binnenkort)."""
+    slugs = set(Land.objects.values_list("slug", flat=True))
+    slugs |= {c["slug"] for c in europe.europe_list()}
+    slugs |= set(EXTRA_SOON)
+    return slugs
+
+
+def land_legacy_redirect(request, slug):
+    """Oude dev-URL /landen/<slug>/ -> root /<slug>/."""
+    return redirect(f"/{slug}/", permanent=True)
+
+
+def blog_datum_redirect(request, jaar, maand, dag, slug):
+    """Oude WordPress datum-URL /blog/jjjj/mm/dd/<slug>/ -> /blog/<slug>/."""
+    return redirect(f"/blog/{slug}/", permanent=True)
+
+
+def kennisbank_redirect(request, rest):
+    """Kennisbankartikelen bestaan nu niet; 301 naar de landhome /<land>/.
+    Onbekend land -> /landen/. (Komt later terug als echte artikelen.)"""
+    parts = [p for p in rest.split("/") if p]
+    if parts:
+        landslug = _KB_LAND_ALIAS.get(parts[0], parts[0])
+        if landslug in _bekende_landslugs():
+            return redirect(f"/{landslug}/", permanent=True)
+    return redirect("/landen/", permanent=True)
+
+
 def land_detail(request, slug):
     land = Land.objects.filter(slug=slug, actief=True).first()
     if not land:
-        # Bekend land uit de navigatielijst maar (nog) zonder data, bv. Noorwegen,
-        # Finland, Verenigd Koninkrijk, Denemarken, Griekenland: die worden niet door
-        # OpenHolidays gedekt en hebben geen eigen bron. Toon een nette 'binnenkort'-
-        # pagina (200, noindex) i.p.v. een harde 404. Onbekende slug -> echte 404.
+        # 1) Oude live-URL die we bundelen/omleiden (VK-naties, contact, …).
+        if slug in ROOT_REDIRECTS:
+            return redirect(ROOT_REDIRECTS[slug], permanent=True)
+        # 2) Bekend land zonder data (nav-lijst) of geïndexeerd extra land: nette
+        #    'binnenkort'-pagina i.p.v. een harde 404. Onbekende slug -> echte 404.
         kandidaat = next((c for c in europe.europe_list() if c["slug"] == slug), None)
+        if not kandidaat and slug in EXTRA_SOON:
+            naam, vlag = EXTRA_SOON[slug]
+            kandidaat = {"name": naam, "flag": vlag, "slug": slug}
         if not kandidaat:
             raise Http404("Land niet gevonden")
         return render(request, "pages/land_soon.html", {
             "naam": kandidaat["name"], "vlag": kandidaat["flag"], "noindex": True,
             "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Landen", "url": "/landen/"},
-                       {"naam": kandidaat["name"], "url": f"/landen/{slug}/"}],
+                       {"naam": kandidaat["name"], "url": f"/{slug}/"}],
             "seo_title": f"Schoolvakanties {kandidaat['name']}, binnenkort | Schoolvakanties.nl",
             "seo_description": f"De schoolvakanties en feestdagen van {kandidaat['name']} "
                                "voegen we binnenkort toe aan Schoolvakanties.nl.",
@@ -985,7 +1041,7 @@ def land_detail(request, slug):
 
     url = _page_url(request)
     breadcrumb = _breadcrumb_node([("Home", "/"), ("Landen", "/landen/"),
-                                   (land.naam, f"/landen/{land.slug}/")])
+                                   (land.naam, f"/{land.slug}/")])
     breadcrumb["@id"] = url + "#breadcrumb"
 
     return render(request, "pages/land.html", {
@@ -1003,7 +1059,7 @@ def land_detail(request, slug):
         "land_blog": BlogArtikel.objects.filter(active=True, landen=land).order_by("order", "-id")[:3],
         "vooruitblik": vooruitblik,
         "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Landen", "url": "/landen/"},
-                   {"naam": land.naam, "url": f"/landen/{land.slug}/"}],
+                   {"naam": land.naam, "url": f"/{land.slug}/"}],
         "jsonld": _jsonld([
             _land_webpage_node(land, url, jaar, reviewer, seo_description),
             breadcrumb,

@@ -19,7 +19,7 @@
       <div class="foot-col">
         <h2>Populaire landen</h2>
         <ul>
-          {% for c in europe_popular %}<li><a href="/landen/{{ c.slug }}/">{{ c.name }}</a></li>{% endfor %}
+          {% for c in europe_popular %}<li><a href="/{{ c.slug }}/">{{ c.name }}</a></li>{% endfor %}
         </ul>
       </div>
 

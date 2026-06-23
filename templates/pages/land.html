@@ -304,7 +304,7 @@
   <section class="land-block">
     <div class="section-head"><div><span class="eye">Ook handig</span><h2 style="margin-top:8px">Schoolvakanties in andere landen</h2></div><p><a href="/landen/">Alle landen →</a></p></div>
     <div class="land-links">
-      {% for a in andere_landen %}<a class="land-link" href="/landen/{{ a.slug }}/" title="Schoolvakanties {{ a.naam }} {{ jaar }}"><span class="ll-flag">{{ a.vlag }}</span>Schoolvakanties {{ a.naam }}</a>{% endfor %}
+      {% for a in andere_landen %}<a class="land-link" href="/{{ a.slug }}/" title="Schoolvakanties {{ a.naam }} {{ jaar }}"><span class="ll-flag">{{ a.vlag }}</span>Schoolvakanties {{ a.naam }}</a>{% endfor %}
     </div>
   </section>
   {% endif %}

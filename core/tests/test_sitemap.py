@@ -16,7 +16,7 @@ class SitemapTests(TestCase):
 
     def test_bevat_land_blog_en_vaste_paginas(self):
         body = self.client.get("/sitemap.xml").content.decode()
-        self.assertIn("https://schoolvakanties.nl/landen/nederland/", body)
+        self.assertIn("https://schoolvakanties.nl/nederland/", body)
         self.assertIn("https://schoolvakanties.nl/blog/t-post/", body)
         self.assertIn("https://schoolvakanties.nl/samenwerken/", body)
         self.assertIn("https://schoolvakanties.nl/", body)

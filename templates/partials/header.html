@@ -34,7 +34,7 @@
         <div class="mega-eye">Populaire landen</div>
         <div class="mega-pop">
           {% for c in europe_popular %}
-            <a class="ml-country big" href="/landen/{{ c.slug }}/">
+            <a class="ml-country big" href="/{{ c.slug }}/">
               <span class="ml-flag">{{ c.flag }}</span>
               <span class="ml-name">{{ c.name }}</span>
               <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>
@@ -46,7 +46,7 @@
         <div class="mega-eye">Alle landen in Europa</div>
         <div class="mega-all">
           {% for c in europe %}
-            <a class="ml-country" href="/landen/{{ c.slug }}/">
+            <a class="ml-country" href="/{{ c.slug }}/">
               <span class="ml-flag">{{ c.flag }}</span>
               <span class="ml-name">{{ c.name }}</span>
               <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>
@@ -91,7 +91,7 @@
         </button>
         <div class="mobnav-landen" id="mobLanden">
           {% for c in europe %}
-            <a class="mobnav-land" href="/landen/{{ c.slug }}/">
+            <a class="mobnav-land" href="/{{ c.slug }}/">
               <span class="ml-flag">{{ c.flag }}</span>
               <span class="ml-name">{{ c.name }}</span>
               <span class="ml-status {% if c.live %}live{% else %}soon{% endif %}">{% if c.live %}live{% else %}binnenkort{% endif %}</span>

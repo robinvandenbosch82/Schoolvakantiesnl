@@ -52,11 +52,11 @@ class Command(BaseCommand):
         for code in ("NL", "DE", "FR", "ES"):
             land = Land.objects.filter(iso_code=code, actief=True).first()
             if land:
-                targets.append((f"land-{code}", f"/landen/{land.slug}/"))
+                targets.append((f"land-{code}", f"/{land.slug}/"))
         # Jaar-switcher: tweede jaar van NL meenemen.
         nl = Land.objects.filter(iso_code="NL").first()
         if nl:
-            targets.append(("land-NL-2027", f"/landen/{nl.slug}/?jaar=2027"))
+            targets.append(("land-NL-2027", f"/{nl.slug}/?jaar=2027"))
         # Eén blogartikel.
         post = BlogArtikel.objects.filter(active=True).first()
         if post:

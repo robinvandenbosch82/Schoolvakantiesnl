@@ -20,7 +20,7 @@ _EUROPE = [
     ("be", "België", "🇧🇪", True), ("fr", "Frankrijk", "🇫🇷", True),
     ("es", "Spanje", "🇪🇸", True), ("it", "Italië", "🇮🇹", True),
     ("at", "Oostenrijk", "🇦🇹", True), ("pt", "Portugal", "🇵🇹", True),
-    ("ch", "Zwitserland", "🇨🇭", False), ("gb", "Verenigd Koninkrijk", "🇬🇧", False),
+    ("ch", "Zwitserland", "🇨🇭", False), ("gb", "Engeland", "🇬🇧", False),
     ("ie", "Ierland", "🇮🇪", False), ("dk", "Denemarken", "🇩🇰", False),
     ("se", "Zweden", "🇸🇪", False), ("no", "Noorwegen", "🇳🇴", False),
     ("fi", "Finland", "🇫🇮", False), ("pl", "Polen", "🇵🇱", False),

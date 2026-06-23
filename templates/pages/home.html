@@ -16,7 +16,7 @@
         <span class="picker-lab">Bestemming</span>
         <div class="dest-chips">
           {% for c in europe_popular|slice:":6" %}
-            <a class="dest-chip{% if forloop.first %} on{% endif %}" href="/landen/{{ c.slug }}/"><span class="fl">{{ c.flag }}</span>{{ c.name }}</a>
+            <a class="dest-chip{% if forloop.first %} on{% endif %}" href="/{{ c.slug }}/"><span class="fl">{{ c.flag }}</span>{{ c.name }}</a>
           {% endfor %}
           <a class="dest-more" href="/landen/">Alle landen →</a>
         </div>
@@ -144,7 +144,7 @@
   <div class="dest-grid">
     {% for d in bestemmingen %}
       <article class="dest">
-        <a href="{% if d.land %}/landen/{{ d.land.slug }}/{% else %}/landen/{% endif %}">
+        <a href="{% if d.land %}/{{ d.land.slug }}/{% else %}/landen/{% endif %}">
         <div class="dest-img">
           <img src="{% if d.get_photo_url %}{{ d.get_photo_url }}{% else %}{% static 'img/dest/' %}{{ d.slug }}.jpg{% endif %}" alt="{{ d.get_photo_alt }}" loading="lazy" decoding="async" width="800" height="500">
           <div class="dest-badge {% if d.slim_score >= 70 %}is-rustig{% elif d.slim_score >= 45 %}is-matig{% else %}is-druk{% endif %}">
