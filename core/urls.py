@@ -18,4 +18,7 @@ urlpatterns = [
     path("samenwerken/", views.samenwerken, name="samenwerken"),
     path("landen/", views.landen_overzicht, name="landen"),
     path("landen/<slug:slug>/", views.land_detail, name="land_detail"),
+    path("privacy/", views.privacy, name="privacy"),
+    path("cookies/", views.cookies, name="cookies"),
+    path("voorwaarden/", views.voorwaarden, name="voorwaarden"),
 ]

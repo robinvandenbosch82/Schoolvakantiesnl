@@ -88,6 +88,23 @@ PAGES: list[PageSpec] = [
         description="Vergelijk schoolvakanties, feestdagen en de drukste reisweken van heel Europa. "
                     "Eén Slim-score per week: ga weg wanneer het rustig, betaalbaar en fijn is.",
         sitemap_priority=1.0, sitemap_changefreq="weekly"),
+    PageSpec(
+        path="privacy/", name="privacy",
+        title="Privacyverklaring | Schoolvakanties.nl",
+        description="Hoe Schoolvakanties.nl met je persoonsgegevens omgaat: welke gegevens we "
+                    "verwerken, waarvoor, hoe lang en welke rechten je hebt.",
+        sitemap_priority=0.2, sitemap_changefreq="yearly"),
+    PageSpec(
+        path="cookies/", name="cookies",
+        title="Cookieverklaring | Schoolvakanties.nl",
+        description="Welke cookies Schoolvakanties.nl gebruikt en waarom, en hoe je ze beheert.",
+        sitemap_priority=0.2, sitemap_changefreq="yearly"),
+    PageSpec(
+        path="voorwaarden/", name="voorwaarden",
+        title="Gebruiksvoorwaarden | Schoolvakanties.nl",
+        description="De voorwaarden voor het gebruik van Schoolvakanties.nl, inclusief disclaimer "
+                    "over de juistheid van vakantie- en feestdagdata.",
+        sitemap_priority=0.2, sitemap_changefreq="yearly"),
 ]
 
 _MAANDEN = ["", "januari", "februari", "maart", "april", "mei", "juni", "juli",
@@ -471,6 +488,43 @@ def samenwerken(request):
         "seo_description": "Bereik Nederlandse gezinnen op het moment dat ze hun vakantie plannen. "
                            "Reisbureau, hotel, creator of merk, ontdek de mogelijkheden om samen te werken.",
     })
+
+
+# ── Losse pagina's (privacy, cookies, voorwaarden) ───────────────────────────
+_LEGAL_CRUMB = {"privacy": "Privacyverklaring", "cookies": "Cookieverklaring",
+                "voorwaarden": "Gebruiksvoorwaarden"}
+
+
+def _legal(request, key):
+    """Generieke render van een admin-bewerkbare losse pagina (Page.body_html)."""
+    from .models import Expert, Page
+    page = Page.objects.filter(key=key).first()
+    if not page:
+        raise Http404("Pagina niet gevonden")
+    crumbnaam = page.heading or _LEGAL_CRUMB.get(key, page.label)
+    reviewer = page.reviewer or Expert.objects.filter(active=True).order_by("order").first()
+    ctx = {
+        "page": page,
+        "reviewer": reviewer,
+        "bijgewerkt": page.byline_date,
+        "seo_title": page.get_seo_title(),
+        "seo_description": page.get_seo_description(),
+        "crumbs": [{"naam": "Home", "url": "/"}, {"naam": crumbnaam, "url": page.path}],
+        "jsonld": _jsonld([_breadcrumb_node([("Home", "/"), (crumbnaam, page.path)])]),
+    }
+    return render(request, "pages/legal.html", ctx)
+
+
+def privacy(request):
+    return _legal(request, "privacy")
+
+
+def cookies(request):
+    return _legal(request, "cookies")
+
+
+def voorwaarden(request):
+    return _legal(request, "voorwaarden")
 
 
 # ── Blog ────────────────────────────────────────────────────────────────────

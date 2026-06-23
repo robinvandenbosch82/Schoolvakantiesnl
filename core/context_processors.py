@@ -86,6 +86,48 @@ def _footer_from_db():
     return cols
 
 
+def _org_jsonld(site, origin, name):
+    """Bouw de Organization + WebSite @graph uit de site-instellingen, zodat
+    legalName, adres en KvK/vestigingsnummer in de Knowledge Graph komen."""
+    import json
+
+    org = {"@type": "Organization", "@id": f"{origin}/#organization",
+           "name": name, "url": f"{origin}/"}
+    if getattr(site, "bedrijfsnaam", ""):
+        org["legalName"] = site.bedrijfsnaam
+    try:
+        if site.logo:
+            org["logo"] = origin + site.logo.url
+    except Exception:  # geen logo / media niet beschikbaar
+        pass
+    sameas = [u.strip() for u in (site.sameas or "").splitlines()
+              if u.strip().startswith("http")]
+    if sameas:
+        org["sameAs"] = sameas
+    if site.adres_plaats:
+        org["address"] = {
+            "@type": "PostalAddress",
+            "streetAddress": site.adres_straat,
+            "postalCode": site.adres_postcode,
+            "addressLocality": site.adres_plaats,
+            "addressCountry": "NL",
+        }
+    ids = []
+    if site.kvk_nummer:
+        ids.append({"@type": "PropertyValue", "propertyID": "KvK", "value": site.kvk_nummer})
+    if getattr(site, "vestigingsnummer", ""):
+        ids.append({"@type": "PropertyValue", "propertyID": "Vestigingsnummer",
+                    "value": site.vestigingsnummer})
+    if ids:
+        org["identifier"] = ids
+
+    website = {"@type": "WebSite", "@id": f"{origin}/#website", "name": name,
+               "url": f"{origin}/", "publisher": {"@id": f"{origin}/#organization"},
+               "inLanguage": "nl-NL"}
+    return json.dumps({"@context": "https://schema.org", "@graph": [org, website]},
+                      ensure_ascii=False)
+
+
 def site_context(request):
     """Inject brand defaults, navigation, SiteSettings and a canonical URL."""
     try:
@@ -129,4 +171,5 @@ def site_context(request):
         "canonical_url": canonical_url,
         "europe": europe,
         "europe_popular": [c for c in europe if c["pop"]],
+        "org_jsonld": _org_jsonld(site, site_origin, settings.SITE_NAME),
     }

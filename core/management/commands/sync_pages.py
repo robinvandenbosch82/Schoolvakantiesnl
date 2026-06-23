@@ -17,19 +17,15 @@ from core.views import PAGES
 # Friendly Dutch labels for the admin list.
 LABELS = {
     "home": "Homepage",
-    "dekkingen": "Dekkingen (WA / WA+ / Allrisk)",
-    "vergelijken": "Vergelijken",
-    "situaties_beroepen": "Situaties & beroepen",
-    "situatie_gereedschap": "Situatie, Gereedschap in de bus",
-    "beroep_timmerman": "Beroep, Timmerman",
-    "verzekeraars": "Verzekeraars (overzicht)",
-    "verzekeraar_asr": "Verzekeraar, ASR",
-    "kennisbank": "Kennisbank (overzicht)",
-    "kennisbank_artikel": "Kennisbank, Welk ART-slot heb ik nodig",
-    "blog": "Blog & nieuws (overzicht)",
-    "blog_artikel": "Blog, Motor rijklaar na de winterstop",
-    "over_ons": "Onze experts & redactieproces",
-    "klantenservice": "Klantenservice",
+    "planner": "Vakantieplanner",
+    "druktekaart": "Europese druktekaart",
+    "blog": "Blog & reistips (overzicht)",
+    "over_ons": "Over ons & redactie",
+    "samenwerken": "Samenwerken (B2B)",
+    "landen": "Landen (overzicht)",
+    "privacy": "Privacyverklaring",
+    "cookies": "Cookieverklaring",
+    "voorwaarden": "Gebruiksvoorwaarden",
 }
 
 

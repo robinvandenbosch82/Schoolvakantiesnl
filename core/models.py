@@ -79,7 +79,10 @@ class SiteSettings(models.Model):
     whatsapp = models.CharField("WhatsApp-nummer", max_length=40, blank=True, default="")
     email = models.EmailField("E-mail", default="hallo@schoolvakanties.nl")
 
+    bedrijfsnaam = models.CharField("Bedrijfsnaam (juridisch)", max_length=160, blank=True, default="",
+                                    help_text="Rechtspersoon achter de site, bijv. 'Travel Nerds B.V.'.")
     kvk_nummer = models.CharField("KvK-nummer", max_length=40, blank=True, default="")
+    vestigingsnummer = models.CharField("Vestigingsnummer", max_length=40, blank=True, default="")
 
     footer_blurb = models.TextField(
         "Footer-tekst",
@@ -158,6 +161,9 @@ class Page(models.Model):
     eyebrow = models.CharField("Bovenkop", max_length=120, blank=True)
     heading = models.CharField("Titel (H1)", max_length=200, blank=True)
     intro = models.TextField("Intro", blank=True)
+    body_html = models.TextField("Inhoud (HTML)", blank=True,
+                                 help_text="Hoofdtekst voor losse pagina's (privacy, cookies, "
+                                           "voorwaarden). HTML toegestaan.")
 
     # Byline (admin = source of truth; shown on article-style pages). Author/
     # reviewer reference the Expert team so a name change in one place updates

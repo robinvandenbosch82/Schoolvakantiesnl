@@ -647,6 +647,22 @@
 .eeat-by-check strong{ color:var(--ink-2); font-weight:700; }
 .eeat-by-meta{ font-size:12.5px; color:var(--ink-3); font-family:var(--mono); }
 
+/* losse pagina's (privacy / cookies / voorwaarden) */
+.legal{ padding-top:18px; padding-bottom:40px; }
+.legal .art-head{ max-width:68ch; }
+.legal-lead{ font-size:17px; color:var(--ink-2); line-height:1.55; margin-top:14px; }
+.legal-body{ margin-top:30px; }
+.legal-body h2{ font-size:22px; }
+.legal-body h3{ font-size:17px; margin:24px 0 8px; }
+.legal-body ul{ margin:0 0 20px; padding-left:22px; }
+.legal-body ul li{ font-size:16px; color:var(--ink-2); line-height:1.6; margin:6px 0; }
+.legal-body table{ border-collapse:collapse; width:100%; margin:8px 0 24px; font-size:15px; }
+.legal-body th, .legal-body td{ text-align:left; padding:9px 12px; border:1px solid var(--line); vertical-align:top; }
+.legal-body th{ background:var(--paper-2); color:var(--ink); font-weight:700; }
+.legal-body .legal-meta{ margin-top:28px; padding:16px 18px; background:var(--paper-2);
+  border:1px solid var(--line); border-radius:14px; font-size:14.5px; color:var(--ink-2); line-height:1.6; }
+.legal-body .legal-meta strong{ color:var(--ink); }
+
 /* volledige auteurskaart */
 .eeat-card{ margin:40px 0 8px; padding:24px 26px; background:var(--paper-2);
   border:1px solid var(--line); border-radius:var(--r-lg); }

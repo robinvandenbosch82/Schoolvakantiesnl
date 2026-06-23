@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block reviewbar %}{% endblock %}
+
+{% block content %}
+{% include "partials/breadcrumb.html" %}
+<div class="page legal">
+  <header class="art-head">
+    {% if page.eyebrow %}<span class="cat-chip">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.heading|default:page.label }}</h1>
+    {% if page.intro %}<p class="legal-lead">{{ page.intro }}</p>{% endif %}
+    {% include "partials/byline.html" with reviewer=reviewer bijgewerkt=bijgewerkt %}
+  </header>
+
+  <div class="art-body legal-body">
+    {{ page.body_html|safe }}
+
+    {% if site.bedrijfsnaam or site.kvk_nummer or site.adres_plaats %}
+    <div class="legal-meta">
+      <strong>{% if site.bedrijfsnaam %}{{ site.bedrijfsnaam }}{% else %}Schoolvakanties.nl{% endif %}</strong><br>
+      {% if site.adres_straat %}{{ site.adres_straat }}<br>{% endif %}
+      {% if site.adres_postcode or site.adres_plaats %}{{ site.adres_postcode }} {{ site.adres_plaats }}<br>{% endif %}
+      {% if site.kvk_nummer %}KvK: {{ site.kvk_nummer }}<br>{% endif %}
+      {% if site.vestigingsnummer %}Vestigingsnummer: {{ site.vestigingsnummer }}<br>{% endif %}
+      {% if site.email %}E-mail: <a href="mailto:{{ site.email }}">{{ site.email }}</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -18,7 +18,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from core.models import (Bestemming, BlogArtikel, Expert, Faq, Feestdag, Land,
-                         Reisweek, SectieTekst, WeerMaand)
+                         Page, Reisweek, SectieTekst, SiteSettings, WeerMaand)
 
 MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
             "jul": 7, "aug": 8, "sep": 9, "okt": 10, "nov": 11, "dec": 12}
@@ -216,21 +216,27 @@ LAND_FAQ = {
 # (naam, initialen, functie, korte functie, sinds, bio, credentials, focus/tags)
 EXPERTS = [
     ("Jorrit Drenth", "JD", "Mede-eigenaar Travel Nerds", "Operatie", None,
-     "Als mede-eigenaar van Travel Nerds houdt Jorrit alle merken soepel draaiend, "
-     "van de grote lijn tot de allerlaatste komma in een vakantiekalender. Hij gelooft "
-     "dat een goede reis begint bij kloppende details, en daar is hij streng op.",
-     ["Mede-eigenaar Travel Nerds", "Overziet de dagelijkse operatie",
-      "Scherp op detail & datakwaliteit"],
+     "Mede-eigenaar van Travel Nerds B.V. in Nijmegen, het bedrijf achter o.a. "
+     "Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl. Jorrit is verantwoordelijk "
+     "voor de dagelijkse operatie en bewaakt de juistheid en kwaliteit van de vakantie- "
+     "en feestdagdata op Schoolvakanties.nl.",
+     ["Mede-eigenaar Travel Nerds B.V.", "Verantwoordelijk voor operatie & datakwaliteit"],
      "Operatie, Kwaliteit"),
-    ("Robin van den Bosch", "RvdB", "Mede-eigenaar Travel Nerds", "Leisure & strategie", None,
-     "Mede-eigenaar van Travel Nerds, het huis achter o.a. Vliegtickets.com, "
-     "Vakantiewoningen.nl en Cruises.nl. Robin leeft en ademt de leisure-wereld en "
-     "vertaalt wat er speelt naar reistools waar gezinnen écht slimmer van op pad gaan.",
-     ["Mede-eigenaar Travel Nerds",
-      "Achter Vliegtickets.com, Vakantiewoningen.nl & Cruises.nl",
-      "Kent de leisure-markt van binnenuit"],
-     "Strategie, Leisure"),
+    ("Robin van den Bosch", "RvdB", "Mede-eigenaar Travel Nerds", "Strategie", None,
+     "Mede-eigenaar van Travel Nerds B.V. in Nijmegen, het bedrijf achter o.a. "
+     "Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl. Robin richt zich op de "
+     "strategie en productontwikkeling en vertaalt de reismarkt naar praktische "
+     "plantools voor gezinnen.",
+     ["Mede-eigenaar Travel Nerds B.V.",
+      "Achter Vliegtickets.com, Vakantiewoningen.nl & Cruises.nl"],
+     "Strategie, Product"),
 ]
+
+# Vaste (gecommitte) expertfoto's in static/. Worden alleen als fallback gezet:
+# een upload of handmatige URL in de admin heeft altijd voorrang.
+EXPERT_FOTOS = {
+    "Jorrit Drenth": "/static/img/experts/jorrit.jpg",
+}
 
 
 # ── Bewerkbare paginacopy (SectieTekst) ─────────────────────────────────────
@@ -259,6 +265,83 @@ SECTIES = [
 ]
 
 
+# ── Losse pagina's: privacy / cookies / voorwaarden ─────────────────────────
+# Feitelijke teksten; de formele bedrijfsgegevens (KvK, adres) komen los uit de
+# site-instellingen en worden in het template getoond, zodat ze op één plek staan.
+LEGAL = {
+    "privacy": {
+        "heading": "Privacyverklaring",
+        "intro": "Hoe Schoolvakanties.nl met je persoonsgegevens omgaat.",
+        "body": """
+<p>Schoolvakanties.nl respecteert je privacy en verwerkt persoonsgegevens in overeenstemming met de Algemene verordening gegevensbescherming (AVG). Hieronder lees je welke gegevens we verwerken, waarvoor en welke rechten je hebt.</p>
+<h2>Welke gegevens we verwerken</h2>
+<ul>
+<li><strong>Contactformulier (samenwerken):</strong> je naam, eventueel je bedrijfsnaam, je e-mailadres en het bericht dat je achterlaat. Voor misbruikpreventie loggen we daarbij je IP-adres.</li>
+<li><strong>E-mailcontact:</strong> als je ons mailt, bewaren we je bericht en e-mailadres om je te kunnen antwoorden.</li>
+<li><strong>Technische gegevens:</strong> onze server houdt standaard logbestanden bij (zoals IP-adres en opgevraagde pagina) voor beveiliging en het oplossen van storingen.</li>
+</ul>
+<p>We vragen geen account aan, verwerken geen betaalgegevens en verkopen je gegevens nooit.</p>
+<h2>Waarvoor en op welke grondslag</h2>
+<ul>
+<li>Het afhandelen van je aanvraag of vraag (grondslag: uitvoering van of aanloop naar een overeenkomst en ons gerechtvaardigd belang om te reageren).</li>
+<li>De beveiliging en goede werking van de website (gerechtvaardigd belang).</li>
+</ul>
+<h2>Hoe lang we bewaren</h2>
+<p>Aanvragen en e-mailcontact bewaren we niet langer dan nodig, in de regel maximaal 24 maanden na het laatste contact. Technische logbestanden bewaren we kort, doorgaans enkele weken.</p>
+<h2>Delen met derden</h2>
+<p>We delen gegevens alleen met dienstverleners die ons helpen de site te draaien, zoals onze hosting- en e-mailprovider, en uitsluitend voor zover dat nodig is. Met deze partijen zijn verwerkersafspraken gemaakt. We geven geen gegevens door buiten de Europese Economische Ruimte zonder passende waarborgen.</p>
+<h2>Cookies</h2>
+<p>Schoolvakanties.nl gebruikt alleen functionele en noodzakelijke cookies. Lees er meer over in onze <a href="/cookies/">cookieverklaring</a>.</p>
+<h2>Externe data</h2>
+<p>De vakantie- en feestdagdata op deze site komen uit officiële, openbare bronnen (zoals Rijksoverheid.nl, OpenHolidays en Nager.Date). Daarbij worden geen persoonsgegevens van jou uitgewisseld.</p>
+<h2>Je rechten</h2>
+<p>Je hebt het recht op inzage, correctie, verwijdering en beperking van je gegevens, en je kunt bezwaar maken tegen de verwerking. Stuur je verzoek naar het e-mailadres hieronder. Ben je het niet eens met hoe we met je gegevens omgaan, dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
+<h2>Beveiliging</h2>
+<p>We nemen passende technische en organisatorische maatregelen om je gegevens te beschermen, waaronder versleuteling van het dataverkeer via HTTPS.</p>
+""",
+    },
+    "cookies": {
+        "heading": "Cookieverklaring",
+        "intro": "Welke cookies Schoolvakanties.nl gebruikt en waarom.",
+        "body": """
+<p>Schoolvakanties.nl gebruikt cookies zo beperkt mogelijk. We plaatsen alleen functionele en noodzakelijke cookies; daarvoor is geen toestemming vereist.</p>
+<h2>Wat zijn cookies?</h2>
+<p>Cookies zijn kleine tekstbestanden die bij een bezoek aan een website op je apparaat worden opgeslagen. Ze zorgen er bijvoorbeeld voor dat een website goed en veilig werkt.</p>
+<h2>Welke cookies we gebruiken</h2>
+<table>
+<tr><th>Cookie</th><th>Doel</th><th>Bewaartermijn</th></tr>
+<tr><td>sessionid</td><td>Noodzakelijk: houdt je sessie in stand (o.a. voor formulieren).</td><td>Sessie, max. 2 weken</td></tr>
+<tr><td>csrftoken</td><td>Noodzakelijk: beveiligt formulieren tegen misbruik (CSRF).</td><td>1 jaar</td></tr>
+</table>
+<p>We gebruiken op dit moment geen tracking-, advertentie- of analytics-cookies die jou persoonlijk volgen. Mochten we in de toekomst analytische of marketingcookies willen plaatsen, dan vragen we daar vooraf je toestemming voor.</p>
+<h2>Cookies beheren</h2>
+<p>Je kunt cookies altijd zelf beheren of verwijderen via de instellingen van je browser. Het uitschakelen van noodzakelijke cookies kan ertoe leiden dat onderdelen van de site niet goed werken.</p>
+""",
+    },
+    "voorwaarden": {
+        "heading": "Gebruiksvoorwaarden",
+        "intro": "De spelregels voor het gebruik van Schoolvakanties.nl.",
+        "body": """
+<p>Deze gebruiksvoorwaarden zijn van toepassing op het gebruik van de website Schoolvakanties.nl. Door de site te gebruiken ga je akkoord met deze voorwaarden.</p>
+<h2>Doel van de website</h2>
+<p>Schoolvakanties.nl is een informatieve website die schoolvakanties, feestdagen en reisdrukte in Nederland en Europa overzichtelijk samenbrengt en vertaalt naar plantips. De site verkoopt zelf geen reizen of producten.</p>
+<h2>Juistheid van de informatie</h2>
+<p>We stellen de vakantie- en feestdagdata met de grootste zorg samen op basis van officiële bronnen en controleren ze handmatig. Toch kunnen data wijzigen of onvolledig zijn. Aan de informatie op deze site kunnen geen rechten worden ontleend. Controleer voor je definitieve planning altijd de officiële bron, zoals de schoolgids of Rijksoverheid.nl.</p>
+<h2>Intellectueel eigendom</h2>
+<p>De teksten, vormgeving, het drukte-model en de overige inhoud op deze site zijn eigendom van de uitgever of haar licentiegevers. Overname zonder voorafgaande schriftelijke toestemming is niet toegestaan; kort citeren met bronvermelding en een link mag.</p>
+<h2>Aansprakelijkheid</h2>
+<p>Het gebruik van de site is voor eigen risico. Voor zover wettelijk toegestaan zijn we niet aansprakelijk voor schade die voortvloeit uit het gebruik van de site of uit onjuiste of onvolledige informatie.</p>
+<h2>Links naar derden</h2>
+<p>De site kan links bevatten naar websites van derden. We hebben geen invloed op de inhoud daarvan en zijn daar niet verantwoordelijk voor.</p>
+<h2>Wijzigingen</h2>
+<p>We kunnen deze voorwaarden van tijd tot tijd aanpassen. De actuele versie staat altijd op deze pagina.</p>
+<h2>Toepasselijk recht</h2>
+<p>Op deze voorwaarden is Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter in het arrondissement waar de uitgever is gevestigd.</p>
+""",
+    },
+}
+
+
 class Command(BaseCommand):
     help = "Seed de redactionele schoolvakanties-data (landintro's, weer, bestemmingen, radar, experts)."
 
@@ -277,10 +360,53 @@ class Command(BaseCommand):
         self._seed_experts()
         self._seed_faq()
         self._seed_secties()
+        self._seed_bedrijf()
+        self._seed_legal()
         # De blog wordt NIET geseed: de echte artikelen komen uit de WordPress-
         # export via `manage.py import_wp_blog`. We kennen wel auteur + reviewer toe.
         self._seed_blog_redactie()
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
+
+    def _seed_bedrijf(self):
+        """Bedrijfsgegevens (Travel Nerds B.V.) in de site-instellingen. Vult
+        alleen lege velden, zodat handmatige wijzigingen blijven staan."""
+        site = SiteSettings.load()
+        defaults = {
+            "bedrijfsnaam": "Travel Nerds B.V.",
+            "kvk_nummer": "91114373",
+            "vestigingsnummer": "000056802544",
+            "adres_straat": "Hertogstraat 131",
+            "adres_postcode": "6511 RZ",
+            "adres_plaats": "Nijmegen",
+        }
+        changed = []
+        for veld, waarde in defaults.items():
+            if not getattr(site, veld, ""):
+                setattr(site, veld, waarde)
+                changed.append(veld)
+        if changed:
+            site.save(update_fields=changed)
+        self.stdout.write(f"Bedrijfsgegevens: {len(changed)} veld(en) ingevuld.")
+
+    def _seed_legal(self):
+        """Maak/­vul de losse pagina's (privacy/cookies/voorwaarden). Body alleen
+        zetten als die nog leeg is, zodat admin-edits niet worden overschreven."""
+        reviewer = Expert.objects.filter(active=True).order_by("order").first()
+        n = 0
+        for key, data in LEGAL.items():
+            page, _ = Page.objects.get_or_create(
+                key=key, defaults={"label": data["heading"], "path": f"/{key}/"})
+            if not page.body_html:
+                page.heading = page.heading or data["heading"]
+                page.intro = page.intro or data["intro"]
+                page.body_html = data["body"].strip()
+                if not page.byline_date:
+                    page.byline_date = "juni 2026"
+                if reviewer and not page.reviewer_id:
+                    page.reviewer = reviewer
+                page.save()
+                n += 1
+        self.stdout.write(f"Losse pagina's: {n} gevuld.")
 
     def _seed_blog_redactie(self):
         """Verdeel auteur + reviewer over de experts voor de E-E-A-T byline.
@@ -388,12 +514,27 @@ class Command(BaseCommand):
         self.stdout.write(f"Bestemmingen: {n} aangemaakt.")
 
     def _seed_experts(self):
-        n = 0
+        n = upd = 0
         for i, (naam, mono, rol, kort, sinds, bio, cred, focus) in enumerate(EXPERTS):
-            _, created = Expert.objects.get_or_create(
+            obj, created = Expert.objects.get_or_create(
                 name=naam,
                 defaults={"mono": mono, "role": rol, "kort": kort, "sinds": sinds,
                           "bio": bio, "credentials": "\n".join(cred), "tags": focus,
                           "order": i, "active": True})
-            n += int(created)
-        self.stdout.write(f"Experts: {n} aangemaakt.")
+            if created:
+                n += 1
+            else:
+                # Redactionele velden zijn seed-gestuurd: werk ze bij zodat de
+                # feitelijke tekst altijd klopt (admin-edits aan bio kunnen later).
+                obj.mono, obj.role, obj.kort = mono, rol, kort
+                obj.bio = bio
+                obj.credentials = "\n".join(cred)
+                obj.tags = focus
+                obj.save(update_fields=["mono", "role", "kort", "bio", "credentials", "tags"])
+                upd += 1
+            # Fallback-foto: alleen zetten als er nog geen foto is (upload/URL wint).
+            foto = EXPERT_FOTOS.get(naam)
+            if foto and not obj.photo_upload and not obj.photo_local and not obj.photo_url:
+                obj.photo_url = foto
+                obj.save(update_fields=["photo_url"])
+        self.stdout.write(f"Experts: {n} aangemaakt, {upd} bijgewerkt.")

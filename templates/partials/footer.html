@@ -46,11 +46,11 @@
     </div>
 
     <div class="foot-bottom">
-      <span class="copy">© 2026 Schoolvakanties.nl, slim weg met het gezin</span>
+      <span class="copy">© 2026 {% if site.bedrijfsnaam %}{{ site.bedrijfsnaam }}{% else %}Schoolvakanties.nl{% endif %}{% if site.kvk_nummer %} · KvK {{ site.kvk_nummer }}{% endif %}</span>
       <div class="foot-legal">
-        <a href="#">Privacy</a>
-        <a href="#">Cookies</a>
-        <a href="#">Voorwaarden</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/cookies/">Cookies</a>
+        <a href="/voorwaarden/">Voorwaarden</a>
       </div>
     </div>
   </div>
