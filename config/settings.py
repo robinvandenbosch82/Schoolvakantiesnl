@@ -31,14 +31,24 @@ def env_bool(name: str, default: str = "False") -> bool:
 # ──────────────────────────────────────────────────────────────────────────
 DEBUG = env_bool("DEBUG", "False")
 
-# In development we allow a throwaway key so the project runs out of the box.
-# In production a real SECRET_KEY is mandatory — fail hard if it is missing.
+# In lokale ontwikkeling mag er een wegwerp-sleutel zijn zodat het project meteen
+# draait. Op een hostingplatform (Railway/Render) is een echte SECRET_KEY ALTIJD
+# verplicht — ook als DEBUG per ongeluk aanstaat. Anders zou productie draaien met
+# een bekende sleutel (sessie-/CSRF-vervalsing) én zichtbare debug-foutpagina's.
 SECRET_KEY = os.getenv("SECRET_KEY", "")
+_ON_PLATFORM = any(os.getenv(k) for k in (
+    "RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "RAILWAY_SERVICE_ID", "RENDER", "DYNO"))
 if not SECRET_KEY:
-    if DEBUG:
+    if DEBUG and not _ON_PLATFORM:
         SECRET_KEY = "dev-insecure-key-do-not-use-in-production"
     else:
-        raise RuntimeError("SECRET_KEY environment variable is required in production.")
+        raise RuntimeError(
+            "SECRET_KEY environment variable is required (zet ook DEBUG=False in productie).")
+
+# Extra vangnet: DEBUG hoort NOOIT aan te staan op een hostingplatform.
+if DEBUG and _ON_PLATFORM:
+    import warnings
+    warnings.warn("DEBUG staat AAN op een hostingplatform — zet DEBUG=False in productie!")
 
 ALLOWED_HOSTS = [
     h.strip()

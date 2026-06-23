@@ -212,20 +212,24 @@ LAND_FAQ = {
 
 
 
-# ── Redactie / experts (uit experts.js) ─────────────────────────────────────
+# ── Redactie / experts (Travel Nerds-team) ──────────────────────────────────
+# (naam, initialen, functie, korte functie, sinds, bio, credentials, focus/tags)
 EXPERTS = [
-    ("Sanne de Vries", "SdV", "Hoofdredacteur & reisplanner", "Hoofdredacteur", 2012,
-     "Reisjournalist met ruim veertien jaar ervaring in gezinsvakanties. Sanne bewaakt de redactionele lijn en controleert alle vakantie- en feestdagdata voordat ze online gaan.",
-     ["14 jaar reisredactie", "Bezocht 30+ landen met kinderen", "Eindverantwoordelijk voor data-accuratesse"],
-     "Redactie, Slim plannen"),
-    ("Mark Jansen", "MJ", "Data- & drukte-analist", "Data-analist", 2015,
-     "Bouwde het drukte- en Slim-score-model achter Schoolvakanties.nl. Mark combineert officiële vakantiekalenders met verkeers- en boekingsdata tot voorspelbare reisweken.",
-     ["Ontwierp het Slim-score-model", "Werkt met OpenHolidays & KMK-bronnen", "Specialist Duitse deelstaten"],
-     "Drukte & prijzen, Data"),
-    ("Lisa Bakker", "LB", "Redacteur — reizen met kinderen", "Reisredacteur", 2018,
-     "Moeder van drie en gepokt en gemazeld in lange autoritten naar het zuiden. Lisa schrijft de praktische gidsen en test bestemmingen op gezinsvriendelijkheid.",
-     ["60+ gezinsreizen", "Specialist bestemmingen met kinderen", "Praktijktest van elke tip"],
-     "Met kinderen, Bestemmingen"),
+    ("Jorrit Drenth", "JD", "Mede-eigenaar Travel Nerds", "Operatie", None,
+     "Als mede-eigenaar van Travel Nerds houdt Jorrit alle merken soepel draaiend — "
+     "van de grote lijn tot de allerlaatste komma in een vakantiekalender. Hij gelooft "
+     "dat een goede reis begint bij kloppende details, en daar is hij streng op.",
+     ["Mede-eigenaar Travel Nerds", "Overziet de dagelijkse operatie",
+      "Scherp op detail & datakwaliteit"],
+     "Operatie, Kwaliteit"),
+    ("Robin van den Bosch", "RvdB", "Mede-eigenaar Travel Nerds", "Leisure & strategie", None,
+     "Mede-eigenaar van Travel Nerds — het huis achter o.a. Vliegtickets.com, "
+     "Vakantiewoningen.nl en Cruises.nl. Robin leeft en ademt de leisure-wereld en "
+     "vertaalt wat er speelt naar reistools waar gezinnen écht slimmer van op pad gaan.",
+     ["Mede-eigenaar Travel Nerds",
+      "Achter Vliegtickets.com, Vakantiewoningen.nl & Cruises.nl",
+      "Kent de leisure-markt van binnenuit"],
+     "Strategie, Leisure"),
 ]
 
 

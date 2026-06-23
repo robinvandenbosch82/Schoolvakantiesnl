@@ -22,12 +22,12 @@
   </section>
 
   <section class="land-block">
-    <div class="section-head"><div><span class="eye">Onze redactie</span><h2 style="margin-top:8px">Wie schrijft en controleert</h2></div><p>Een vast team met aantoonbare ervaring in reizen, data en onderwijs.</p></div>
+    <div class="section-head"><div><span class="eye">Onze redactie</span><h2 style="margin-top:8px">Wie schrijft en controleert</h2></div><p>Het team van Travel Nerds — het huis achter o.a. Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl.</p></div>
     <div class="oo-team">
       {% for e in experts %}
         <article class="oo-expert">
           <div class="oo-expert-head">
-            <span class="eeat-av" style="width:60px;height:60px;font-size:20px" aria-hidden="true">{{ e.mono }}</span>
+            {% if e.get_photo_url %}<img class="eeat-av" style="width:60px;height:60px;object-fit:cover" src="{{ e.get_photo_url }}" alt="{{ e.get_photo_alt|default:e.name }}">{% else %}<span class="eeat-av" style="width:60px;height:60px;font-size:20px" aria-hidden="true">{{ e.mono }}</span>{% endif %}
             <div>
               <h3>{{ e.name }}</h3>
               <span class="oo-expert-rol">{{ e.role }}</span>

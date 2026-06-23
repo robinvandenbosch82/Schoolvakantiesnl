@@ -515,7 +515,9 @@ def blog_detail(request, slug):
     others = list(BlogArtikel.objects.filter(active=True).exclude(categorie=post.categorie).exclude(pk=post.pk))
     related = (same + others)[:3]
     url = _page_url(request)
+    from .models import Expert
     ctx = {"post": post, "related": related,
+           "experts": Expert.objects.filter(active=True).order_by("order"),
            "seo_title": f"{post.titel} | Schoolvakanties.nl",
            "seo_description": post.excerpt,
            "og_image": f"{settings.SITE_ORIGIN}/static/img/blog/{post.slug}.jpg",
@@ -827,8 +829,10 @@ def land_detail(request, slug):
                  "DE": "OpenHolidays (KMK)",
                  "NO": "Nager.Date", "DK": "Nager.Date", "FI": "Nager.Date",
                  "GB": "Nager.Date", "GR": "Nager.Date"}.get(land.iso_code, "OpenHolidays")
+    from .models import Expert
     return render(request, "pages/land.html", {
         "land": land, "regios": regios, "deel_label": deel_label, "bron_kort": bron_kort,
+        "experts": Expert.objects.filter(active=True).order_by("order"),
         "regio_feest_aantal": regio_feest_aantal,
         "jaar": jaar, "beschikbare_jaren": beschikbare_jaren,
         "nl_regio_overzicht": ([{"naam": r.naam, "uitleg": r.uitleg,
