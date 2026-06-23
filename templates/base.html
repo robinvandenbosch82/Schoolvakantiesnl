@@ -1,4 +1,4 @@
-{% load static %}<!doctype html>
+{% load static cms %}<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8">
@@ -24,11 +24,8 @@
         onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"></noscript>
 
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=10">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=10">
-  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=10">
-  <link rel="stylesheet" href="{% static 'css/header.css' %}?v=10">
-  <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=10">
+  {# Core-CSS inline om render-blocking netwerkverzoeken te vermijden (trage origin). #}
+  {% inline_core_css %}
   {% block head_js %}{% endblock %}
   {% block extra_css %}{% endblock %}
   <style>/* hidden-attribuut leidend maken boven de .mega/.mobnav display-regels uit header.css */
