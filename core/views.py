@@ -900,10 +900,18 @@ def land_detail(request, slug):
         nl_vert = _vakantie_nl(naam) if land.iso_code != "NL" else ""
         if nl_vert and nl_vert == naam.lower():
             nl_vert = ""
+        # Samenvatting voor het compacte overzichtsblok (featured-snippet-bait):
+        # de overspannende periode (vroegste start – laatste eind) over alle regio's,
+        # met een 'spreiding'-vlag als de data per regio verschillen.
+        starts = [v.start_datum for v in entries]
+        ends = [v.eind_datum or v.start_datum for v in entries]
+        ranges = {(v.start_datum, v.eind_datum) for v in entries}
         period_list.append({
             "naam": naam, "nl_naam": nl_vert, "alias": first.alias, "status": first.status,
             "note": first.note, "rows": rows,
             "verplicht": "verplicht" in (first.status or "").lower(),
+            "samenvatting": _periode_str(min(starts), max(ends)),
+            "gespreid": len(ranges) > 1,
         })
 
     # Feestdagen (officieel) met NL-weergave. Alléén LANDELIJKE feestdagen, de

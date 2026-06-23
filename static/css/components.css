@@ -376,6 +376,17 @@
 .kern-tabel th{ width:42%; color:var(--ink-2); font-weight:600; background:var(--paper-2); }
 .kern-tabel td{ color:var(--ink); font-weight:600; }
 
+/* compact vakantie-overzicht (featured-snippet-bait, boven de detailtabellen) */
+.vak-overzicht{ width:100%; max-width:680px; border-collapse:collapse; font-size:15px; margin:0 0 26px;
+  background:var(--paper); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+.vak-overzicht th, .vak-overzicht td{ text-align:left; padding:11px 16px; border-bottom:1px solid var(--line); }
+.vak-overzicht tbody tr:last-child td{ border-bottom:0; }
+.vak-overzicht thead th{ background:var(--paper-2); color:var(--ink-2); font-weight:700; font-size:13px; }
+.vak-overzicht td:first-child{ font-weight:600; color:var(--ink); }
+.vak-overzicht td:last-child{ color:var(--ink-2); }
+.vo-tag{ display:inline-block; margin-left:6px; font-size:11.5px; font-weight:600; padding:2px 8px;
+  border-radius:999px; background:var(--accent-soft); color:var(--accent-ink); white-space:nowrap; }
+
 /* interne links naar andere landen */
 .land-links{ display:flex; flex-wrap:wrap; gap:9px; }
 .land-link{ display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600;

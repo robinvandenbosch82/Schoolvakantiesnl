@@ -105,6 +105,19 @@
       <div><span class="eye">Alle schoolvakanties {{ jaar }}</span><h2 style="margin-top:8px">Schoolvakanties {{ land.naam }} {{ jaar }}</h2></div>
       <p>Per {{ deel_label|lower }} de exacte periode en weeknummers.</p>
     </div>
+    {# COMPACT OVERZICHT (featured-snippet-bait) #}
+    <table class="vak-overzicht">
+      <caption class="sr-only">Overzicht schoolvakanties {{ land.naam }} {{ jaar }}</caption>
+      <thead><tr><th>Schoolvakantie</th><th>Periode {{ jaar }}</th></tr></thead>
+      <tbody>
+        {% for p in periods %}
+        <tr>
+          <td>{{ p.naam }}{% if p.nl_naam %} <span class="vak-nl">· {{ p.nl_naam }}</span>{% endif %}</td>
+          <td>{{ p.samenvatting }}{% if p.gespreid %} <span class="vo-tag">spreiding per {{ deel_label|lower }}</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     {% if land.iso_code == 'FR' %}
     <div class="fr-zones-intro">
       <p>Frankrijk spreidt de vakanties over drie <strong>zones</strong> (A, B en C) plus Corsica, om de drukte op de weg en bij de wintersport te spreiden. Welke zone voor jou geldt, hangt af van de <strong>région</strong> waar je heen gaat:</p>
