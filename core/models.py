@@ -293,6 +293,9 @@ class BlogArtikel(PhotoMixin):
     datum = models.CharField("Datum (weergave)", max_length=40, blank=True)
     author = models.ForeignKey("Expert", verbose_name="Auteur", on_delete=models.SET_NULL,
                                null=True, blank=True, related_name="+")
+    reviewer = models.ForeignKey("Expert", verbose_name="Gecontroleerd door", on_delete=models.SET_NULL,
+                                 null=True, blank=True, related_name="+",
+                                 help_text="Toont de 'Gecontroleerd door … · bijgewerkt' regel in de byline.")
     excerpt = models.TextField("Samenvatting", blank=True)
     body_html = models.TextField("Inhoud (HTML)", blank=True)
     toc = models.JSONField("Inhoudsopgave", default=list, blank=True)

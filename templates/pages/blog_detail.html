@@ -12,9 +12,9 @@
     <span class="cat-chip cat-{{ post.categorie|lower|cut:' '|cut:'&' }}">{{ post.categorie }}</span>
     <h1>{{ post.titel }}</h1>
     <div class="post-meta">
-      {% if post.author %}<span>{{ post.author.name }}{% if post.author.role %} · {{ post.author.role }}{% endif %}</span><span>·</span>{% endif %}
       <span>{{ post.datum }}</span><span>·</span><span>{{ post.leestijd }}</span>
     </div>
+    {% include "partials/byline.html" with author=post.author reviewer=post.reviewer bijgewerkt=post.datum %}
   </header>
 
   <div class="art-hero"><img src="{% if post.get_photo_url %}{{ post.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ post.slug }}.jpg{% endif %}" alt="{{ post.titel }}"></div>
@@ -32,15 +32,6 @@
         </div>
       </div>
 
-      {% if post.author %}
-      <div class="widget" style="display:flex;gap:16px;align-items:flex-start;margin-top:8px">
-        <div class="ml-flag" style="font-size:30px">{% if post.author.mono %}<span class="mono" style="display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:var(--accent-soft);color:var(--accent-ink);font-weight:800">{{ post.author.mono }}</span>{% endif %}</div>
-        <div>
-          <strong>{{ post.author.name }}</strong> · <span style="color:var(--ink-3)">{{ post.author.role }}</span>
-          {% if post.author.bio %}<p style="color:var(--ink-2);font-size:14px;margin-top:6px">{{ post.author.bio }}</p>{% endif %}
-        </div>
-      </div>
-      {% endif %}
     </article>
 
     <aside class="art-side">
@@ -53,8 +44,6 @@
       {% include "partials/blog_sidebar.html" %}
     </aside>
   </div>
-
-  {% include "partials/eeat.html" %}
 
   {% if related %}
   <section class="related">

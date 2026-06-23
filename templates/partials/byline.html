@@ -1,0 +1,22 @@
+{# Compacte E-E-A-T byline: auteur + controle. Verwacht: author, reviewer, bijgewerkt. #}
+{% if author or reviewer %}
+{% with av=author|default:reviewer %}
+<div class="eeat-byline">
+  {% if av.get_photo_url %}
+    <img class="eeat-av" style="width:46px;height:46px;object-fit:cover" src="{{ av.get_photo_url }}" alt="{{ av.get_photo_alt|default:av.name }}">
+  {% else %}
+    <span class="eeat-av" style="width:46px;height:46px;font-size:15px" aria-hidden="true">{{ av.mono }}</span>
+  {% endif %}
+  <div class="eeat-byline-txt">
+    {% if author %}
+      <span class="eeat-by-name">Geschreven door <a href="/over-ons/#person-{{ author.slug }}"><strong>{{ author.name }}</strong></a>{% if author.kort or author.role %} · {{ author.kort|default:author.role }}{% endif %}</span>
+    {% endif %}
+    {% if reviewer %}
+      <span class="eeat-by-check"><span class="eeat-check" aria-hidden="true">✓</span> Gecontroleerd door <strong>{{ reviewer.name }}</strong>{% if bijgewerkt %} · bijgewerkt {{ bijgewerkt }}{% endif %}</span>
+    {% elif bijgewerkt %}
+      <span class="eeat-by-meta">Bijgewerkt {{ bijgewerkt }}</span>
+    {% endif %}
+  </div>
+</div>
+{% endwith %}
+{% endif %}

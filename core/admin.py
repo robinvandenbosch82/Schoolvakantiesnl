@@ -144,11 +144,11 @@ class ExpertAdmin(PexelsPhotoMixin, admin.ModelAdmin):
 
 @admin.register(BlogArtikel)
 class BlogArtikelAdmin(PexelsPhotoMixin, admin.ModelAdmin):
-    list_display = ("titel", "categorie", "author", "datum", "featured", "order", "active")
+    list_display = ("titel", "categorie", "author", "reviewer", "datum", "featured", "order", "active")
     list_editable = ("featured", "order", "active")
     prepopulated_fields = {"slug": ("titel",)}
     search_fields = ("titel", "excerpt")
-    autocomplete_fields = ("author",)
+    autocomplete_fields = ("author", "reviewer")
     filter_horizontal = ("landen",)
     list_filter = ("categorie", "featured", "active", "landen")
     readonly_fields = ("pexels_widget",)

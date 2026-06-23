@@ -17,7 +17,7 @@ import sys
 
 from django.core.management.base import BaseCommand
 
-from core.models import (Bestemming, Expert, Faq, Feestdag, Land,
+from core.models import (Bestemming, BlogArtikel, Expert, Faq, Feestdag, Land,
                          Reisweek, SectieTekst, WeerMaand)
 
 MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
@@ -278,8 +278,27 @@ class Command(BaseCommand):
         self._seed_faq()
         self._seed_secties()
         # De blog wordt NIET geseed: de echte artikelen komen uit de WordPress-
-        # export via `manage.py import_wp_blog`.
+        # export via `manage.py import_wp_blog`. We kennen wel auteur + reviewer toe.
+        self._seed_blog_redactie()
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
+
+    def _seed_blog_redactie(self):
+        """Verdeel auteur + reviewer over de experts voor de E-E-A-T byline.
+
+        Deterministisch op slug (zodat re-runs stabiel zijn) en alleen voor
+        artikelen zonder auteur, zodat handmatige toewijzingen in de admin
+        blijven staan."""
+        experts = list(Expert.objects.filter(active=True).order_by("order"))
+        if len(experts) < 1:
+            return
+        n = 0
+        artikelen = BlogArtikel.objects.filter(author__isnull=True).order_by("slug")
+        for i, art in enumerate(artikelen):
+            art.author = experts[i % len(experts)]
+            art.reviewer = experts[(i + 1) % len(experts)]
+            art.save(update_fields=["author", "reviewer"])
+            n += 1
+        self.stdout.write(f"Blog-redactie toegekend aan {n} artikel(en).")
 
     def _seed_secties(self):
         n = 0
