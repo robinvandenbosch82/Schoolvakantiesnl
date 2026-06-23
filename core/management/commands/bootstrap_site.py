@@ -51,6 +51,11 @@ class Command(BaseCommand):
         except Exception as exc:  # noqa: BLE001
             self.stderr.write(self.style.WARNING(f"Blogimport overgeslagen: {exc}."))
 
+        # 3b) Byline-redactie: zeker stellen dat élk artikel een auteur + reviewer
+        #     heeft. De seed (stap 2) draait vóór de blog bestaat en de import
+        #     dekt alleen de WXR-export; dit vangt al het overige op.
+        self._assign_blog_redactie()
+
         # 4) Page-rijen synchroniseren met de routing-registry.
         call_command("sync_pages")
 
@@ -58,6 +63,23 @@ class Command(BaseCommand):
         self._ensure_superuser()
 
         self.stdout.write(self.style.SUCCESS("bootstrap_site klaar."))
+
+    def _assign_blog_redactie(self):
+        """Ken auteur + reviewer toe aan elk artikel zonder auteur (deterministisch
+        op slug). Idempotent: laat handmatige toewijzingen in de admin staan."""
+        from core.models import BlogArtikel, Expert
+
+        experts = list(Expert.objects.filter(active=True).order_by("order"))
+        if not experts:
+            return
+        n = 0
+        for i, art in enumerate(BlogArtikel.objects.filter(author__isnull=True).order_by("slug")):
+            art.author = experts[i % len(experts)]
+            art.reviewer = experts[(i + 1) % len(experts)]
+            art.save(update_fields=["author", "reviewer"])
+            n += 1
+        if n:
+            self.stdout.write(f"Byline-redactie toegekend aan {n} resterend artikel(en).")
 
     def _ensure_superuser(self):
         from django.contrib.auth import get_user_model

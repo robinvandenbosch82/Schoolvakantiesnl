@@ -104,6 +104,14 @@ class Command(BaseCommand):
         land_by_naam = {l.naam.lower(): l for l in Land.objects.all()
                         if l.naam.lower() != "nederland"}
 
+        # Redactie voor de E-E-A-T byline: auteur + reviewer over de experts
+        # verdelen. Cruciaal: de blog wordt na de seed geïmporteerd, dus de
+        # auteur móét hier worden gezet (anders blijft de byline op een verse
+        # deploy leeg). We zetten 'm alleen als die nog niet bestaat, zodat een
+        # handmatige toewijzing in de admin bij her-import blijft staan.
+        from core.models import Expert
+        experts = list(Expert.objects.filter(active=True).order_by("order"))
+
         gemaakt = bijgewerkt = 0
         for order, it in enumerate(posts):
             titel = _geen_streepjes((it.findtext("title") or "").strip())
@@ -144,6 +152,12 @@ class Command(BaseCommand):
                     "order": order,
                 },
             )
+            # Byline-redactie toekennen als die nog ontbreekt.
+            if experts and not obj.author_id:
+                obj.author = experts[order % len(experts)]
+                obj.reviewer = experts[(order + 1) % len(experts)]
+                obj.save(update_fields=["author", "reviewer"])
+
             # Koppel aan landen waarvan de naam in de titel voorkomt.
             obj.landen.clear()
             for naam, land in land_by_naam.items():
