@@ -31,21 +31,30 @@ def env_bool(name: str, default: str = "False") -> bool:
 # ──────────────────────────────────────────────────────────────────────────
 DEBUG = env_bool("DEBUG", "False")
 
-# In lokale ontwikkeling mag er een wegwerp-sleutel zijn zodat het project meteen
-# draait. Op een hostingplatform (Railway/Render) is een echte SECRET_KEY ALTIJD
-# verplicht — ook als DEBUG per ongeluk aanstaat. Anders zou productie draaien met
-# een bekende sleutel (sessie-/CSRF-vervalsing) én zichtbare debug-foutpagina's.
+# SECRET_KEY-beleid (combineert build-vriendelijk + veilig op runtime):
+#  - lokale dev (geen platform): wegwerp-key, draait out-of-the-box.
+#  - build/release-commando's (collectstatic/migrate/check): placeholder mag —
+#    die hebben geen runtime-secret nodig, zo slaagt de build zonder env-vars.
+#  - runtime (gunicorn) in productie: de ECHTE key is VERPLICHT. Ontbreekt hij,
+#    dan faalt de start hard i.p.v. te draaien met een bekende sleutel (anders
+#    is sessie-/CSRF-vervalsing mogelijk).
 SECRET_KEY = os.getenv("SECRET_KEY", "")
 _ON_PLATFORM = any(os.getenv(k) for k in (
     "RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "RAILWAY_SERVICE_ID", "RENDER", "DYNO"))
+_BUILD_CMDS = {"collectstatic", "makemigrations", "migrate", "check",
+               "bootstrap_site", "import_alles", "test"}
+_is_build_cmd = any(c in sys.argv for c in _BUILD_CMDS)
 if not SECRET_KEY:
     if DEBUG and not _ON_PLATFORM:
         SECRET_KEY = "dev-insecure-key-do-not-use-in-production"
+    elif _is_build_cmd:
+        SECRET_KEY = "build-time-placeholder-not-used-at-runtime"
     else:
         raise RuntimeError(
-            "SECRET_KEY environment variable is required (zet ook DEBUG=False in productie).")
+            "SECRET_KEY ontbreekt op runtime — zet 'm in de platform-Variables "
+            "(en zet DEBUG=False in productie).")
 
-# Extra vangnet: DEBUG hoort NOOIT aan te staan op een hostingplatform.
+# Vangnet: DEBUG hoort NOOIT aan te staan op een hostingplatform.
 if DEBUG and _ON_PLATFORM:
     import warnings
     warnings.warn("DEBUG staat AAN op een hostingplatform — zet DEBUG=False in productie!")
