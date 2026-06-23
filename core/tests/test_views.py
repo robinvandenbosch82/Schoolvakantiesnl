@@ -65,6 +65,22 @@ class PageRenderTests(TestCase):
         self.assertContains(resp, '"@type": "FAQPage"')
         self.assertContains(resp, "Vragen over schoolvakanties in Nederland")
 
+    def test_heading_order(self):
+        """Elke pagina heeft precies één h1 en slaat geen heading-niveau over
+        (a11y / SEO). Beschermt tegen regressies in de heading-hiërarchie."""
+        import re
+        routes = ["/", "/planner/", "/druktekaart/", "/blog/", "/over-ons/",
+                  "/samenwerken/", "/landen/", "/landen/nederland/", "/blog/testpost/"]
+        for r in routes:
+            html = self.client.get(r).content.decode()
+            levels = [int(m.group(1)) for m in re.finditer(r"<h([1-6])\b", html)]
+            self.assertEqual(levels.count(1), 1, f"{r}: verwacht precies één h1, kreeg {levels.count(1)}")
+            prev = 0
+            for lv in levels:
+                if prev:
+                    self.assertLessEqual(lv, prev + 1, f"{r}: heading-sprong h{prev}->h{lv} in {levels}")
+                prev = lv
+
     def test_land_binnenkort(self):
         # 'duitsland' staat in de landenlijst maar niet als actief Land in de test-DB
         # -> nette binnenkort-pagina (200), geen 404.

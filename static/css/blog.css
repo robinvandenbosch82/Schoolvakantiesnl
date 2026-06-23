@@ -48,9 +48,9 @@
 /* ---------- sidebar widgets ---------- */
 .blog-side, .art-side { display:flex; flex-direction:column; gap:18px; position:sticky; top:84px; }
 .widget { background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:20px 22px; box-shadow:var(--shadow-sm); }
-.widget h4 { font-size:15px; letter-spacing:-0.01em; margin-bottom:12px; }
+.widget h2 { font-size:15px; letter-spacing:-0.01em; margin-bottom:12px; }
 .widget-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.widget-head h4 { margin:0; }
+.widget-head h2 { margin:0; }
 .live-dot { width:9px; height:9px; border-radius:99px; background:var(--rustig); box-shadow:0 0 0 3px var(--rustig-soft); animation:pulse 2s infinite; }
 .widget-link { display:inline-block; margin-top:12px; background:none; border:none; color:var(--accent); font-weight:700; font-size:13.5px; padding:0; }
 

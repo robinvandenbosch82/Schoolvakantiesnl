@@ -1,7 +1,7 @@
 {# Blog-sidebar widgets. Verwacht: best_week, komend in de context. #}
 {% if best_week %}
 <div class="widget reisweek">
-  <h4>Slimste reisweek nu</h4>
+  <h2>Slimste reisweek nu</h2>
   <div class="rw-body">
     <div class="ring is-{{ best_week.band }}" style="width:92px;height:92px;flex:0 0 92px;position:relative;display:grid;place-items:center;border:7px solid var(--c-soft);border-radius:50%">
       <span class="mono" style="font-size:30px;font-weight:800;color:var(--c-ink)">{{ best_week.slim_score }}</span>
@@ -17,7 +17,7 @@
 {% endif %}
 
 <div class="widget countdown">
-  <div class="widget-head"><h4>Aankomende vakanties</h4><span class="live-dot" title="Live via OpenHolidays"></span></div>
+  <div class="widget-head"><h2>Aankomende vakanties</h2><span class="live-dot" title="Live via OpenHolidays"></span></div>
   {% if komend %}
     <ul class="cd-list">
       {% for it in komend %}<li><span class="cd-naam">{{ it.naam }}</span><span class="cd-dagen mono">{{ it.dagen }} dagen</span></li>{% endfor %}
@@ -27,7 +27,7 @@
 </div>
 
 <div class="widget nieuwsbrief">
-  <h4>📬 Slim-weg nieuwsbrief</h4>
+  <h2>📬 Slim-weg nieuwsbrief</h2>
   <p>Elke maand de slimste reisweken en rustige bestemmingen in je inbox.</p>
   <form data-newsletter onsubmit="return false">
     <input type="email" placeholder="jouw@email.nl" required>
