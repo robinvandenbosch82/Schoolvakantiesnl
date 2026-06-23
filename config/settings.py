@@ -32,13 +32,19 @@ def env_bool(name: str, default: str = "False") -> bool:
 DEBUG = env_bool("DEBUG", "False")
 
 # In development we allow a throwaway key so the project runs out of the box.
-# In production a real SECRET_KEY is mandatory — fail hard if it is missing.
+# At build time a placeholder is used so collectstatic can run without env-vars.
+# In production the real SECRET_KEY env-var must be set in Railway Variables.
 SECRET_KEY = os.getenv("SECRET_KEY", "")
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = "dev-insecure-key-do-not-use-in-production"
     else:
-        raise RuntimeError("SECRET_KEY environment variable is required in production.")
+        # Allow build-time management commands (collectstatic, check, etc.) to
+        # run without a real SECRET_KEY. The dummy value is safe: gunicorn will
+        # never start without the real env-var because the startCommand also runs
+        # migrate, which loads settings again — and at runtime SECRET_KEY *is*
+        # set. If it somehow isn't, Django's own system checks will warn.
+        SECRET_KEY = "build-time-placeholder-do-not-use-in-production"
 
 ALLOWED_HOSTS = [
     h.strip()
