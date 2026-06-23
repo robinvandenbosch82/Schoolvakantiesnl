@@ -11,6 +11,7 @@ van de XSS-/clickjacking-/injectie-oppervlakte zonder de SSR-opzet te breken.
 Configureerbaar via env: CSP_ENABLED (default aan), CSP_REPORT_ONLY (default uit).
 """
 import os
+from django.http import HttpResponsePermanentRedirect
 
 # Externe bronnen die de pagina's nodig hebben (alleen Google Fonts).
 _CSP = "; ".join([
@@ -36,6 +37,22 @@ def _enabled(name, default):
     return os.getenv(name, default).strip().lower() in ("1", "true", "yes", "on")
 
 
+class ApexToWwwRedirectMiddleware:
+    """Redirect schoolvakanties.nl (apex) to www.schoolvakanties.nl."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.get_host().startswith("schoolvakanties.nl"):
+            # Redirect apex domain to www
+            new_url = request.build_absolute_uri().replace(
+                "://schoolvakanties.nl", "://www.schoolvakanties.nl", 1
+            )
+            return HttpResponsePermanentRedirect(new_url)
+        return self.get_response(request)
+
+
 class SecurityHeadersMiddleware:
     """Zet CSP + Permissions-Policy op elke response (idempotent: overschrijft niet
     als er al expliciet een is gezet, bv. door een specifieke view)."""
@@ -54,3 +71,4 @@ class SecurityHeadersMiddleware:
             response[self.header] = _CSP
         response.setdefault("Permissions-Policy", _PERMISSIONS)
         return response
+
