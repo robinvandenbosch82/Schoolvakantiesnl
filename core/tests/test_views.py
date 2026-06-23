@@ -15,7 +15,8 @@ class PageRenderTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         _seed_weeks()
-        Land.objects.create(iso_code="NL", naam="Nederland", slug="nederland", actief=True)
+        Land.objects.create(iso_code="NL", naam="Nederland", slug="nederland", actief=True,
+                            weer_beste="Mei, juni en september: zacht en relatief droog.")
         BlogArtikel.objects.create(titel="Testpost", slug="testpost", active=True,
                                    body_html="<p>Hoi</p>", excerpt="Korte intro")
 
@@ -50,6 +51,19 @@ class PageRenderTests(TestCase):
 
     def test_land_live(self):
         self.assertChrome(self.client.get("/landen/nederland/"))
+
+    def test_land_seo(self):
+        """Landpagina: keyword-H1, kerngegevens-tabel en verrijkte JSON-LD
+        (WebPage + BreadcrumbList + FAQPage uit de afgeleide FAQ)."""
+        resp = self.client.get("/landen/nederland/")
+        self.assertContains(resp, "<h1>Schoolvakanties Nederland 2026</h1>")
+        self.assertContains(resp, 'class="kern-tabel"')
+        self.assertContains(resp, '"@type": "WebPage"')
+        self.assertContains(resp, '"@type": "BreadcrumbList"')
+        # Zonder admin-FAQ levert de afgeleide FAQ (o.a. beste reistijd) tóch een
+        # zichtbare FAQ-sectie + FAQPage-schema.
+        self.assertContains(resp, '"@type": "FAQPage"')
+        self.assertContains(resp, "Vragen over schoolvakanties in Nederland")
 
     def test_land_binnenkort(self):
         # 'duitsland' staat in de landenlijst maar niet als actief Land in de test-DB

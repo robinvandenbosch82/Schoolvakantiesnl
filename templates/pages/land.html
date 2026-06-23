@@ -76,13 +76,27 @@
     <div class="land-hero-main">
       <span class="land-flag">{{ land.vlag }}</span>
       <div>
-        <span class="eye">Schoolvakanties &amp; vrije dagen · {{ jaar }}</span>
-        <h1>{{ land.naam }}</h1>
+        <span class="eye">Vakantiekalender · officiële bronnen</span>
+        <h1>Schoolvakanties {{ land.naam }} {{ jaar }}</h1>
         {% if land.intro %}<p class="land-sub">{{ land.intro }}</p>{% else %}<p class="land-sub">Alle schoolvakanties en feestdagen van {{ land.naam }} in {{ jaar }}, overzichtelijk op één plek.</p>{% endif %}
         {% if vooruitblik %}<p class="vooruitblik">📅 Eerstvolgende vakantie in {{ land.naam }}: <strong>{{ vooruitblik.naam }}</strong>, nog <strong>{{ vooruitblik.dagen }} dagen</strong>.</p>{% endif %}
       </div>
     </div>
   </div>
+
+  {# KERNGEGEVENS (snippet-bait + directe beantwoording) #}
+  {% if kernfeiten %}
+  <section class="land-block land-kern">
+    <table class="kern-tabel">
+      <caption class="sr-only">Schoolvakanties {{ land.naam }} {{ jaar }} in het kort</caption>
+      <tbody>
+        {% for label, waarde in kernfeiten %}
+        <tr><th scope="row">{{ label }}</th><td>{{ waarde }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
 
   {# SCHOOLVAKANTIES PER PERIODE #}
   {% if periods %}
@@ -269,6 +283,16 @@
   <section class="land-block">
     <div class="section-head"><div><span class="eye">Lees ook</span><h2 style="margin-top:8px">Blog over {{ land.naam }}</h2></div><p><a href="/blog/">Alle artikelen →</a></p></div>
     {% include "partials/blogcards.html" with blogcards=land_blog %}
+  </section>
+  {% endif %}
+
+  {# SCHOOLVAKANTIES ANDERE LANDEN (interne links) #}
+  {% if andere_landen %}
+  <section class="land-block">
+    <div class="section-head"><div><span class="eye">Ook handig</span><h2 style="margin-top:8px">Schoolvakanties in andere landen</h2></div><p><a href="/landen/">Alle landen →</a></p></div>
+    <div class="land-links">
+      {% for a in andere_landen %}<a class="land-link" href="/landen/{{ a.slug }}/" title="Schoolvakanties {{ a.naam }} {{ jaar }}"><span class="ll-flag">{{ a.vlag }}</span>Schoolvakanties {{ a.naam }}</a>{% endfor %}
+    </div>
   </section>
   {% endif %}
 

@@ -36,8 +36,15 @@ def _jsonld(nodes):
 
 
 def _faqpage_node(faqs, url):
-    qs = [{"@type": "Question", "name": f.question,
-           "acceptedAnswer": {"@type": "Answer", "text": f.answer}} for f in faqs]
+    """faqs = queryset van Faq-objecten óf lijst van {question, answer}-dicts."""
+    def _q(f):
+        return f["question"] if isinstance(f, dict) else f.question
+
+    def _a(f):
+        return f["answer"] if isinstance(f, dict) else f.answer
+
+    qs = [{"@type": "Question", "name": _q(f),
+           "acceptedAnswer": {"@type": "Answer", "text": _a(f)}} for f in faqs]
     return {"@type": "FAQPage", "@id": url + "#faq", "mainEntity": qs} if qs else None
 
 
@@ -733,6 +740,75 @@ def context_europe():
     return europe.europe_list(live)
 
 
+def _land_kernfeiten(land, jaar, period_list, feestdagen, regios, deel_label, vooruitblik):
+    """Compacte feiten-tabel: beantwoordt de zoekintentie direct (snippet-bait)."""
+    feiten = []
+    if period_list:
+        feiten.append((f"Schoolvakanties {jaar}", f"{len(period_list)} vakantieperiodes"))
+    feiten.append((f"Officiële feestdagen {jaar}", f"{len(feestdagen)} landelijke vrije dagen"))
+    if land.weer_beste:
+        feiten.append(("Beste reismaanden", land.weer_beste))
+    if regios:
+        eenheid = {"Deelstaat": "deelstaten", "Gemeenschap": "gemeenschappen"}.get(deel_label, "regio's")
+        feiten.append(("Indeling", f"{len(regios)} {eenheid} met (deels) eigen vakanties"))
+    if vooruitblik:
+        feiten.append(("Eerstvolgende vakantie",
+                       f"{vooruitblik['naam']}, over {vooruitblik['dagen']} dagen"))
+    return feiten
+
+
+def _land_faq_auto(land, jaar, period_list, feestdagen, regios, deel_label):
+    """Feitelijke FAQ afgeleid uit de eigen paginadata, zodat élke landpagina een
+    FAQ-sectie + FAQPage-snippet krijgt (niet alleen de handmatig gevulde landen)."""
+    items = []
+    if period_list:
+        namen = ", ".join(p["naam"] for p in period_list)
+        items.append({
+            "question": f"Welke schoolvakanties heeft {land.naam} in {jaar}?",
+            "answer": (f"{land.naam} heeft in {jaar} {len(period_list)} schoolvakantieperiodes: "
+                       f"{namen}. De exacte data en weeknummers staan per {deel_label.lower()} "
+                       f"in het overzicht op deze pagina.")})
+    if feestdagen:
+        eerste = ", ".join(f["naam"] for f in feestdagen[:4])
+        items.append({
+            "question": f"Hoeveel officiële feestdagen heeft {land.naam} in {jaar}?",
+            "answer": (f"{land.naam} telt in {jaar} {len(feestdagen)} landelijke officiële feestdagen, "
+                       f"waaronder {eerste}. Op deze dagen zijn scholen en veel diensten gesloten.")})
+    if land.weer_beste:
+        items.append({
+            "question": f"Wat is de beste reistijd voor {land.naam}?",
+            "answer": f"De beste reismaanden voor {land.naam}: {land.weer_beste}"})
+    if regios and len(regios) > 1:
+        eenheid = {"Deelstaat": "deelstaat", "Gemeenschap": "gemeenschap"}.get(deel_label, "regio")
+        items.append({
+            "question": f"Heeft heel {land.naam} tegelijk schoolvakantie?",
+            "answer": (f"Niet altijd: {land.naam} is verdeeld in {len(regios)} {eenheid}en die hun "
+                       f"schoolvakanties (deels) zelf bepalen. Vooral de zomervakantie kan per "
+                       f"{eenheid} verschillen, dus check per {eenheid} de exacte data hierboven.")})
+    return items
+
+
+def _land_webpage_node(land, url, jaar, reviewer, beschrijving):
+    """WebPage-node met E-E-A-T-signalen (dateModified, reviewedBy, about-land)."""
+    origin = settings.SITE_ORIGIN
+    node = {
+        "@type": "WebPage", "@id": url + "#webpage", "url": url,
+        "name": f"Schoolvakanties {land.naam} {jaar}",
+        "description": beschrijving, "inLanguage": "nl-NL",
+        "isPartOf": {"@id": f"{origin}/#website"},
+        "breadcrumb": {"@id": url + "#breadcrumb"},
+        "about": {"@type": "Country", "name": land.naam},
+        "publisher": {"@id": f"{origin}/#organization"},
+    }
+    if land.imported_at:
+        iso = land.imported_at.date().isoformat()
+        node["dateModified"] = iso
+        node["lastReviewed"] = iso
+    if reviewer:
+        node["reviewedBy"] = {"@type": "Person", "name": reviewer.name, "jobTitle": reviewer.role}
+    return node
+
+
 def land_detail(request, slug):
     land = Land.objects.filter(slug=slug, actief=True).first()
     if not land:
@@ -883,9 +959,30 @@ def land_detail(request, slug):
                  "NO": "Nager.Date", "DK": "Nager.Date", "FI": "Nager.Date",
                  "GB": "Nager.Date", "GR": "Nager.Date"}.get(land.iso_code, "OpenHolidays")
     from .models import Expert
+    experts = list(Expert.objects.filter(active=True).order_by("order"))
+    reviewer = experts[0] if experts else None
+
+    # FAQ: handmatige (admin) vragen eerst, daarna feitelijke afgeleide vragen,
+    # zodat élke landpagina een FAQ-sectie + FAQPage-snippet heeft.
+    admin_faq = Faq.objects.filter(page_key=f"land-{land.iso_code.lower()}", active=True)
+    faq_items = [{"question": f.question, "answer": f.answer} for f in admin_faq]
+    faq_items += _land_faq_auto(land, jaar, period_list, feestdagen, regios, deel_label)
+
+    kernfeiten = _land_kernfeiten(land, jaar, period_list, feestdagen, regios, deel_label, vooruitblik)
+    andere_landen = list(Land.objects.filter(actief=True).exclude(pk=land.pk).order_by("order", "naam"))
+
+    seo_title = f"Schoolvakanties {land.naam} {jaar} + feestdagen | Schoolvakanties.nl"
+    seo_description = (f"Alle schoolvakanties en officiële feestdagen van {land.naam} in {jaar}, "
+                       f"overzichtelijk per {deel_label.lower()}. Plus de beste reisweken en het weer per maand.")
+
+    url = _page_url(request)
+    breadcrumb = _breadcrumb_node([("Home", "/"), ("Landen", "/landen/"),
+                                   (land.naam, f"/landen/{land.slug}/")])
+    breadcrumb["@id"] = url + "#breadcrumb"
+
     return render(request, "pages/land.html", {
         "land": land, "regios": regios, "deel_label": deel_label, "bron_kort": bron_kort,
-        "experts": Expert.objects.filter(active=True).order_by("order"),
+        "experts": experts,
         "regio_feest_aantal": regio_feest_aantal,
         "jaar": jaar, "beschikbare_jaren": beschikbare_jaren,
         "nl_regio_overzicht": ([{"naam": r.naam, "uitleg": r.uitleg,
@@ -893,18 +990,17 @@ def land_detail(request, slug):
                                if land.iso_code == "NL" else None),
         "periods": period_list, "feestdagen": feestdagen, "officieus": officieus,
         "weer_rows": weer_rows, "brw": brw, "brw_max": brw_max, "brw_top": brw_top,
-        "faq": Faq.objects.filter(page_key=f"land-{land.iso_code.lower()}", active=True),
+        "kernfeiten": kernfeiten, "andere_landen": andere_landen,
+        "faq": faq_items,
         "land_blog": BlogArtikel.objects.filter(active=True, landen=land).order_by("order", "-id")[:3],
         "vooruitblik": vooruitblik,
         "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Landen", "url": "/landen/"},
                    {"naam": land.naam, "url": f"/landen/{land.slug}/"}],
         "jsonld": _jsonld([
-            _breadcrumb_node([("Home", "/"), ("Landen", "/landen/"),
-                              (land.naam, f"/landen/{land.slug}/")]),
-            _faqpage_node(Faq.objects.filter(page_key=f"land-{land.iso_code.lower()}", active=True),
-                          _page_url(request)),
+            _land_webpage_node(land, url, jaar, reviewer, seo_description),
+            breadcrumb,
+            _faqpage_node(faq_items, url),
         ]),
-        "seo_title": f"Schoolvakanties {land.naam} {jaar}, data per {deel_label.lower()} | Schoolvakanties.nl",
-        "seo_description": f"Alle schoolvakanties en feestdagen van {land.naam} in {jaar}, "
-                           f"overzichtelijk per {deel_label.lower()}. {land.intro[:90]}",
+        "seo_title": seo_title,
+        "seo_description": seo_description,
     })
