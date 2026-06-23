@@ -195,6 +195,13 @@ STORAGES = {
     },
 }
 
+# Cache-levensduur voor static die NIET gehasht is (content-afbeeldingen die we
+# per slug refereren, bv. /static/img/dest/<slug>.jpg en /static/img/blog/...).
+# Gehashte assets (CSS/JS via de manifest-storage) krijgen sowieso 1 jaar +
+# immutable; deze instelling raakt alleen de plain-path bestanden. WhiteNoise
+# default is 60s — dat kostte herhaalbezoekers onnodige downloads (PageSpeed).
+WHITENOISE_MAX_AGE = 2592000  # 30 dagen
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

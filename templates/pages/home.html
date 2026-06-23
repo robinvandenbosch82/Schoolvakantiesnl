@@ -112,7 +112,7 @@
       </svg>
       <div class="wkslider">
         <span class="wknow" id="mapWkLabel">WK {{ default_week.wk }} · {{ default_week.d1 }}</span>
-        <input type="range" min="0" max="{{ weeks|length|add:'-1' }}" value="{{ default_idx }}" id="mapSlider">
+        <input type="range" min="0" max="{{ weeks|length|add:'-1' }}" value="{{ default_idx }}" id="mapSlider" aria-label="Kies een reisweek om de drukte per land te zien">
       </div>
     </div>
     <div class="map-side">
@@ -146,7 +146,7 @@
       <article class="dest">
         <a href="{% if d.land %}/landen/{{ d.land.slug }}/{% else %}/landen/{% endif %}">
         <div class="dest-img">
-          <img src="{% if d.get_photo_url %}{{ d.get_photo_url }}{% else %}{% static 'img/dest/' %}{{ d.slug }}.jpg{% endif %}" alt="{{ d.get_photo_alt }}" loading="lazy">
+          <img src="{% if d.get_photo_url %}{{ d.get_photo_url }}{% else %}{% static 'img/dest/' %}{{ d.slug }}.jpg{% endif %}" alt="{{ d.get_photo_alt }}" loading="lazy" decoding="async" width="800" height="500">
           <div class="dest-badge {% if d.slim_score >= 70 %}is-rustig{% elif d.slim_score >= 45 %}is-matig{% else %}is-druk{% endif %}">
             <span class="bdot" style="background:var(--c)">{{ d.slim_score }}</span>
             <span class="blab">Slim-score</span>
