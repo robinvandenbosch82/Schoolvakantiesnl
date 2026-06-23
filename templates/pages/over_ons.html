@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cms %}
 
 {% block reviewbar %}{% endblock %}
 
@@ -6,8 +7,8 @@
 <div class="page overons">
   <header class="oo-hero">
     <span class="eye">Over ons</span>
-    <h1>De mensen achter Schoolvakanties.nl</h1>
-    <p class="lead">Sinds 2009 helpen we Nederlandse gezinnen om slim weg te gaan. Geen overgenomen lijstjes, maar officiële data, een vaste redactie en een drukte-model dat we zelf bouwden en onderhouden.</p>
+    <h1>{% stekst "over_ons" "hero_kop" %}De mensen achter Schoolvakanties.nl{% endstekst %}</h1>
+    <p class="lead">{% stekst "over_ons" "hero_lead" %}Sinds 2009 helpen we Nederlandse gezinnen om slim weg te gaan. Geen overgenomen lijstjes, maar officiële data, een vaste redactie en een drukte-model dat we zelf bouwden en onderhouden.{% endstekst %}</p>
     <div class="oo-trust">
       <div class="oo-trust-it"><strong>Sinds 2009</strong><span>actief &amp; onafhankelijk</span></div>
       <div class="oo-trust-it"><strong>1 op 3</strong><span>NL gezinnen gebruikt ons</span></div>
@@ -17,12 +18,12 @@
   </header>
 
   <section class="land-block oo-missie">
-    <div class="section-head"><div><span class="eye">Onze missie</span><h2 style="margin-top:8px">Vakantieplannen zonder gedoe, en zonder verrassingen</h2></div></div>
-    <p class="oo-body">Schoolvakanties verschillen per regio, per land en per jaar. Dat maakt plannen lastig en drukte onvoorspelbaar. Wij brengen alle officiële data samen op één plek en vertalen die naar concreet advies: wanneer is het rustig, waar is het betaalbaar, en welke week past bij jouw gezin. Onafhankelijk, transparant en altijd herleidbaar naar de bron.</p>
+    <div class="section-head"><div><span class="eye">Onze missie</span><h2 style="margin-top:8px">{% stekst "over_ons" "missie_kop" %}Vakantieplannen zonder gedoe, en zonder verrassingen{% endstekst %}</h2></div></div>
+    <p class="oo-body">{% stekst "over_ons" "missie_tekst" %}Schoolvakanties verschillen per regio, per land en per jaar. Dat maakt plannen lastig en drukte onvoorspelbaar. Wij brengen alle officiële data samen op één plek en vertalen die naar concreet advies: wanneer is het rustig, waar is het betaalbaar, en welke week past bij jouw gezin. Onafhankelijk, transparant en altijd herleidbaar naar de bron.{% endstekst %}</p>
   </section>
 
   <section class="land-block">
-    <div class="section-head"><div><span class="eye">Onze redactie</span><h2 style="margin-top:8px">Wie schrijft en controleert</h2></div><p>Het team van Travel Nerds, het huis achter o.a. Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl.</p></div>
+    <div class="section-head"><div><span class="eye">Onze redactie</span><h2 style="margin-top:8px">{% stekst "over_ons" "redactie_kop" %}Wie schrijft en controleert{% endstekst %}</h2></div><p>{% stekst "over_ons" "redactie_intro" %}Het team van Travel Nerds, het huis achter o.a. Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl.{% endstekst %}</p></div>
     <div class="oo-team">
       {% for e in experts %}
         <article class="oo-expert">

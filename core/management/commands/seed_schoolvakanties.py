@@ -18,7 +18,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from core.models import (Bestemming, Expert, Faq, Feestdag, Land,
-                         Reisweek, WeerMaand)
+                         Reisweek, SectieTekst, WeerMaand)
 
 MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
             "jul": 7, "aug": 8, "sep": 9, "okt": 10, "nov": 11, "dec": 12}
@@ -233,6 +233,32 @@ EXPERTS = [
 ]
 
 
+# ── Bewerkbare paginacopy (SectieTekst) ─────────────────────────────────────
+# (pagina, sleutel, omschrijving, tekst). De template toont deze tekst via
+# {% stekst pagina sleutel %}; in de admin (Sectieteksten) kan de redactie 'm
+# aanpassen. Niet-klobberend: een herhaalde seed overschrijft geen admin-edits.
+SECTIES = [
+    ("home", "hero_eye", "Home, hero bovenkop", "Slimme reisplanner voor gezinnen"),
+    ("home", "hero_lead", "Home, hero intro",
+     "Kies je bestemming en maand, wij tonen meteen de slimste weken om met de kinderen op pad te gaan. Drukte, prijs, weer en schoolvakanties, in één score."),
+    ("over_ons", "hero_kop", "Over ons, titel", "De mensen achter Schoolvakanties.nl"),
+    ("over_ons", "hero_lead", "Over ons, intro",
+     "Sinds 2009 helpen we Nederlandse gezinnen om slim weg te gaan. Geen overgenomen lijstjes, maar officiële data, een vaste redactie en een drukte-model dat we zelf bouwden en onderhouden."),
+    ("over_ons", "missie_kop", "Over ons, missie-kop", "Vakantieplannen zonder gedoe, en zonder verrassingen"),
+    ("over_ons", "missie_tekst", "Over ons, missie-tekst",
+     "Schoolvakanties verschillen per regio, per land en per jaar. Dat maakt plannen lastig en drukte onvoorspelbaar. Wij brengen alle officiële data samen op één plek en vertalen die naar concreet advies: wanneer is het rustig, waar is het betaalbaar, en welke week past bij jouw gezin. Onafhankelijk, transparant en altijd herleidbaar naar de bron."),
+    ("over_ons", "redactie_kop", "Over ons, redactie-kop", "Wie schrijft en controleert"),
+    ("over_ons", "redactie_intro", "Over ons, redactie-intro",
+     "Het team van Travel Nerds, het huis achter o.a. Vliegtickets.com, Vakantiewoningen.nl en Cruises.nl."),
+    ("samenwerken", "hero_kop", "Samenwerken, titel", "Bereik gezinnen op het moment dat ze hun vakantie plannen"),
+    ("samenwerken", "hero_lead", "Samenwerken, intro",
+     "Schoolvakanties.nl is voor veel Nederlandse ouders het startpunt van elke reisplanning. Of je nu reisbureau, hotel, creator of merk bent, er is volop ruimte om samen te werken."),
+    ("samenwerken", "contact_kop", "Samenwerken, contact-kop", "Laten we kennismaken"),
+    ("samenwerken", "contact_tekst", "Samenwerken, contact-tekst",
+     "Vertel kort wat je voor ogen hebt, dan denken we mee over de beste vorm. We reageren doorgaans binnen één werkdag."),
+]
+
+
 class Command(BaseCommand):
     help = "Seed de redactionele schoolvakanties-data (landintro's, weer, bestemmingen, radar, experts)."
 
@@ -250,9 +276,19 @@ class Command(BaseCommand):
         self._seed_bestemmingen()
         self._seed_experts()
         self._seed_faq()
+        self._seed_secties()
         # De blog wordt NIET geseed: de echte artikelen komen uit de WordPress-
         # export via `manage.py import_wp_blog`.
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
+
+    def _seed_secties(self):
+        n = 0
+        for i, (pagina, sleutel, naam, tekst) in enumerate(SECTIES):
+            _, created = SectieTekst.objects.get_or_create(
+                pagina=pagina, sleutel=sleutel,
+                defaults={"naam": naam, "tekst": tekst, "order": i})
+            n += int(created)
+        self.stdout.write(f"Sectieteksten: {n} aangemaakt.")
 
     def _seed_faq(self):
         n = 0

@@ -494,6 +494,10 @@ class MenuItem(models.Model):
 # minimal placeholders; they are expanded per the new design once it lands.
 PAGINA_CHOICES = [
     ("home", "Homepage"),
+    ("over_ons", "Over ons"),
+    ("samenwerken", "Samenwerken"),
+    ("planner", "Vakantieplanner"),
+    ("druktekaart", "Druktekaart"),
 ]
 
 

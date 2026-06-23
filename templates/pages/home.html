@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static cms %}
 
 {% block head_js %}<script src="{% static 'js/europe-geo.js' %}?v=1" defer></script>{% endblock %}
 
@@ -8,9 +8,9 @@
 <section class="page hero">
   <div class="hero-grid">
     <div class="rise">
-      <span class="eye">Slimme reisplanner voor gezinnen</span>
+      <span class="eye">{% stekst "home" "hero_eye" %}Slimme reisplanner voor gezinnen{% endstekst %}</span>
       <h1 style="margin-top:14px">Ga weg wanneer het <span class="accent-word">rustig, betaalbaar en fijn</span> is.</h1>
-      <p class="lead">Kies je bestemming en maand, wij tonen meteen de slimste weken om met de kinderen op pad te gaan. Drukte, prijs, weer en schoolvakanties, in één score.</p>
+      <p class="lead">{% stekst "home" "hero_lead" %}Kies je bestemming en maand, wij tonen meteen de slimste weken om met de kinderen op pad te gaan. Drukte, prijs, weer en schoolvakanties, in één score.{% endstekst %}</p>
 
       <div class="picker">
         <span class="picker-lab">Bestemming</span>

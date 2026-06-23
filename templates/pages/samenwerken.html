@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static cms %}
 
 {% block content %}
 <div class="page samenw">
   <header class="sw-hero">
     <span class="eye">Samenwerken</span>
-    <h1>Bereik gezinnen op het moment dat ze hun vakantie plannen</h1>
-    <p class="lead">Schoolvakanties.nl is voor veel Nederlandse ouders het startpunt van elke reisplanning. Of je nu reisbureau, hotel, creator of merk bent, er is volop ruimte om samen te werken.</p>
+    <h1>{% stekst "samenwerken" "hero_kop" %}Bereik gezinnen op het moment dat ze hun vakantie plannen{% endstekst %}</h1>
+    <p class="lead">{% stekst "samenwerken" "hero_lead" %}Schoolvakanties.nl is voor veel Nederlandse ouders het startpunt van elke reisplanning. Of je nu reisbureau, hotel, creator of merk bent, er is volop ruimte om samen te werken.{% endstekst %}</p>
     <div class="sw-trust">
       <div class="sw-trust-it"><strong>1 op 3</strong><span>NL gezinnen gebruikt ons</span></div>
       <div class="sw-trust-it"><strong>Piekmaanden</strong><span>jan–mrt &amp; mei–jul</span></div>
@@ -103,8 +103,8 @@
     <div class="sw-contact-grid">
       <div class="sw-contact-intro">
         <span class="eye">Neem contact op</span>
-        <h2 style="margin-top:8px">Laten we kennismaken</h2>
-        <p>Vertel kort wat je voor ogen hebt, dan denken we mee over de beste vorm. We reageren doorgaans binnen één werkdag.</p>
+        <h2 style="margin-top:8px">{% stekst "samenwerken" "contact_kop" %}Laten we kennismaken{% endstekst %}</h2>
+        <p>{% stekst "samenwerken" "contact_tekst" %}Vertel kort wat je voor ogen hebt, dan denken we mee over de beste vorm. We reageren doorgaans binnen één werkdag.{% endstekst %}</p>
         <div class="sw-contact-direct">
           <a href="mailto:partners@schoolvakanties.nl"><span class="lbl">Mail</span>partners@schoolvakanties.nl</a>
           <a href="tel:+31302001234"><span class="lbl">Telefoon</span>030 - 200 12 34</a>
