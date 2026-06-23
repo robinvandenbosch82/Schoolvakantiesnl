@@ -45,17 +45,22 @@ def _datum(raw):
         return ""
 
 
+def _geen_streepjes(s):
+    """Gedachtestreepjes (—) vervangen door een komma; en-streepjes (reeksen) blijven."""
+    return re.sub(r"\s*—\s*", ", ", s or "")
+
+
 def _clean_html(html):
     # Verwijder de onzichtbare WordPress-blok-commentaren (<!-- wp:... -->).
     html = re.sub(r"<!--\s*/?wp:.*?-->", "", html, flags=re.S)
-    return html.strip()
+    return _geen_streepjes(html).strip()
 
 
 def _excerpt(raw_excerpt, content):
     if raw_excerpt:
-        return re.sub(r"<[^>]+>", "", raw_excerpt).strip()[:300]
+        return _geen_streepjes(re.sub(r"<[^>]+>", "", raw_excerpt).strip())[:300]
     tekst = re.sub(r"<[^>]+>", " ", content)
-    tekst = re.sub(r"\s+", " ", tekst).strip()
+    tekst = _geen_streepjes(re.sub(r"\s+", " ", tekst).strip())
     return tekst[:200].rsplit(" ", 1)[0] + ("…" if len(tekst) > 200 else "")
 
 
@@ -101,7 +106,7 @@ class Command(BaseCommand):
 
         gemaakt = bijgewerkt = 0
         for order, it in enumerate(posts):
-            titel = (it.findtext("title") or "").strip()
+            titel = _geen_streepjes((it.findtext("title") or "").strip())
             slug = _txt(it, "wp:post_name") or slugify(titel)
             slug = slug[:220]
             content = _clean_html(it.findtext("content:encoded", namespaces=NS) or "")
@@ -150,5 +155,5 @@ class Command(BaseCommand):
             self.stdout.write(f"  {'+' if created else '~'} {titel[:60]}  ({slug})")
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nKlaar — {gemaakt} nieuw, {bijgewerkt} bijgewerkt "
+            f"\nKlaar, {gemaakt} nieuw, {bijgewerkt} bijgewerkt "
             f"({len(attach)} bijlagen herkend)."))

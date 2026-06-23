@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 resp = client.get(url)
             except Exception as exc:  # noqa: BLE001
                 failures += 1
-                self.stderr.write(self.style.ERROR(f"FAIL {url} — raised {exc!r}"))
+                self.stderr.write(self.style.ERROR(f"FAIL {url}, raised {exc!r}"))
                 continue
             problems = []
             if resp.status_code != 200:
@@ -84,7 +84,7 @@ class Command(BaseCommand):
                     problems.append(f"bevat {m!r}")
             if problems:
                 failures += 1
-                self.stderr.write(self.style.ERROR(f"FAIL {url} — {', '.join(problems)}"))
+                self.stderr.write(self.style.ERROR(f"FAIL {url}, {', '.join(problems)}"))
             elif verbose:
                 self.stdout.write(self.style.SUCCESS(f"OK   {url} ({label})"))
 
@@ -92,7 +92,7 @@ class Command(BaseCommand):
             resp = client.get(url)
             if resp.status_code != 200:
                 failures += 1
-                self.stderr.write(self.style.ERROR(f"FAIL {url} — status {resp.status_code}"))
+                self.stderr.write(self.style.ERROR(f"FAIL {url}, status {resp.status_code}"))
             elif verbose:
                 self.stdout.write(self.style.SUCCESS(f"OK   {url} ({label})"))
 

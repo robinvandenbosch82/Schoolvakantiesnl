@@ -115,5 +115,5 @@ class Command(BaseCommand):
 
         verb = "zou aanmaken" if o["dry_run"] else "aangemaakt"
         self.stdout.write(self.style.SUCCESS(
-            f"Import klaar — {created} {verb}, {updated} bijgewerkt, {skipped} overgeslagen. "
+            f"Import klaar, {created} {verb}, {updated} bijgewerkt, {skipped} overgeslagen. "
             f"Totaal nu: {ContentPagina.objects.count()} content-pagina's."))

@@ -1,4 +1,4 @@
-"""Pure logica rond de druktekaart/planner — geen DB of netwerk."""
+"""Pure logica rond de druktekaart/planner, geen DB of netwerk."""
 from django.test import SimpleTestCase
 
 from core import europe

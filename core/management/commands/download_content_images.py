@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 cp.save(update_fields=["image_local"])
                 done += 1
                 self.stdout.write(f"  ok  {cp.slug} ({len(r.content) // 1024} KB)")
-            except Exception as exc:  # noqa: BLE001 — keep going on a single failure
+            except Exception as exc:  # noqa: BLE001, keep going on a single failure
                 failed += 1
                 self.stderr.write(f"  FAIL {cp.slug}: {exc}")
 

@@ -5,10 +5,10 @@ Drie secties, allemaal gepind op de canonical productie-host (SITE_ORIGIN) + htt
 zodat de URL's identiek zijn aan de on-page rel=canonical, ongeacht hoe de sitemap
 wordt opgehaald (www/non-www/dev-host):
 
-  * static — de vaste pagina's (home, landen, planner, druktekaart, blog,
+  * static, de vaste pagina's (home, landen, planner, druktekaart, blog,
              over-ons, samenwerken).
-  * landen — elke actieve Land (/landen/<slug>/), met <lastmod> = laatste import.
-  * blog   — elk gepubliceerd BlogArtikel (/blog/<slug>/).
+  * landen, elke actieve Land (/landen/<slug>/), met <lastmod> = laatste import.
+  * blog, elk gepubliceerd BlogArtikel (/blog/<slug>/).
 
 Bereikbaar op /sitemap.xml en geadverteerd in robots.txt.
 """

@@ -1,5 +1,5 @@
 """
-Pexels API service — foto's zoeken, ophalen en lokaal opslaan.
+Pexels API service, foto's zoeken, ophalen en lokaal opslaan.
 Documentatie: https://www.pexels.com/api/documentation/
 """
 

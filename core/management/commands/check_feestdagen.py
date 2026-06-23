@@ -1,12 +1,12 @@
 """
 Kruiscontrole van onze (OpenHolidays-)feestdagen tegen Nager.Date
-(date.nager.at) — een tweede, onafhankelijke bron voor officiële feestdagen in
+(date.nager.at), een tweede, onafhankelijke bron voor officiële feestdagen in
 100+ landen. Bedoeld om stil afwijkende of ontbrekende data te signaleren i.p.v.
 blind op één bron te vertrouwen.
 
 Per land/jaar wordt gerapporteerd:
-  * GAT  — landelijke feestdag die Nager kent maar wij missen.
-  * EXTRA — datum die wij hebben maar Nager nergens kent (mogelijk fout/regionaal).
+  * GAT, landelijke feestdag die Nager kent maar wij missen.
+  * EXTRA, datum die wij hebben maar Nager nergens kent (mogelijk fout/regionaal).
 
 Standaard alleen rapporteren. Met --fill worden ontbrekende landelijke feestdagen
 toegevoegd (bron='nager', categorie='officieel'); vergrendelde rijen blijven met
@@ -67,7 +67,7 @@ class Command(BaseCommand):
             tot_gap += gaps; tot_extra += extras; tot_filled += filled
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nKlaar — {tot_gap} gaten, {tot_extra} extra's"
+            f"\nKlaar, {tot_gap} gaten, {tot_extra} extra's"
             + (f", {tot_filled} aangevuld." if self.fill else " (alleen rapport).")))
 
     def _check_land(self, land, years):
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                 nager = data.json()
             except requests.RequestException:
                 self.stderr.write(self.style.WARNING(
-                    f"  {land.iso_code} {year}: Nager niet bereikbaar — overgeslagen."))
+                    f"  {land.iso_code} {year}: Nager niet bereikbaar, overgeslagen."))
                 continue
 
             nager_global = {dt.date.fromisoformat(h["date"]): h

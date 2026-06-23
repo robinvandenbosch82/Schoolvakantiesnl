@@ -20,14 +20,14 @@ LABELS = {
     "dekkingen": "Dekkingen (WA / WA+ / Allrisk)",
     "vergelijken": "Vergelijken",
     "situaties_beroepen": "Situaties & beroepen",
-    "situatie_gereedschap": "Situatie — Gereedschap in de bus",
-    "beroep_timmerman": "Beroep — Timmerman",
+    "situatie_gereedschap": "Situatie, Gereedschap in de bus",
+    "beroep_timmerman": "Beroep, Timmerman",
     "verzekeraars": "Verzekeraars (overzicht)",
-    "verzekeraar_asr": "Verzekeraar — ASR",
+    "verzekeraar_asr": "Verzekeraar, ASR",
     "kennisbank": "Kennisbank (overzicht)",
-    "kennisbank_artikel": "Kennisbank — Welk ART-slot heb ik nodig",
+    "kennisbank_artikel": "Kennisbank, Welk ART-slot heb ik nodig",
     "blog": "Blog & nieuws (overzicht)",
-    "blog_artikel": "Blog — Motor rijklaar na de winterstop",
+    "blog_artikel": "Blog, Motor rijklaar na de winterstop",
     "over_ons": "Onze experts & redactieproces",
     "klantenservice": "Klantenservice",
 }
@@ -78,5 +78,5 @@ class Command(BaseCommand):
                     updated += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"Pages synced — {created} created, {updated} updated, {len(PAGES)} total."
+            f"Pages synced, {created} created, {updated} updated, {len(PAGES)} total."
         ))

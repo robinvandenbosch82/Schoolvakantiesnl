@@ -5,12 +5,12 @@ Design decision (mirrors the sibling sites motorverzekering / bestelauto­
 verzekering / cruises.nl): a *structured* CMS where the Django admin is the
 source of truth.
 
-- SiteSettings  — one editable row of global brand/contact/trust values.
-- Page          — one row per route (synced from the PAGES registry), holding
+- SiteSettings, one editable row of global brand/contact/trust values.
+- Page, one row per route (synced from the PAGES registry), holding
                   per-page SEO + hero copy. Makes every page editable in admin.
-- Content models — the repeatable/rich content (FAQ, reviews, experts, blog &
+- Content models, the repeatable/rich content (FAQ, reviews, experts, blog &
                   knowledge-base articles, generic section copy + cards).
-- ContentPagina — ready-to-render pages imported from the contentfabriek.
+- ContentPagina, ready-to-render pages imported from the contentfabriek.
 
 Domain models specific to school holidays (vakanties / regio's / schooljaren /
 feestdagen) are added in a later step once the new design is in.
@@ -83,7 +83,7 @@ class SiteSettings(models.Model):
 
     footer_blurb = models.TextField(
         "Footer-tekst",
-        default="Alle schoolvakanties en feestdagen in Nederland — overzichtelijk per "
+        default="Alle schoolvakanties en feestdagen in Nederland, overzichtelijk per "
                 "regio en schooljaar. Onafhankelijk en altijd up-to-date.",
     )
 
@@ -103,7 +103,7 @@ class SiteSettings(models.Model):
         "Social-profielen (sameAs)", blank=True,
         help_text="Eén volledige URL per regel: LinkedIn, Facebook, X… "
                   "Verschijnen als sameAs in de Organization-graaf.")
-    # Optioneel vestigingsadres — alleen ingevuld weergeven (geen lege PostalAddress).
+    # Optioneel vestigingsadres, alleen ingevuld weergeven (geen lege PostalAddress).
     adres_straat = models.CharField("Vestiging · straat + nr.", max_length=160, blank=True)
     adres_postcode = models.CharField("Vestiging · postcode", max_length=16, blank=True)
     adres_plaats = models.CharField("Vestiging · plaats", max_length=120, blank=True)
@@ -522,7 +522,7 @@ class SectieTekst(models.Model):
         ordering = ["pagina", "order", "sleutel"]
 
     def __str__(self):
-        return f"{self.get_pagina_display()} — {self.naam or self.sleutel}"
+        return f"{self.get_pagina_display()}, {self.naam or self.sleutel}"
 
     @property
     def alineas(self):
@@ -537,8 +537,8 @@ class Kaart(models.Model):
     list is a minimal placeholder, expanded per the new design once it lands."""
 
     BLOK_CHOICES = [
-        ("home_waarom", "Home — Waarom-kaarten"),
-        ("home_stappen", "Home — In drie stappen"),
+        ("home_waarom", "Home, Waarom-kaarten"),
+        ("home_stappen", "Home, In drie stappen"),
     ]
 
     blok = models.CharField("Blok", max_length=50, choices=BLOK_CHOICES)
@@ -557,7 +557,7 @@ class Kaart(models.Model):
         ordering = ["blok", "volgorde"]
 
     def __str__(self):
-        return f"{self.get_blok_display()} — {self.titel or self.tag or self.meta}"
+        return f"{self.get_blok_display()}, {self.titel or self.tag or self.meta}"
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -590,9 +590,9 @@ class Land(models.Model):
     # Redactioneel (handmatig, blijft bij import behouden)
     intro = models.TextField("Intro", blank=True)
     regio_info = models.TextField("Regio-uitleg (algemeen)", blank=True)
-    studiedagen_uitleg = models.TextField("Studiedagen — uitleg", blank=True)
-    weer_bron = models.CharField("Weer — bron", max_length=160, blank=True)
-    weer_beste = models.CharField("Weer — beste periode", max_length=255, blank=True)
+    studiedagen_uitleg = models.TextField("Studiedagen, uitleg", blank=True)
+    weer_bron = models.CharField("Weer, bron", max_length=160, blank=True)
+    weer_beste = models.CharField("Weer, beste periode", max_length=255, blank=True)
     bron = models.CharField("Databron-vermelding", max_length=300, blank=True)
     bijgewerkt = models.CharField("Bijgewerkt (weergave)", max_length=40, blank=True,
                                   help_text="bijv. 'mei 2026'.")
@@ -675,7 +675,7 @@ class Schoolvakantie(models.Model):
         indexes = [models.Index(fields=["land", "start_datum"])]
 
     def __str__(self):
-        return f"{self.naam} — {self.land.iso_code} ({self.start_datum:%d-%m-%Y})"
+        return f"{self.naam}, {self.land.iso_code} ({self.start_datum:%d-%m-%Y})"
 
 
 class Feestdag(models.Model):
@@ -712,7 +712,7 @@ class Feestdag(models.Model):
         indexes = [models.Index(fields=["land", "categorie", "start_datum"])]
 
     def __str__(self):
-        return f"{self.naam} — {self.land.iso_code} ({self.start_datum:%d-%m})"
+        return f"{self.naam}, {self.land.iso_code} ({self.start_datum:%d-%m})"
 
 
 class WeerMaand(models.Model):
@@ -727,13 +727,13 @@ class WeerMaand(models.Model):
     regen = models.DecimalField("Regendagen", max_digits=4, decimal_places=1)
 
     class Meta:
-        verbose_name = "Weer — maand"
+        verbose_name = "Weer, maand"
         verbose_name_plural = "Weer (per maand)"
         ordering = ["land", "maand"]
         unique_together = [("land", "maand")]
 
     def __str__(self):
-        return f"{self.land.iso_code} — {self.get_maand_display()}"
+        return f"{self.land.iso_code}, {self.get_maand_display()}"
 
 
 class Bestemming(PhotoMixin):
@@ -787,7 +787,7 @@ class Reisweek(models.Model):
         unique_together = [("jaar", "weeknr")]
 
     def __str__(self):
-        return f"{self.jaar} · wk {self.weeknr} — slim {self.slim_score}"
+        return f"{self.jaar} · wk {self.weeknr}, slim {self.slim_score}"
 
     @property
     def slim_score(self):
@@ -828,4 +828,4 @@ class Samenwerkingsaanvraag(models.Model):
         indexes = [models.Index(fields=["-aangemaakt"])]
 
     def __str__(self):
-        return f"{self.naam} — {self.aangemaakt:%d-%m-%Y}"
+        return f"{self.naam}, {self.aangemaakt:%d-%m-%Y}"

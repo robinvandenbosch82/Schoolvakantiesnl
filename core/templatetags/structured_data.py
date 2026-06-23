@@ -5,7 +5,7 @@ The contentfabriek import may or may not supply a hand-authored `schema_jsonld`.
 This tag bridges the gap so EVERY content page ships a valid, @id-linked graph:
 
   * If `schema_jsonld` is present AND parses as JSON, it is trusted verbatim
-    (admin/CSV is the source of truth) — but only after a validity gate so one
+    (admin/CSV is the source of truth), but only after a validity gate so one
     malformed feed value can never break the page's structured data.
   * Otherwise we synthesise an Article (+ FAQPage when the page has FAQ HTML)
     from the model fields, wired into the site graph by @id reference.

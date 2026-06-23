@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def _models():
-    """Models carrying a PhotoMixin — resolved lazily to avoid import cycles."""
+    """Models carrying a PhotoMixin, resolved lazily to avoid import cycles."""
     from core.models import (
         BlogArtikel, Expert, KennisbankArtikel, Review,
     )
@@ -38,7 +38,7 @@ def _process_photo(instance):
         instance.photo_local = rel
     try:
         compress_if_needed(upload.path)
-    except Exception as exc:  # noqa: BLE001 — never block a save on imaging
+    except Exception as exc:  # noqa: BLE001, never block a save on imaging
         logger.warning("compress_if_needed failed for %s: %s", rel, exc)
     try:
         get_variant_urls(rel)

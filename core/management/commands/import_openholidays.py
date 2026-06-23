@@ -2,16 +2,16 @@
 Importeer school- en feestdagen uit de OpenHolidays API (openholidaysapi.org).
 
 Idempotent: upsert op external_id (de GUID van de API). Een rij die in de admin
-op `vergrendeld=True` staat, wordt overgeslagen — zo blijven handmatige correcties
+op `vergrendeld=True` staat, wordt overgeslagen, zo blijven handmatige correcties
 in uitzonderingsgevallen behouden. Redactionele velden (Land.intro, weer,
 bestemmingen, reisweken) worden NOOIT aangeraakt.
 
 Regio-normalisatie (de API is rommeliger dan de site wil):
-  * NL — de API tagt schoolvakanties per gemeente, niet per schoolregio. We
+  * NL, de API tagt schoolvakanties per gemeente, niet per schoolregio. We
     vouwen dat samen tot de drie officiële regio's Noord / Midden / Zuid door de
     provincie-meerderheid van elke entry te bepalen (Gelderland is gesplitst en
     telt niet mee in de stemming).
-  * DE — we koppelen alleen op deelstaat-niveau (DE-XX), niet op de diepere
+  * DE, we koppelen alleen op deelstaat-niveau (DE-XX), niet op de diepere
     Landkreise, en gebruiken Nederlandse deelstaatnamen.
 
 Bedoeld om regelmatig te draaien (cron / scheduled task):
@@ -75,8 +75,7 @@ NL_REGIO_PROV = {
     "Zuid": {"ZE", "LI", "NB"},
 }
 # Totaal aantal gemeenten per regio (uit /Subdivisions, GE buiten beschouwing).
-# Noemer om te bepalen welk dekkingspercentage van een regio in een entry zit —
-# robuust tegen losse grensgemeenten die in een andere regio 'lekken'.
+# Noemer om te bepalen welk dekkingspercentage van een regio in een entry zit, # robuust tegen losse grensgemeenten die in een andere regio 'lekken'.
 NL_REGIO_GEMEENTEN = {"Noord": 115, "Midden": 76, "Zuid": 100}
 
 # Duitse deelstaten in het Nederlands.
@@ -114,7 +113,7 @@ def _be_canon_naam(naam):
             return canon
     return naam
 
-# De eigen taal per land — gebruikt als terugval voor vakantienamen wanneer er
+# De eigen taal per land, gebruikt als terugval voor vakantienamen wanneer er
 # geen Nederlandse vertaling is (bv. 'Sommerferien' i.p.v. 'Summer Holidays').
 NATIVE_LANG = {"NL": "NL", "DE": "DE", "BE": "NL", "FR": "FR", "IT": "IT",
                "ES": "ES", "AT": "DE", "CH": "DE", "LU": "FR", "PT": "PT",
@@ -203,18 +202,18 @@ class Command(BaseCommand):
             land.imported_at = self.now
             update = ["imported_at"]
             # Provenance-vermelding bijhouden (behalve voor landen met een nationale
-            # schoolvakantie-bron — die zet import_nationaal zelf).
+            # schoolvakantie-bron, die zet import_nationaal zelf).
             if code not in SCHOOL_OVERRIDE:
                 bron = "Schoolvakanties & feestdagen: OpenHolidays.org"
                 if land.bron != bron:
                     land.bron = bron; update.append("bron")
             land.save(update_fields=update)
             self.stdout.write(self.style.SUCCESS(
-                f"{land.naam} ({land.iso_code}) — {v} schoolvakanties, {f} feestdagen, "
+                f"{land.naam} ({land.iso_code}), {v} schoolvakanties, {f} feestdagen, "
                 f"{land.regios.count()} regio's ({vs + fs} vergrendeld overgeslagen)."))
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nKlaar — {totals['vak']} schoolvakanties, {totals['feest']} feestdagen. "
+            f"\nKlaar, {totals['vak']} schoolvakanties, {totals['feest']} feestdagen. "
             f"Vergrendeld overgeslagen: {totals['vak_skip'] + totals['feest_skip']}."))
 
     # ── API helpers ─────────────────────────────────────────────────────────
@@ -270,7 +269,7 @@ class Command(BaseCommand):
             return
         else:
             # Generiek: top-level subdivisions in de eigen landstaal (bv. Andalucía,
-            # Toscana, Île-de-France) — leesbaarder/authentieker dan de Engelse naam.
+            # Toscana, Île-de-France), leesbaarder/authentieker dan de Engelse naam.
             for i, node in enumerate(self._get("/Subdivisions", countryIsoCode=land.iso_code,
                                                languageIsoCode=self.native)):
                 code = node.get("code") or node.get("isoCode")
@@ -308,7 +307,7 @@ class Command(BaseCommand):
     def _nl_regions(codes):
         """Bepaal alle regio's (Noord/Midden/Zuid) die een entry dekt, op basis
         van hoeveel gemeenten van elke regio in de entry zitten. Een regio matcht
-        als ≥50% van zijn gemeenten aanwezig is — zo komen landelijke vakanties
+        als ≥50% van zijn gemeenten aanwezig is, zo komen landelijke vakanties
         (kerst/mei → alle 3) en gedeelde periodes (bv. Midden + Zuid) goed uit,
         terwijl losse grensgemeenten die 'lekken' geen valse match geven."""
         counts = {naam: 0 for naam in NL_REGIO_PROV}
@@ -398,7 +397,7 @@ class Command(BaseCommand):
                     "land": land, "naam": "Vacaciones de verano", "type": "Summer",
                     "start_datum": datum, "eind_datum": dt.date(jaar, 9, 8),
                     "landelijk": False,
-                    "note": "Einddatum indicatief — Spaanse scholen hervatten begin "
+                    "note": "Einddatum indicatief, Spaanse scholen hervatten begin "
                             "september (± 8 sep, verschilt per gemeenschap).",
                     "comment": "Afgeleid uit de laatste lesdag (Fin de lecciones).",
                     "bron": "api", "imported_at": self.now,

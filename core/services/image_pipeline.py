@@ -5,7 +5,7 @@ Workflow:
   - Genereert varianten in 'cache/<original-path-with-suffix>':
       mijn-foto_w400.jpg, mijn-foto_w800.jpg, mijn-foto_w1200.jpg
       mijn-foto_w400.webp, mijn-foto_w800.webp, mijn-foto_w1200.webp
-  - Idempotent — skip als variant al bestaat én niet ouder dan origineel
+  - Idempotent, skip als variant al bestaat én niet ouder dan origineel
   - Behoudt aspect-ratio (alleen width-resize, height auto)
 
 Compressie bij upload (via signals.py):
@@ -71,7 +71,7 @@ def get_variant_urls(relative_path, widths=None, formats=('webp', 'jpg')):
         return None
     widths = widths or DEFAULT_WIDTHS
 
-    # Externe of static URL — geen pipeline
+    # Externe of static URL, geen pipeline
     if relative_path.startswith(('http://', 'https://', '//', '/static/', 'static/')):
         return None
 

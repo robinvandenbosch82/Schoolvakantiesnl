@@ -9,7 +9,7 @@ door WhiteNoise met far-future cache geserveerd. Bij succes wordt `photo_url`
 geleegd zodat de lokale versie wint; faalt het, dan blijft de hotlink als terugval
 staan.
 
-De bestanden zijn statische assets (in git), dus deploy-stabiel — geen
+De bestanden zijn statische assets (in git), dus deploy-stabiel, geen
 afhankelijkheid van een persistente media-volume.
 
     python manage.py download_blog_images
@@ -74,9 +74,9 @@ class Command(BaseCommand):
                 done += 1
             except Exception as exc:  # noqa: BLE001
                 self.stderr.write(self.style.WARNING(
-                    f"  faalde: {post.slug} ({exc}) — hotlink blijft als terugval."))
+                    f"  faalde: {post.slug} ({exc}), hotlink blijft als terugval."))
                 failed += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nKlaar — {done} gedownload, {skipped} bestond al, {failed} mislukt. "
+            f"\nKlaar, {done} gedownload, {skipped} bestond al, {failed} mislukt. "
             f"Map: {DEST}"))

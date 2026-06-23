@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             name='Kaart',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('blok', models.CharField(choices=[('home_waarom', 'Home — Waarom-kaarten'), ('home_stappen', 'Home — In drie stappen')], max_length=50, verbose_name='Blok')),
+                ('blok', models.CharField(choices=[('home_waarom', 'Home, Waarom-kaarten'), ('home_stappen', 'Home, In drie stappen')], max_length=50, verbose_name='Blok')),
                 ('volgorde', models.PositiveIntegerField(default=0, verbose_name='Volgorde')),
                 ('tag', models.CharField(blank=True, help_text="Klein mono-label of nummer, bv. '01'.", max_length=40, verbose_name='Tag/label')),
                 ('titel', models.CharField(blank=True, max_length=200, verbose_name='Titel')),
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
                 ('whatsapp', models.CharField(blank=True, default='', max_length=40, verbose_name='WhatsApp-nummer')),
                 ('email', models.EmailField(default='hallo@schoolvakanties.nl', max_length=254, verbose_name='E-mail')),
                 ('kvk_nummer', models.CharField(blank=True, default='', max_length=40, verbose_name='KvK-nummer')),
-                ('footer_blurb', models.TextField(default='Alle schoolvakanties en feestdagen in Nederland — overzichtelijk per regio en schooljaar. Onafhankelijk en altijd up-to-date.', verbose_name='Footer-tekst')),
+                ('footer_blurb', models.TextField(default='Alle schoolvakanties en feestdagen in Nederland, overzichtelijk per regio en schooljaar. Onafhankelijk en altijd up-to-date.', verbose_name='Footer-tekst')),
                 ('pexels_api_key', models.CharField(blank=True, help_text='Gratis via pexels.com/api, heeft voorrang boven PEXELS_API_KEY in .env.', max_length=100, verbose_name='Pexels API-sleutel')),
                 ('default_og_image', models.ImageField(blank=True, help_text='Gebruikt als een pagina zelf geen OG-afbeelding heeft.', null=True, upload_to='og/', verbose_name='Standaard deelafbeelding (OG)')),
                 ('logo', models.ImageField(blank=True, help_text='Gebruikt als Organization-logo in de JSON-LD (verplicht voor artikel-rich-results) en in het Google Knowledge Panel.', null=True, upload_to='brand/', verbose_name='Logo (vierkant, ≥112px)')),

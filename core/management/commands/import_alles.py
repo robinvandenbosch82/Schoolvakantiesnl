@@ -2,13 +2,13 @@
 Eén commando dat de hele dataketen in de juiste volgorde draait. Geschikt voor
 de cron / scheduled task:
 
-  1. import_openholidays   — feestdagen (alle landen) + schoolvakanties (behalve
+  1. import_openholidays, feestdagen (alle landen) + schoolvakanties (behalve
                              NL/FR, die door de nationale bron worden gedekt).
-  2. import_nationaal      — schoolvakanties NL (Rijksoverheid) + FR (zones),
+  2. import_nationaal, schoolvakanties NL (Rijksoverheid) + FR (zones),
                              leidend, en ruimt oude OpenHolidays-rijen op.
-  3. import_feestdaglanden — feestdagen-only landen (NO/DK/FI/GB/GR) via Nager.Date,
+  3. import_feestdaglanden, feestdagen-only landen (NO/DK/FI/GB/GR) via Nager.Date,
                              die OpenHolidays niet dekt.
-  4. check_feestdagen      — kruiscontrole van de feestdagen tegen Nager.Date
+  4. check_feestdagen, kruiscontrole van de feestdagen tegen Nager.Date
                              (alleen rapport; voeg --fill toe om gaten te vullen).
 
     python manage.py import_alles

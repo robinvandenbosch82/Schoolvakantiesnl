@@ -1,5 +1,5 @@
 """
-PexelsPhotoMixin — admin widget to search Pexels and fill a model's photo fields.
+PexelsPhotoMixin, admin widget to search Pexels and fill a model's photo fields.
 
 Ported 1-on-1 from vliegtickets.com (test-claude-code/core/admin.py). Defaults
 are aligned to this project's PhotoMixin field names (photo_url / photo_credit /
@@ -122,8 +122,7 @@ class PexelsPhotoMixin:
                 <div id="pexels-results"></div>
                 <div id="pexels-feedback"></div>
                 <p class="pexels-attribution">
-                    Foto&#39;s via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a> —
-                    gebruik vereist naamsvermelding van de fotograaf.
+                    Foto&#39;s via <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>,                     gebruik vereist naamsvermelding van de fotograaf.
                 </p>
             </div>
             ''',

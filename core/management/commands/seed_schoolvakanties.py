@@ -27,7 +27,7 @@ MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
 def _parse_nl_date(s, jaar=2026):
     """'14 feb' -> date; geeft (start, eind) terug, eind=None tenzij een reeks
     zoals '15–17 feb' of '19 sep – 4 okt'."""
-    s = s.replace("–", "-").replace("—", "-")
+    s = s.replace("–", "-").replace(", ", "-")
     parts = [p.strip() for p in s.split("-")]
 
     def one(token, fallback_month=None):
@@ -49,18 +49,18 @@ def _parse_nl_date(s, jaar=2026):
 # ── Redactionele landdata (uit landdata.js) ─────────────────────────────────
 LAND_TEKST = {
     "NL": {
-        "intro": "Nederland kent vijf schoolvakanties per jaar, gespreid over drie regio's — Noord, Midden en Zuid — om de drukte op de wegen en in vakantiegebieden te verdelen. De meivakantie, zomervakantie en kerstvakantie staan wettelijk vast; de voorjaars- en herfstvakantie zijn adviesdata waar scholen van mogen afwijken.",
+        "intro": "Nederland kent vijf schoolvakanties per jaar, gespreid over drie regio's, Noord, Midden en Zuid, om de drukte op de wegen en in vakantiegebieden te verdelen. De meivakantie, zomervakantie en kerstvakantie staan wettelijk vast; de voorjaars- en herfstvakantie zijn adviesdata waar scholen van mogen afwijken.",
         "regio_info": "De spreiding over Noord, Midden en Zuid is in de jaren '80 ingevoerd om de drukte op de wegen en in vakantiegebieden te verminderen. Vooral de zomervakantie is daardoor regionaal verschillend.",
         "studiedagen_uitleg": "Naast de landelijke vakanties plannen scholen zelf studiedagen (margedagen): roostervrije dagen voor leerlingen waarop het team werkt. Deze verschillen per school en staan in de schoolgids. Gemiddeld 4–7 per schooljaar.",
         "weer_bron": "Langjarig gemiddelde · KNMI (De Bilt)",
         "weer_beste": "Mei, juni en september: zacht, relatief droog en buiten de drukste weken.",
-        "bron": "Bron: Rijksoverheid (ministerie van OCW). Verplichte data staan vast; adviesdata kunnen per school verschillen — raadpleeg de schoolgids.",
+        "bron": "Bron: Rijksoverheid (ministerie van OCW). Verplichte data staan vast; adviesdata kunnen per school verschillen, raadpleeg de schoolgids.",
         "bijgewerkt": "mei 2026",
     },
     "DE": {
         "intro": "Duitsland heeft geen landelijke schoolvakanties: elk van de 16 deelstaten (Bundesländer) bepaalt zijn eigen data. Alleen de zomervakantie wordt door de Kultusministerkonferenz gespreid (het 'Ferienkorridor') om files te voorkomen. Daardoor is het hele land vrijwel nooit tegelijk vrij.",
-        "regio_info": "Duitsland kent geen provincie-indeling zoals Nederland: elk van de 16 deelstaten plant zelf. Alleen de zomervakantie wordt centraal gespreid. Voor Nederlandse reizigers zijn vooral Niedersachsen en Nordrhein-Westfalen relevant — die grenzen direct aan ons land.",
-        "studiedagen_uitleg": "Deelstaten geven scholen 'bewegliche Ferientage': losse roostervrije dagen die de school zelf inplant — vaak brugdagen of rond Fasching/Karneval. Maximaal 6 per schooljaar.",
+        "regio_info": "Duitsland kent geen provincie-indeling zoals Nederland: elk van de 16 deelstaten plant zelf. Alleen de zomervakantie wordt centraal gespreid. Voor Nederlandse reizigers zijn vooral Niedersachsen en Nordrhein-Westfalen relevant, die grenzen direct aan ons land.",
+        "studiedagen_uitleg": "Deelstaten geven scholen 'bewegliche Ferientage': losse roostervrije dagen die de school zelf inplant, vaak brugdagen of rond Fasching/Karneval. Maximaal 6 per schooljaar.",
         "weer_bron": "Langjarig gemiddelde · Deutscher Wetterdienst (landelijk)",
         "weer_beste": "Mei tot september voor zon; juli en augustus het warmst, maar ook het drukst en duurst.",
         "bron": "Bron: Kultusministerkonferenz (KMK) en de afzonderlijke deelstaten. Alle data onder voorbehoud (ohne Gewähr).",
@@ -74,7 +74,7 @@ LAND_TEKST = {
         "bijgewerkt": "juni 2026",
     },
     "FR": {
-        "intro": "Frankrijk verdeelt de schoolvakanties over drie zones (A, B en C) om de drukte te spreiden — vooral rond de wintersport en de zomer goed merkbaar.",
+        "intro": "Frankrijk verdeelt de schoolvakanties over drie zones (A, B en C) om de drukte te spreiden, vooral rond de wintersport en de zomer goed merkbaar.",
         "weer_bron": "Langjarig gemiddelde (indicatief)",
         "weer_beste": "Mei, juni en september voor aangenaam weer zonder de hoogzomerdrukte.",
         "bron": "Bron: OpenHolidays API. Data onder voorbehoud; raadpleeg de schoolkalender.",
@@ -183,7 +183,7 @@ BESTEMMINGEN = [
 # ── FAQ homepage (uit landdata.js, NL) ──────────────────────────────────────
 FAQ_HOME = [
     ("Mag mijn school afwijken van deze vakantiedata?",
-     "De meivakantie, zomervakantie en kerstvakantie zijn wettelijk verplicht — daar mag geen enkele school van afwijken. De voorjaars- en herfstvakantie zijn adviesdata: scholen mogen hier, met instemming van de medezeggenschapsraad, van afwijken. Check altijd de schoolgids voor de definitieve data."),
+     "De meivakantie, zomervakantie en kerstvakantie zijn wettelijk verplicht, daar mag geen enkele school van afwijken. De voorjaars- en herfstvakantie zijn adviesdata: scholen mogen hier, met instemming van de medezeggenschapsraad, van afwijken. Check altijd de schoolgids voor de definitieve data."),
     ("Waarom zijn de vakanties verdeeld over drie regio's?",
      "De spreiding over Noord, Midden en Zuid is in de jaren '80 ingevoerd om de drukte op de wegen en in vakantiegebieden te verminderen. Vooral de zomervakantie is daardoor regionaal verschillend; de andere vakanties volgen meestal het landelijke advies."),
     ("Wat is het verschil tussen de krokus- en carnavalsvakantie?",
@@ -191,7 +191,7 @@ FAQ_HOME = [
     ("Wanneer is het het rustigst om met de kinderen weg te gaan?",
      "Net buiten de piek. Begin juli en eind augustus tot half september zijn duidelijk rustiger en goedkoper dan de drukke weken eind juli en begin augustus, wanneer alle regio's én veel buurlanden tegelijk vrij zijn."),
     ("Mag ik buiten de schoolvakanties op vakantie?",
-     "Alleen in uitzonderlijke gevallen en met toestemming van de school. Zomaar eerder vertrekken valt onder ongeoorloofd schoolverzuim en kan een boete opleveren. Plan dus binnen de vakanties — of kies een slimme, rustige week erbinnen."),
+     "Alleen in uitzonderlijke gevallen en met toestemming van de school. Zomaar eerder vertrekken valt onder ongeoorloofd schoolverzuim en kan een boete opleveren. Plan dus binnen de vakanties, of kies een slimme, rustige week erbinnen."),
 ]
 
 LAND_FAQ = {
@@ -200,11 +200,11 @@ LAND_FAQ = {
         ("Waarom heeft Duitsland 16 verschillende schoolvakanties?",
          "Elke deelstaat (Bundesland) bepaalt zijn eigen vakantiedata. Alleen de zomervakantie wordt door de Kultusministerkonferenz gecoördineerd en gespreid, zodat niet heel Duitsland tegelijk de weg op gaat."),
         ("Welke deelstaten grenzen aan Nederland?",
-         "Niedersachsen (Nedersaksen) en Nordrhein-Westfalen (NRW) grenzen direct aan Nederland. NRW is met ruim 18 miljoen inwoners de dichtstbevolkte deelstaat — als die vakantie heeft, merk je dat aan de drukte."),
+         "Niedersachsen (Nedersaksen) en Nordrhein-Westfalen (NRW) grenzen direct aan Nederland. NRW is met ruim 18 miljoen inwoners de dichtstbevolkte deelstaat, als die vakantie heeft, merk je dat aan de drukte."),
         ("Wanneer heeft heel Duitsland tegelijk vakantie?",
          "Rond 3 tot 5 augustus 2026 overlappen voor het eerst alle 16 deelstaten: dan is het in heel Duitsland zomervakantie. Dat is een landelijk verkeershoogtepunt."),
         ("Wat zijn 'bewegliche Ferientage'?",
-         "Losse, roostervrije dagen die scholen zelf mogen inplannen — maximaal zes per schooljaar. Vaak voor brugdagen of Fasching/Karneval (Rosenmontag). Ze verschillen per school."),
+         "Losse, roostervrije dagen die scholen zelf mogen inplannen, maximaal zes per schooljaar. Vaak voor brugdagen of Fasching/Karneval (Rosenmontag). Ze verschillen per school."),
         ("Hoe vermijd ik de drukte in Duitsland?",
          "Reis in een week waarin de grote, dichtbevolkte deelstaten (NRW, Beieren, Baden-Württemberg) nog naar school gaan, of juist net voor of na hun vakantie. Begin juli en half september zijn vaak het rustigst."),
     ],
@@ -216,14 +216,14 @@ LAND_FAQ = {
 # (naam, initialen, functie, korte functie, sinds, bio, credentials, focus/tags)
 EXPERTS = [
     ("Jorrit Drenth", "JD", "Mede-eigenaar Travel Nerds", "Operatie", None,
-     "Als mede-eigenaar van Travel Nerds houdt Jorrit alle merken soepel draaiend — "
+     "Als mede-eigenaar van Travel Nerds houdt Jorrit alle merken soepel draaiend, "
      "van de grote lijn tot de allerlaatste komma in een vakantiekalender. Hij gelooft "
      "dat een goede reis begint bij kloppende details, en daar is hij streng op.",
      ["Mede-eigenaar Travel Nerds", "Overziet de dagelijkse operatie",
       "Scherp op detail & datakwaliteit"],
      "Operatie, Kwaliteit"),
     ("Robin van den Bosch", "RvdB", "Mede-eigenaar Travel Nerds", "Leisure & strategie", None,
-     "Mede-eigenaar van Travel Nerds — het huis achter o.a. Vliegtickets.com, "
+     "Mede-eigenaar van Travel Nerds, het huis achter o.a. Vliegtickets.com, "
      "Vakantiewoningen.nl en Cruises.nl. Robin leeft en ademt de leisure-wereld en "
      "vertaalt wat er speelt naar reistools waar gezinnen écht slimmer van op pad gaan.",
      ["Mede-eigenaar Travel Nerds",

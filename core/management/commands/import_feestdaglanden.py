@@ -56,7 +56,7 @@ class Command(BaseCommand):
         for code in codes:
             m = meta.get(code)
             if not m:
-                self.stderr.write(self.style.WARNING(f"{code}: niet in de landenlijst — overgeslagen."))
+                self.stderr.write(self.style.WARNING(f"{code}: niet in de landenlijst, overgeslagen."))
                 continue
             land, _ = Land.objects.get_or_create(
                 iso_code=code, defaults={"naam": m["name"], "vlag": m["flag"]})
@@ -107,6 +107,6 @@ class Command(BaseCommand):
                     obj.regios.clear()
                     done += 1
             self.stdout.write(self.style.SUCCESS(
-                f"{land.vlag} {land.naam} ({code}) — live met {done} feestdagen."))
+                f"{land.vlag} {land.naam} ({code}), live met {done} feestdagen."))
 
         self.stdout.write(self.style.SUCCESS("\nKlaar."))

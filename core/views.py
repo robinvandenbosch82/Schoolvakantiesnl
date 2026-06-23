@@ -84,7 +84,7 @@ class PageSpec:
 PAGES: list[PageSpec] = [
     PageSpec(
         path="", name="home",
-        title="Schoolvakanties & feestdagen 2026 — slim weg met het gezin | Schoolvakanties.nl",
+        title="Schoolvakanties & feestdagen 2026, slim weg met het gezin | Schoolvakanties.nl",
         description="Vergelijk schoolvakanties, feestdagen en de drukste reisweken van heel Europa. "
                     "Eén Slim-score per week: ga weg wanneer het rustig, betaalbaar en fijn is.",
         sitemap_priority=1.0, sitemap_changefreq="weekly"),
@@ -104,8 +104,7 @@ TOON_JAAR = 2026
 # viewBox-string van de realistische Europa-kaart (uit de gegenereerde geo-data).
 _MAP_VB = "0 0 %d %d" % (round(europe.VIEWBOX[2]), round(europe.VIEWBOX[3]))
 
-# Regio-codes die we per land verbergen: Franse overzeese gebieden (DOM-TOM) —
-# eigen, afwijkende schoolkalenders, niet relevant voor een NL-reispubliek en
+# Regio-codes die we per land verbergen: Franse overzeese gebieden (DOM-TOM), # eigen, afwijkende schoolkalenders, niet relevant voor een NL-reispubliek en
 # bron van schijnduplicaten. Exact-match (FR-NA = Nouvelle-Aquitaine is métropole!).
 VERBERG_REGIO_CODES = {
     "FR": {"FR-GP", "FR-MQ", "FR-GF", "FR-GY", "FR-RE", "FR-RU", "FR-YT",
@@ -183,18 +182,18 @@ def _vakantie_nl(naam):
 
 # Korte Nederlandse uitleg per officieuze/themadag.
 _OFFICIEUS_UITLEG = [
-    (("valentijn", "valentin", "valentine"), "Valentijnsdag (14 feb) — dag van de geliefden."),
+    (("valentijn", "valentin", "valentine"), "Valentijnsdag (14 feb), dag van de geliefden."),
     (("carnaval", "rosenmontag", "fasching", "fastnacht", "karneval"),
-     "Carnaval — uitbundig volksfeest vóór de vastentijd; in het zuiden groot gevierd."),
-    (("moederdag", "muttertag", "mother"), "Moederdag — eerbetoon aan moeders (2e zondag van mei)."),
-    (("vaderdag", "vatertag", "father"), "Vaderdag — eerbetoon aan vaders."),
-    (("dierendag",), "Dierendag (4 okt) — extra aandacht voor (huis)dieren."),
-    (("halloween",), "Halloween (31 okt) — griezelfeest met verkleden en snoep, vooral voor kinderen."),
-    (("sint-maarten", "sint maarten", "martin"), "Sint-Maarten (11 nov) — kinderen lopen met lampionnen langs de deuren."),
-    (("sinterklaas", "nikolaus"), "Sinterklaas (5–6 dec) — kinderfeest met cadeaus en pepernoten."),
-    (("oudjaar", "silvester", "oudejaars", "saint-sylvestre"), "Oudejaarsavond (31 dec) — de jaarwisseling met vuurwerk."),
-    (("oktoberfest",), "Oktoberfest — groot bierfestival in München (eind sep–begin okt)."),
-    (("koningsdag",), "Koningsdag (27 apr) — de verjaardag van de koning."),
+     "Carnaval, uitbundig volksfeest vóór de vastentijd; in het zuiden groot gevierd."),
+    (("moederdag", "muttertag", "mother"), "Moederdag, eerbetoon aan moeders (2e zondag van mei)."),
+    (("vaderdag", "vatertag", "father"), "Vaderdag, eerbetoon aan vaders."),
+    (("dierendag",), "Dierendag (4 okt), extra aandacht voor (huis)dieren."),
+    (("halloween",), "Halloween (31 okt), griezelfeest met verkleden en snoep, vooral voor kinderen."),
+    (("sint-maarten", "sint maarten", "martin"), "Sint-Maarten (11 nov), kinderen lopen met lampionnen langs de deuren."),
+    (("sinterklaas", "nikolaus"), "Sinterklaas (5–6 dec), kinderfeest met cadeaus en pepernoten."),
+    (("oudjaar", "silvester", "oudejaars", "saint-sylvestre"), "Oudejaarsavond (31 dec), de jaarwisseling met vuurwerk."),
+    (("oktoberfest",), "Oktoberfest, groot bierfestival in München (eind sep–begin okt)."),
+    (("koningsdag",), "Koningsdag (27 apr), de verjaardag van de koning."),
 ]
 
 
@@ -203,7 +202,7 @@ def _officieus_uitleg(naam):
     for keys, tekst in _OFFICIEUS_UITLEG:
         if any(k in n for k in keys):
             return tekst
-    return "Onofficiële themadag — geen vrije dag, maar vaak wel extra druk."
+    return "Onofficiële themadag, geen vrije dag, maar vaak wel extra druk."
 
 
 # Provincies per NL-schoolvakantieregio (officieel; Gelderland is gesplitst).
@@ -217,52 +216,52 @@ NL_REGIO_PROVINCIES = {
 # Korte Nederlandse uitleg per feestdag (keyword-match, specifiek vóór generiek).
 _FEEST_UITLEG = [
     (("driekoning", "heilige drei", "epiphan", "épiphanie", "reyes", "befana"),
-     "Driekoningen (6 jan) — het bezoek van de drie wijzen aan het kind Jezus."),
+     "Driekoningen (6 jan), het bezoek van de drie wijzen aan het kind Jezus."),
     (("nieuwjaar", "jour de l", "neujahr", "new year", "año nuevo", "ano nuevo",
       "capodanno", "anul nou", "nový rok", "nowy rok", "uusaasta", "naujieji"),
-     "Nieuwjaarsdag — de eerste dag van het jaar."),
+     "Nieuwjaarsdag, de eerste dag van het jaar."),
     (("goede vrijdag", "vendredi saint", "karfreitag", "good friday", "viernes santo",
-      "venerdì santo", "velký pátek"), "Goede Vrijdag — herdenking van de kruisiging, de vrijdag vóór Pasen."),
+      "venerdì santo", "velký pátek"), "Goede Vrijdag, herdenking van de kruisiging, de vrijdag vóór Pasen."),
     (("tweede paas", "lundi de pâques", "ostermontag", "easter monday", "lunes de pascua",
-      "lunedì dell'angelo", "velikonoční pondělí"), "Tweede Paasdag — de maandag na Pasen."),
+      "lunedì dell'angelo", "velikonoční pondělí"), "Tweede Paasdag, de maandag na Pasen."),
     (("eerste paas", "ostersonntag", "easter sunday", "pâques", "paasdag", "pascua", "pasqua"),
-     "Pasen — christelijk feest van de opstanding van Christus."),
-    (("koningsdag",), "Koningsdag — de verjaardag van de koning, nationale feestdag."),
+     "Pasen, christelijk feest van de opstanding van Christus."),
+    (("koningsdag",), "Koningsdag, de verjaardag van de koning, nationale feestdag."),
     (("bevrijding", "victoire 1945", "victory in europe", "8 mai", "liberación", "liberation"),
-     "Bevrijdingsdag / Dag van de Overwinning — einde van WO II in Europa (8 mei 1945)."),
+     "Bevrijdingsdag / Dag van de Overwinning, einde van WO II in Europa (8 mei 1945)."),
     (("arbeid", "travail", "tag der arbeit", "labour", "labor", "trabajo", "lavoro",
-      "premier mai", "święto pracy"), "Dag van de Arbeid (1 mei) — internationale dag van de werkende mens."),
+      "premier mai", "święto pracy"), "Dag van de Arbeid (1 mei), internationale dag van de werkende mens."),
     (("hemelvaart", "ascension", "himmelfahrt", "ascensione", "ascensión"),
-     "Hemelvaartsdag — 40 dagen na Pasen; valt altijd op een donderdag."),
+     "Hemelvaartsdag, 40 dagen na Pasen; valt altijd op een donderdag."),
     (("pinkster", "pentecôte", "pfingst", "pentecost", "pentecoste", "pentecostés"),
-     "Pinksteren — 50 dagen na Pasen, met vaak een vrije Tweede Pinksterdag."),
+     "Pinksteren, 50 dagen na Pasen, met vaak een vrije Tweede Pinksterdag."),
     (("sacrament", "fronleichnam", "corpus christi", "fête-dieu", "boží tělo"),
-     "Sacramentsdag — katholiek feest, 60 dagen na Pasen."),
+     "Sacramentsdag, katholiek feest, 60 dagen na Pasen."),
     (("duitse eenheid", "deutschen einheit"),
-     "Dag van de Duitse Eenheid (3 okt) — viert de hereniging van Duitsland in 1990."),
+     "Dag van de Duitse Eenheid (3 okt), viert de hereniging van Duitsland in 1990."),
     (("nationale feestdag", "fête nationale", "quatorze juillet", "bastille", "nationalfeiertag",
       "fiesta nacional", "festa della repubblica", "national day", "státní svátek"),
      "Nationale feestdag van het land."),
     (("maria", "assomption", "assumption", "assunzione", "asunción", "himmelfahrt mariä"),
-     "Maria-Hemelvaart (15 aug) — katholiek hoogfeest."),
+     "Maria-Hemelvaart (15 aug), katholiek hoogfeest."),
     (("allerheiligen", "toussaint", "all saints", "ognissanti", "todos los santos"),
-     "Allerheiligen (1 nov) — herdenking van alle heiligen."),
+     "Allerheiligen (1 nov), herdenking van alle heiligen."),
     (("allerziel", "défunts", "all souls", "dušiček"),
-     "Allerzielen (2 nov) — herdenking van alle overledenen."),
+     "Allerzielen (2 nov), herdenking van alle overledenen."),
     (("wapenstilstand", "armistice", "11 novembre"),
-     "Wapenstilstandsdag (11 nov 1918) — einde van de Eerste Wereldoorlog."),
+     "Wapenstilstandsdag (11 nov 1918), einde van de Eerste Wereldoorlog."),
     (("hervorming", "reformationstag", "reformation"),
-     "Hervormingsdag (31 okt) — protestantse gedenkdag van de Reformatie."),
-    (("buß", "buss- und bet", "bettag"), "Boete- en bededag — protestantse gedenkdag."),
+     "Hervormingsdag (31 okt), protestantse gedenkdag van de Reformatie."),
+    (("buß", "buss- und bet", "bettag"), "Boete- en bededag, protestantse gedenkdag."),
     (("tweede kerst", "2ème jour de noël", "zweiter weihnacht", "2. weihnacht", "stephen",
       "stefano", "stefanitag", "boxing day", "santo estêvão", "druhý svátek vánoční"),
      "Tweede Kerstdag (26 dec)."),
     (("kerst", "noël", "weihnacht", "navidad", "natale", "christmas", "crăciun",
-      "boże narodzenie", "vánoce", "1. svátek vánoční"), "Eerste Kerstdag (25 dec) — de geboorte van Christus."),
+      "boże narodzenie", "vánoce", "1. svátek vánoční"), "Eerste Kerstdag (25 dec), de geboorte van Christus."),
     (("oudejaar", "silvester", "saint-sylvestre", "new year's eve", "nochevieja"),
-     "Oudejaarsdag (31 dec) — de laatste dag van het jaar."),
+     "Oudejaarsdag (31 dec), de laatste dag van het jaar."),
     (("afschaffing", "abolition", "esclavage", "slavernij"),
-     "Afschaffing van de slavernij — herdenkingsdag."),
+     "Afschaffing van de slavernij, herdenkingsdag."),
     (("vrouwendag", "frauentag", "women's day"), "Internationale Vrouwendag (8 maart)."),
 ]
 
@@ -385,7 +384,7 @@ def over_ons(request):
             ("OpenHolidays API", "live vakantie- & feestdagdata EU"),
             ("KMK (Duitsland)", "spreiding van de deelstaten"),
         ],
-        "seo_title": "Over ons — de mensen achter Schoolvakanties.nl",
+        "seo_title": "Over ons, de mensen achter Schoolvakanties.nl",
         "seo_description": "Onafhankelijke vakantieplanner sinds 2009. Officiële data, een vaste "
                            "redactie en een zelfgebouwd drukte-model. Lees hoe we werken.",
     })
@@ -408,13 +407,13 @@ def _client_ip(request):
 
 def _mail_samenwerking(naam, bedrijf, email, soort, bericht):
     """Best-effort doormailen van een lead. Faalt dit (geen/verkeerde mailserver),
-    dan loggen we het — de lead staat al in de DB, dus gaat nooit verloren."""
+    dan loggen we het, de lead staat al in de DB, dus gaat nooit verloren."""
     import logging
     from django.core.mail import send_mail
     body = (f"Naam: {naam}\nBedrijf: {bedrijf}\nE-mail: {email}\n"
             f"Type samenwerking: {soort}\n\n{bericht}")
     try:
-        send_mail(f"Samenwerkingsaanvraag — {naam}", body,
+        send_mail(f"Samenwerkingsaanvraag, {naam}", body,
                   settings.DEFAULT_FROM_EMAIL, [settings.PARTNER_INBOX],
                   fail_silently=False)
     except Exception:  # noqa: BLE001
@@ -427,7 +426,7 @@ def samenwerken(request):
     fout = ""
     if request.method == "POST":
         # Honeypot: bots vullen dit verborgen veld. Doe alsof het lukte en stop
-        # (geen lead opslaan, geen mail) — zo merkt de bot niets.
+        # (geen lead opslaan, geen mail), zo merkt de bot niets.
         if request.POST.get("website", "").strip():
             verzonden = True
         else:
@@ -453,7 +452,7 @@ def samenwerken(request):
                 email_ok = False
 
             if pogingen >= 5:
-                fout = ("Je hebt zojuist al een aanvraag verstuurd — probeer het over "
+                fout = ("Je hebt zojuist al een aanvraag verstuurd, probeer het over "
                         "een uurtje opnieuw of mail ons direct.")
             elif not (naam and bericht and email_ok):
                 fout = "Vul je naam, een geldig e-mailadres en een kort bericht in."
@@ -468,9 +467,9 @@ def samenwerken(request):
         "types": SAMENWERKING_TYPES,
         "verzonden": verzonden,
         "fout": fout,
-        "seo_title": "Samenwerken met Schoolvakanties.nl — partnerships & adverteren",
+        "seo_title": "Samenwerken met Schoolvakanties.nl, partnerships & adverteren",
         "seo_description": "Bereik Nederlandse gezinnen op het moment dat ze hun vakantie plannen. "
-                           "Reisbureau, hotel, creator of merk — ontdek de mogelijkheden om samen te werken.",
+                           "Reisbureau, hotel, creator of merk, ontdek de mogelijkheden om samen te werken.",
     })
 
 
@@ -500,7 +499,7 @@ def blog_overzicht(request):
     featured = next((p for p in posts if p.featured), posts[0] if posts else None)
     rest = [p for p in posts if p != featured]
     ctx = {"featured": featured, "posts": rest, "cats": BLOG_CATS,
-           "seo_title": "Blog — slim weg met het gezin | Schoolvakanties.nl",
+           "seo_title": "Blog, slim weg met het gezin | Schoolvakanties.nl",
            "seo_description": "Praktische tips, rustige bestemmingen en slim plannen rond de "
                               "schoolvakanties. Lees de blog van Schoolvakanties.nl."}
     ctx.update(_blog_sidebar())
@@ -576,7 +575,7 @@ def planner(request):
         except Exception:
             week_span.append((None, None))
 
-    # WANNEER — de échte NL-regio zomervensters (Noord/Midden/Zuid) als week-indexen.
+    # WANNEER, de échte NL-regio zomervensters (Noord/Midden/Zuid) als week-indexen.
     nl = Land.objects.filter(iso_code="NL").first()
     regio_windows = []
     if nl:
@@ -586,7 +585,7 @@ def planner(request):
             if not zomer or not zomer.eind_datum:
                 continue
             s, e = zomer.start_datum, zomer.eind_datum
-            # Weken die ín de vakantie starten (maandag binnen het venster) — zo
+            # Weken die ín de vakantie starten (maandag binnen het venster), zo
             # tonen we alleen volle reisweken, niet een halve week ervoor.
             idxs = [i for i, (mon, sun) in enumerate(week_span) if mon and s <= mon <= e]
             regio_windows.append({
@@ -594,7 +593,7 @@ def planner(request):
                 "label": f"{s.day} {_MND[s.month]} – {e.day} {_MND[e.month]}",
                 "weeks": idxs})
 
-    # WAARHEEN — wanneer is de (lange) zomervakantie op de bestemming afgelopen?
+    # WAARHEEN, wanneer is de (lange) zomervakantie op de bestemming afgelopen?
     # Dan zijn de scholen daar weer begonnen → meteen rustiger en goedkoper.
     def _summer_end(land):
         best = None
@@ -625,7 +624,7 @@ def planner(request):
         "regio_windows": regio_windows,
         "regio_windows_json": json.dumps(regio_windows),
         "dest_summer_json": json.dumps(dest_summer),
-        "seo_title": "Vakantieplanner — vind jullie slimste reisweek | Schoolvakanties.nl",
+        "seo_title": "Vakantieplanner, vind jullie slimste reisweek | Schoolvakanties.nl",
         "seo_description": "Plan de slimste week om met de kinderen weg te gaan. We scoren elke "
                            "week op drukte, prijs, weer en schoolvakantie-overlap.",
     })
@@ -658,7 +657,7 @@ def druktekaart(request):
         "weeks_json": json.dumps(wk),
         "countries_json": json.dumps([{"code": c["code"], "name": c["name"],
                                        "flag": c["flag"], "drukte": c["drukte"]} for c in countries]),
-        "seo_title": "Europese druktekaart — waar is het rustig per week | Schoolvakanties.nl",
+        "seo_title": "Europese druktekaart, waar is het rustig per week | Schoolvakanties.nl",
         "seo_description": "Schuif door de weken en zie in één oogopslag waar het in Europa rustig is. "
                            "Groen→rood drukte per land, week voor week.",
     })
@@ -683,7 +682,7 @@ def context_europe():
 def land_detail(request, slug):
     land = Land.objects.filter(slug=slug, actief=True).first()
     if not land:
-        # Bekend land uit de navigatielijst maar (nog) zonder data — bv. Noorwegen,
+        # Bekend land uit de navigatielijst maar (nog) zonder data, bv. Noorwegen,
         # Finland, Verenigd Koninkrijk, Denemarken, Griekenland: die worden niet door
         # OpenHolidays gedekt en hebben geen eigen bron. Toon een nette 'binnenkort'-
         # pagina (200, noindex) i.p.v. een harde 404. Onbekende slug -> echte 404.
@@ -694,7 +693,7 @@ def land_detail(request, slug):
             "naam": kandidaat["name"], "vlag": kandidaat["flag"], "noindex": True,
             "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Landen", "url": "/landen/"},
                        {"naam": kandidaat["name"], "url": f"/landen/{slug}/"}],
-            "seo_title": f"Schoolvakanties {kandidaat['name']} — binnenkort | Schoolvakanties.nl",
+            "seo_title": f"Schoolvakanties {kandidaat['name']}, binnenkort | Schoolvakanties.nl",
             "seo_description": f"De schoolvakanties en feestdagen van {kandidaat['name']} "
                                "voegen we binnenkort toe aan Schoolvakanties.nl.",
         })
@@ -705,7 +704,7 @@ def land_detail(request, slug):
     nationwide_names = _NL_LANDELIJK if land.iso_code == "NL" else set()
 
     # Jaar-switcher: welke jaren hebben (genoeg) data voor dit land? De import
-    # bevat staarten van aangrenzende schooljaren — die filteren we eruit (>=3).
+    # bevat staarten van aangrenzende schooljaren, die filteren we eruit (>=3).
     from django.db.models import Count
     from django.db.models.functions import ExtractYear
     jaar_counts = (land.schoolvakanties.annotate(j=ExtractYear("start_datum"))
@@ -758,7 +757,7 @@ def land_detail(request, slug):
             # Eén rij per regio binnen een periode: heeft een regio meerdere
             # datums (sub-regio's/districten/schooltypes die verschillen, bv. CH-
             # kantons of CZ-gespreide voorjaarsvakantie), dan tonen we de langste
-            # (hoofd)periode — anders verschijnt dezelfde regio verwarrend 2-3×.
+            # (hoofd)periode, anders verschijnt dezelfde regio verwarrend 2-3×.
             best = {}
             for r in rows:
                 cur = best.get(r["regio"])
@@ -777,7 +776,7 @@ def land_detail(request, slug):
             "verplicht": "verplicht" in (first.status or "").lower(),
         })
 
-    # Feestdagen (officieel) met NL-weergave. Alléén LANDELIJKE feestdagen — de
+    # Feestdagen (officieel) met NL-weergave. Alléén LANDELIJKE feestdagen, de
     # vrije dagen die in het hele land gelden. Regionale/lokale dagen (bv. de
     # Portugese 'Feriado Municipal' per gemeente, of de autonome-gemeenschapsdagen
     # in Spanje) zijn voor een landelijk reisoverzicht ruis en blazen de lijst op.
@@ -851,7 +850,7 @@ def land_detail(request, slug):
             _faqpage_node(Faq.objects.filter(page_key=f"land-{land.iso_code.lower()}", active=True),
                           _page_url(request)),
         ]),
-        "seo_title": f"Schoolvakanties {land.naam} {jaar} — data per {deel_label.lower()} | Schoolvakanties.nl",
+        "seo_title": f"Schoolvakanties {land.naam} {jaar}, data per {deel_label.lower()} | Schoolvakanties.nl",
         "seo_description": f"Alle schoolvakanties en feestdagen van {land.naam} in {jaar}, "
                            f"overzichtelijk per {deel_label.lower()}. {land.intro[:90]}",
     })

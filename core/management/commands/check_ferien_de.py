@@ -1,6 +1,6 @@
 """
 Kruiscontrole van onze Duitse schoolvakanties (OpenHolidays / KMK) tegen
-ferien-api.de — een tweede, onafhankelijke bron per Bundesland. Report-only en
+ferien-api.de, een tweede, onafhankelijke bron per Bundesland. Report-only en
 niet-destructief: het signaleert alleen periodes die in één van beide bronnen
 ontbreken of afwijken, zodat we afwijkingen zien zonder blind één bron te volgen.
 
@@ -25,7 +25,7 @@ FERIEN_URL = "https://ferien-api.de/api/v1/holidays/{state}/{year}"
 # ferien-api stateCode -> onze Regio-code.
 STATES = ["BW", "BY", "BE", "BB", "HB", "HH", "HE", "NI",
           "MV", "NW", "RP", "SL", "SN", "ST", "SH", "TH"]
-THROTTLE = 0.7  # seconden tussen calls — beleefd tegen de rate-limit.
+THROTTLE = 0.7  # seconden tussen calls, beleefd tegen de rate-limit.
 
 
 class Command(BaseCommand):
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     ok += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nKlaar — {ok} deelstaat/jaar exact gelijk, {gaten} gaten, "
+            f"\nKlaar, {ok} deelstaat/jaar exact gelijk, {gaten} gaten, "
             f"{afwijk} afwijkingen, {onbereikbaar} niet bereikbaar."))
 
     def _fetch(self, state, year):

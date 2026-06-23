@@ -78,8 +78,8 @@
       <div>
         <span class="eye">Schoolvakanties &amp; vrije dagen · {{ jaar }}</span>
         <h1>{{ land.naam }}</h1>
-        {% if land.intro %}<p class="land-sub">{{ land.intro }}</p>{% else %}<p class="land-sub">Alle schoolvakanties en feestdagen van {{ land.naam }} in {{ jaar }} — overzichtelijk op één plek.</p>{% endif %}
-        {% if vooruitblik %}<p class="vooruitblik">📅 Eerstvolgende vakantie in {{ land.naam }}: <strong>{{ vooruitblik.naam }}</strong> — nog <strong>{{ vooruitblik.dagen }} dagen</strong>.</p>{% endif %}
+        {% if land.intro %}<p class="land-sub">{{ land.intro }}</p>{% else %}<p class="land-sub">Alle schoolvakanties en feestdagen van {{ land.naam }} in {{ jaar }}, overzichtelijk op één plek.</p>{% endif %}
+        {% if vooruitblik %}<p class="vooruitblik">📅 Eerstvolgende vakantie in {{ land.naam }}: <strong>{{ vooruitblik.naam }}</strong>, nog <strong>{{ vooruitblik.dagen }} dagen</strong>.</p>{% endif %}
       </div>
     </div>
   </div>
@@ -123,7 +123,7 @@
       <div><span class="eye">Schoolvakanties</span><h2 style="margin-top:8px">Schoolvakanties {{ land.naam }}</h2></div>
     </div>
     <div class="vak-soon">
-      <strong>Binnenkort.</strong> Voor {{ land.naam }} tonen we hieronder al de officiële feestdagen. De schoolvakanties verschillen hier per regio of gemeente en hebben nog geen centrale, betrouwbare bron — die voegen we toe zodra die beschikbaar is.
+      <strong>Binnenkort.</strong> Voor {{ land.naam }} tonen we hieronder al de officiële feestdagen. De schoolvakanties verschillen hier per regio of gemeente en hebben nog geen centrale, betrouwbare bron, die voegen we toe zodra die beschikbaar is.
     </div>
   </section>
   {% endif %}
@@ -132,7 +132,7 @@
   <section class="land-block">
     <div class="section-head">
       <div><span class="eye">Vrije dagen</span><h2 style="margin-top:8px">Officiële feestdagen {{ land.naam }} {{ jaar }}</h2></div>
-      <p>Landelijke vrije dagen — handig voor een lang weekend of midweek.</p>
+      <p>Landelijke vrije dagen, handig voor een lang weekend of midweek.</p>
     </div>
     <div class="feest">
       {% for f in feestdagen %}

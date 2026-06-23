@@ -4,13 +4,13 @@ Template-tag voor responsive <picture> met WebP srcset.
 Gebruik:
     {% load responsive_image %}
 
-    {# LCP hero — eager + preload #}
+    {# LCP hero, eager + preload #}
     {% picture post.hero_image_local sizes="100vw" alt=post.title loading="eager" fetchpriority="high" %}
 
     {# Lazy kaartje #}
     {% picture airport.photo_local sizes="(max-width:600px) 100vw, 33vw" alt=airport.city %}
 
-    {# Externe URL (Pexels) — plain img met juiste attrs #}
+    {# Externe URL (Pexels), plain img met juiste attrs #}
     {% picture "https://images.pexels.com/…" alt="…" loading="eager" fetchpriority="high" %}
 
 Output (lokaal bestand):
@@ -78,7 +78,7 @@ def picture(source, **kwargs):
     # ── Lokaal bestand via pipeline ───────────────────────────────────────────
     info = get_variant_urls(src, widths=widths)
     if not info:
-        # Bestand niet gevonden — plain img, werkt zodra bestand aanwezig is
+        # Bestand niet gevonden, plain img, werkt zodra bestand aanwezig is
         url = src if src.startswith('/') else f'/media/{src}'
         return mark_safe(
             f'<img {_attrs(url, alt, css_class, loading, decoding, fetchpriority, style=style)}>'

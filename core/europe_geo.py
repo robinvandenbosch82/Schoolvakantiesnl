@@ -1,5 +1,5 @@
 """Realistische Europa-landpaden (gegenereerd uit GeoJSON, Mercator).
-Niet handmatig bewerken — zie _gen_geo.py."""
+Niet handmatig bewerken, zie _gen_geo.py."""
 
 VIEWBOX = (0, 0, 720.0, 666.3)
 

@@ -5,7 +5,7 @@ Content-Security-Policy en Permissions-Policy.
 CSP staat bewust inline styles/scripts toe ('unsafe-inline'): de pagina's gebruiken
 inline <style>-blokken, JSON-LD en een inline font-`onload`-handler. De winst zit in
 het beperken van de herkomst (default-src 'self'), het blokkeren van plug-ins/objects
-en framing, en het vastzetten van base-uri/form-action — dat dicht het grootste deel
+en framing, en het vastzetten van base-uri/form-action, dat dicht het grootste deel
 van de XSS-/clickjacking-/injectie-oppervlakte zonder de SSR-opzet te breken.
 
 Configureerbaar via env: CSP_ENABLED (default aan), CSP_REPORT_ONLY (default uit).

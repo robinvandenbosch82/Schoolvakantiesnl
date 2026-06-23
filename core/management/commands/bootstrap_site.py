@@ -2,7 +2,7 @@
 One-shot deploy-bootstrap voor een verse host (lege database).
 
 Vult de site idempotent: importeert de vakantie-/feestdagdata uit OpenHolidays
-(best-effort — een API-storing laat de deploy niet falen), seedt de redactionele
+(best-effort, een API-storing laat de deploy niet falen), seedt de redactionele
 data, synct de Page-rijen en maakt een admin-user uit de omgeving. Veilig om bij
 elke deploy te draaien.
 
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     "De cron/handmatige run vult dit later."))
         if not Land.objects.exists():
             self.stderr.write(self.style.WARNING(
-                "Nog geen landen in de DB — draai later `manage.py import_alles`."))
+                "Nog geen landen in de DB, draai later `manage.py import_alles`."))
 
         # 2) Redactionele data (landintro's, weer, bestemmingen, reisweken, experts, FAQ).
         self.stdout.write("Redactionele data seeden…")

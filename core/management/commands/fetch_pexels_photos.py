@@ -94,5 +94,5 @@ class Command(BaseCommand):
                     filled += 1
                 time.sleep(o["delay"])
 
-        msg = f"Klaar — {processed} bekeken, {filled} gevuld" + (" (dry-run)" if o["dry_run"] else "")
+        msg = f"Klaar, {processed} bekeken, {filled} gevuld" + (" (dry-run)" if o["dry_run"] else "")
         self.stdout.write(self.style.SUCCESS(msg))

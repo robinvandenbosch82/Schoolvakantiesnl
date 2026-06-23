@@ -65,7 +65,7 @@ _PROFILES = {
     "pl": (12, 2.8, 24), "cz": (12, 2.6, 23), "sk": (12, 2.6, 23), "hu": (13, 2.6, 25),
     "si": (12, 2.4, 24), "ro": (13, 2.8, 24), "bg": (13, 2.6, 25),
     # Noord/Baltisch (vroeg). NB: Zweden/Noorwegen vallen buiten de kaart-bbox
-    # (te noordelijk), dus geen profiel — anders staan ze wel in de lijst maar
+    # (te noordelijk), dus geen profiel, anders staan ze wel in de lijst maar
     # niet op de kaart.
     "dk": (10, 2.6, 22), "ee": (10, 2.6, 21), "lv": (10, 2.6, 21), "lt": (10, 2.6, 21),
 }
@@ -95,8 +95,7 @@ def prijs_curve(drukte, overlap, niveau):
 def drukte_profile(peak, spread, base, n):
     """Gauss-drukteprofiel rond de piekweek (0–100 per week). Gememoized: de invoer
     komt uit de constante _PROFILES, dus elk uniek profiel wordt één keer berekend
-    i.p.v. per request (country_drukte roept dit 25× aan). Geeft een tuple terug —
-    immutable, dus veilig om tussen requests te delen."""
+    i.p.v. per request (country_drukte roept dit 25× aan). Geeft een tuple terug,     immutable, dus veilig om tussen requests te delen."""
     return tuple(
         round(base + (100 - base) * math.exp(-((i - peak) ** 2) / (2 * spread * spread)))
         for i in range(n)

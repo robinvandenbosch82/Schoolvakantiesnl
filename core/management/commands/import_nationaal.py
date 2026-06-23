@@ -2,14 +2,14 @@
 Importeer SCHOOLVAKANTIES uit de gezaghebbende nationale bronnen, als override op
 OpenHolidays (dat voor deze landen rommeliger/minder precies is):
 
-  * NL — Rijksoverheid open data (opendata.rijksoverheid.nl). De officiële
+  * NL, Rijksoverheid open data (opendata.rijksoverheid.nl). De officiële
     adviesdata per regio Noord/Midden/Zuid (+ 'heel Nederland'), inclusief of de
     periode wettelijk verplicht is. Loopt meerdere schooljaren vooruit.
-  * FR — Éducation nationale open data (data.education.gouv.fr). Het échte
+  * FR, Éducation nationale open data (data.education.gouv.fr). Het échte
     Franse model: schoolzones A / B / C (+ Corse). Overzeese gebieden worden
     bewust overgeslagen (alleen métropole).
 
-(DE blijft op OpenHolidays — dat is al de officiële KMK-bron; ferien-api.de
+(DE blijft op OpenHolidays, dat is al de officiële KMK-bron; ferien-api.de
 dient als losse kruiscontrole, zie check_ferien_de.)
 
 Idempotent: upsert op een genamespacede external_id (bv. 'rijksoverheid:…'),
@@ -97,7 +97,7 @@ class Command(BaseCommand):
         handlers = {"NL": self._import_nl, "FR": self._import_fr}
         for code in codes:
             if code not in handlers:
-                self.stderr.write(self.style.WARNING(f"Land {code} heeft geen nationale bron — overgeslagen."))
+                self.stderr.write(self.style.WARNING(f"Land {code} heeft geen nationale bron, overgeslagen."))
                 continue
             land = self._ensure_land(code)
             done = handlers[code](land)
@@ -105,7 +105,7 @@ class Command(BaseCommand):
             land.imported_at = self.now
             land.save(update_fields=["imported_at"])
             self.stdout.write(self.style.SUCCESS(
-                f"{land.naam} ({code}) — {done} schoolvakanties geïmporteerd, "
+                f"{land.naam} ({code}), {done} schoolvakanties geïmporteerd, "
                 f"{removed} oude OpenHolidays-rijen opgeruimd."))
 
     # ── HTTP ──────────────────────────────────────────────────────────────────

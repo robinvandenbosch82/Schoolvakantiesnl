@@ -34,7 +34,7 @@ from .models import (
     WeerMaand,
 )
 
-admin.site.site_header = "Schoolvakanties.nl — beheer"
+admin.site.site_header = "Schoolvakanties.nl, beheer"
 admin.site.site_title = "Schoolvakanties.nl"
 admin.site.index_title = "Content & instellingen"
 
