@@ -24,12 +24,8 @@
         onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"></noscript>
 
-  {# Externe core-CSS (Cloudflare cachet .css aan de edge; klein HTML-document). #}
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=11">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=11">
-  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=11">
-  <link rel="stylesheet" href="{% static 'css/header.css' %}?v=11">
-  <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=11">
+  {# Core-CSS inline: geen render-blocking CSS-verzoeken (snelle FCP op mobiel). #}
+  {% inline_core_css %}
   {% block head_js %}{% endblock %}
   {% block extra_css %}{% endblock %}
   <style>/* hidden-attribuut leidend maken boven de .mega/.mobnav display-regels uit header.css */
