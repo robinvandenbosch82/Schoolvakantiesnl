@@ -23,7 +23,7 @@
   {# Externe core-CSS: Cloudflare cachet .css aan de edge en de browser cachet ze over pagina's heen. #}
   <link rel="stylesheet" href="{% static 'css/fonts.css' %}?v=15">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=15">
-  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=16">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=17">
   <link rel="stylesheet" href="{% static 'css/header.css' %}?v=15">
   <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=15">
   {% block head_js %}{% endblock %}
@@ -40,7 +40,7 @@
     {% block reviewbar %}{% include "partials/reviewbar.html" %}{% endblock %}
     {% include "partials/footer.html" %}
   </div>
-  <script src="{% static 'js/site.js' %}?v=11" defer></script>
+  <script src="{% static 'js/site.js' %}?v=12" defer></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

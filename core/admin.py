@@ -24,7 +24,7 @@ from .models import (
     Land,
     MenuItem,
     Page,
-    NlPlaats,
+    Plaats,
     Regio,
     Reisweek,
     Review,
@@ -255,12 +255,13 @@ class RegioAdmin(admin.ModelAdmin):
     search_fields = ("naam", "code", "korte_naam")
 
 
-@admin.register(NlPlaats)
-class NlPlaatsAdmin(admin.ModelAdmin):
-    list_display = ("naam", "regio")
-    list_filter = ("regio",)
+@admin.register(Plaats)
+class PlaatsAdmin(admin.ModelAdmin):
+    list_display = ("naam", "land", "regio")
+    list_filter = ("land", "regio")
     list_editable = ("regio",)
-    search_fields = ("naam",)
+    search_fields = ("naam", "regio")
+    list_select_related = ("land",)
 
 
 @admin.register(Schoolvakantie)

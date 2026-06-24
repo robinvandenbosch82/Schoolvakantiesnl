@@ -204,19 +204,21 @@
   {% if land.iso_code == 'NL' or land.regio_info or regios %}
   <section class="land-block">
     <div class="section-head"><div><span class="eye">Regio-indeling</span><h2 style="margin-top:8px">{% if land.iso_code == 'DE' %}Hoe is Duitsland ingedeeld?{% elif land.iso_code == 'NL' %}Welke regio is mijn provincie?{% else %}De regio's van {{ land.naam }}{% endif %}</h2></div>{% if regios and land.iso_code != 'NL' %}<p>{{ regios|length }} regio's met (deels) eigen schoolvakanties.</p>{% endif %}</div>
-    {% if land.iso_code == 'NL' %}
+    {% if plaats_zoeker %}
       <div class="plaats-zoek" data-plaats-zoek>
-        <label class="pz-label" for="pz-input">Zoek je woonplaats of gemeente</label>
+        <label class="pz-label" for="pz-input">{% if land.iso_code == 'NL' %}Zoek je woonplaats of gemeente{% else %}Zoek je gemeente of district{% endif %}</label>
         <div class="pz-field">
           <input id="pz-input" type="text" autocomplete="off" spellcheck="false"
-                 placeholder="Bijv. Amsterdam, Eindhoven, Utrecht…"
+                 placeholder="{% if land.iso_code == 'NL' %}Bijv. Amsterdam, Eindhoven, Utrecht…{% else %}Bijv. je gemeente of district…{% endif %}"
                  role="combobox" aria-expanded="false" aria-autocomplete="list"
                  aria-controls="pz-suggest" data-pz-input>
           <ul id="pz-suggest" class="pz-suggest" role="listbox" hidden data-pz-suggest></ul>
         </div>
         <div class="pz-result" role="status" aria-live="polite" hidden data-pz-result></div>
       </div>
-      {% if nl_plaatsen_json %}<script type="application/json" id="nl-plaatsen-data">{{ nl_plaatsen_json|safe }}</script>{% endif %}
+      <script type="application/json" id="plaatsen-data">{{ plaatsen_json|safe }}</script>
+    {% endif %}
+    {% if land.iso_code == 'NL' %}
       <div class="regio-cols">
         {% for r in nl_regio_overzicht %}
         <div class="regio-col" data-regio="{{ r.naam }}">
@@ -231,7 +233,7 @@
       {% if land.regio_info %}<p class="land-intro" style="margin-bottom:18px">{{ land.regio_info }}</p>{% endif %}
       {% if regios %}
         <div class="officieus">
-          {% for r in regios %}<div class="off-chip"><span class="oc-txt"><span class="oc-nm">{{ r.naam }}</span>{% if r.korte_naam and r.korte_naam != r.naam %}<span class="oc-dt">{{ r.korte_naam }}</span>{% endif %}</span></div>{% endfor %}
+          {% for r in regios %}<div class="off-chip" data-regio="{{ r.naam }}"><span class="oc-txt"><span class="oc-nm">{{ r.naam }}</span>{% if r.korte_naam and r.korte_naam != r.naam %}<span class="oc-dt">{{ r.korte_naam }}</span>{% endif %}</span></div>{% endfor %}
         </div>
       {% endif %}
     {% endif %}

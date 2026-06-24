@@ -18,7 +18,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from core.models import (Bestemming, BlogArtikel, Expert, Faq, Feestdag, Land,
-                         NlPlaats, Page, Reisweek, SectieTekst, SiteSettings, WeerMaand)
+                         Plaats, Page, Reisweek, SectieTekst, SiteSettings, WeerMaand)
 
 MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
             "jul": 7, "aug": 8, "sep": 9, "okt": 10, "nov": 11, "dec": 12}
@@ -369,7 +369,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
 
     # Gecureerde basisset plaats -> regio (provincie-correct). De volledige lijst
-    # met álle gemeenten (incl. de Gelderland-splitsing) vult `import_nl_plaatsen`
+    # met álle gemeenten (incl. de Gelderland-splitsing) vult `import_plaatsen`
     # op productie uit OpenHolidays; dit zorgt dat de zoekfunctie meteen werkt.
     NL_PLAATSEN = {
         "Noord": ["Groningen", "Leeuwarden", "Assen", "Emmen", "Zwolle", "Deventer",
@@ -386,14 +386,18 @@ class Command(BaseCommand):
     }
 
     def _seed_nl_plaatsen(self):
+        from core.models import Land
+        nl = Land.objects.filter(iso_code="NL").first()
+        if not nl:
+            return
         n = 0
         for regio, plaatsen in self.NL_PLAATSEN.items():
             for naam in plaatsen:
-                _, created = NlPlaats.objects.get_or_create(
-                    naam=naam, defaults={"regio": regio})
+                _, created = Plaats.objects.get_or_create(
+                    land=nl, naam=naam, defaults={"regio": regio})
                 n += int(created)
         self.stdout.write(f"NL plaatsen->regio: {n} toegevoegd "
-                          f"({NlPlaats.objects.count()} totaal).")
+                          f"({Plaats.objects.filter(land=nl).count()} totaal).")
 
     def _seed_bedrijf(self):
         """Bedrijfsgegevens (Travel Nerds B.V.) in de site-instellingen. Vult

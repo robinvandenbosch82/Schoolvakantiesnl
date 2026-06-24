@@ -56,14 +56,15 @@ class Command(BaseCommand):
         #     dekt alleen de WXR-export; dit vangt al het overige op.
         self._assign_blog_redactie()
 
-        # 3c) NL plaats -> regio volledig vullen uit OpenHolidays (best-effort;
-        #     incl. de Gelderland-splitsing). Faalt de API, dan blijft de seed-set.
+        # 3c) Plaats -> regio vullen uit OpenHolidays voor alle landen met
+        #     plaatsniveau-data (NL incl. Gelderland-splitsing, CZ okres→kraj, …).
+        #     Best-effort: faalt de API, dan blijft de gecureerde seed-set staan.
         if not opts["skip_import"]:
             try:
-                self.stdout.write("NL plaatsen->regio importeren…")
-                call_command("import_nl_plaatsen")
+                self.stdout.write("Plaatsen->regio importeren…")
+                call_command("import_plaatsen")
             except Exception as exc:  # noqa: BLE001
-                self.stderr.write(self.style.WARNING(f"NL-plaatsenimport overgeslagen: {exc}."))
+                self.stderr.write(self.style.WARNING(f"Plaatsenimport overgeslagen: {exc}."))
 
         # 4) Page-rijen synchroniseren met de routing-registry.
         call_command("sync_pages")

@@ -17,7 +17,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 
 from . import europe
-from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, NlPlaats, Regio,
+from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, Plaats, Regio,
                      Reisweek, Schoolvakantie)
 
 BLOG_CATS = ["Slim plannen", "Bestemmingen", "Met kinderen", "Drukte & prijzen"]
@@ -1064,6 +1064,15 @@ def land_detail(request, slug):
                                    (land.naam, f"/{land.slug}/")])
     breadcrumb["@id"] = url + "#breadcrumb"
 
+    # Plaats→regio-zoeker: toon 'm alleen als de OpenHolidays-data dit land op
+    # plaatsniveau dekt én die plaatsen over ≥3 regio's verdeeld zijn (anders
+    # vindt de meeste bezoeker z'n plaats niet). Dat is nu NL en CZ.
+    plaatsen = list(land.plaatsen.all())
+    plaats_regios = {p.regio for p in plaatsen}
+    plaats_zoeker = len(plaats_regios) >= 3
+    plaatsen_json = (json.dumps([{"n": p.naam, "r": p.regio} for p in plaatsen],
+                                ensure_ascii=False) if plaats_zoeker else "")
+
     return render(request, "pages/land.html", {
         "land": land, "regios": regios, "deel_label": deel_label, "bron_kort": bron_kort,
         "experts": experts,
@@ -1072,9 +1081,8 @@ def land_detail(request, slug):
         "nl_regio_overzicht": ([{"naam": r.naam, "uitleg": r.uitleg,
                                  "provincies": NL_REGIO_PROVINCIES.get(r.naam, [])} for r in regios]
                                if land.iso_code == "NL" else None),
-        "nl_plaatsen_json": (json.dumps([{"n": p.naam, "r": p.regio}
-                                         for p in NlPlaats.objects.all()], ensure_ascii=False)
-                             if land.iso_code == "NL" else ""),
+        "plaats_zoeker": plaats_zoeker,
+        "plaatsen_json": plaatsen_json,
         "periods": period_list, "feestdagen": feestdagen, "officieus": officieus,
         "weer_rows": weer_rows, "brw": brw, "brw_max": brw_max, "brw_top": brw_top,
         "kernfeiten": kernfeiten, "andere_landen": andere_landen,

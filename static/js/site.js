@@ -494,17 +494,17 @@
     });
   }
 
-  // ── NL plaats → regio zoeker (typeahead + highlight) ─────────────────────
+  // ── Plaats → regio zoeker (typeahead + highlight) ────────────────────────
   function plaatsZoeker() {
     var box = $("[data-plaats-zoek]");
     if (!box) return;
     var input = $("[data-pz-input]", box);
     var sug = $("[data-pz-suggest]", box);
     var out = $("[data-pz-result]", box);
-    var plaatsen = readJSON("nl-plaatsen-data");
+    var plaatsen = readJSON("plaatsen-data");
     if (!input || !sug || !out || !plaatsen || !plaatsen.length) return;
 
-    var cols = $$(".regio-col");
+    var cols = $$(".regio-col, .off-chip");
     var REGIO_UITLEG = {
       Noord: "Noord-Nederland", Midden: "Midden-Nederland", Zuid: "Zuid-Nederland"
     };
@@ -512,6 +512,8 @@
       return (s || "").toLowerCase()
         .replace(/['’`.]/g, "").replace(/\s+/g, " ").trim();
     };
+    // Veilige class-suffix; alleen NL-regio's hebben een eigen kleur.
+    var slug = function (s) { return norm(s).replace(/[^a-z0-9]+/g, "-"); };
     var active = -1, matches = [];
 
     function clearHi() { cols.forEach(function (c) { c.classList.remove("is-hit"); }); }
@@ -524,7 +526,7 @@
         if (hit.scrollIntoView) hit.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       out.innerHTML = "<strong>" + p.n + "</strong> valt onder schoolvakantieregio " +
-        "<span class=\"pz-regio pz-regio--" + p.r.toLowerCase() + "\">" +
+        "<span class=\"pz-regio pz-regio--" + slug(p.r) + "\">" +
         (REGIO_UITLEG[p.r] || p.r) + "</span>.";
       out.hidden = false;
     }
@@ -546,7 +548,7 @@
       sug.innerHTML = matches.map(function (p, i) {
         return "<li role=\"option\" id=\"pz-opt-" + i + "\" data-i=\"" + i + "\">" +
           "<span class=\"pz-nm\">" + p.n + "</span>" +
-          "<span class=\"pz-rg pz-regio--" + p.r.toLowerCase() + "\">" + p.r + "</span></li>";
+          "<span class=\"pz-rg pz-regio--" + slug(p.r) + "\">" + p.r + "</span></li>";
       }).join("");
       sug.hidden = false; active = -1;
       input.setAttribute("aria-expanded", "true");

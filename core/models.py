@@ -656,22 +656,26 @@ class Regio(models.Model):
         return f"{self.naam} ({self.land.iso_code})"
 
 
-class NlPlaats(models.Model):
-    """Nederlandse plaats/gemeente -> schoolvakantieregio (Noord/Midden/Zuid),
-    voor de 'zoek je plaats'-functie op /nederland/. Gevuld door
-    `import_nl_plaatsen` (uit OpenHolidays, incl. de Gelderland-splitsing) en met
-    een gecureerde basisset uit de seed; handmatig bij te werken in de admin."""
-    REGIO_CHOICES = [("Noord", "Noord"), ("Midden", "Midden"), ("Zuid", "Zuid")]
-    naam = models.CharField("Plaats / gemeente", max_length=120, unique=True)
-    regio = models.CharField("Regio", max_length=10, choices=REGIO_CHOICES)
+class Plaats(models.Model):
+    """Plaats / gemeente / district -> schoolvakantieregio, voor de 'zoek je
+    plaats'-functie op de landpagina's. `regio` is de naam van de bijbehorende
+    Regio (zodat de juiste regio-kaart oplicht). Gevuld door `import_plaatsen`
+    uit OpenHolidays — alleen voor landen die op plaatsniveau getagd zijn
+    (NL via de provincie-indeling Noord/Midden/Zuid, CZ via okres→kraj, enz.).
+    Handmatig bij te werken in de admin."""
+    land = models.ForeignKey("Land", on_delete=models.CASCADE, related_name="plaatsen")
+    naam = models.CharField("Plaats / gemeente", max_length=120)
+    regio = models.CharField("Regio", max_length=120,
+                             help_text="Naam van de Regio waar deze plaats onder valt.")
 
     class Meta:
-        verbose_name = "NL plaats → regio"
-        verbose_name_plural = "NL plaatsen → regio"
-        ordering = ["naam"]
+        verbose_name = "plaats → regio"
+        verbose_name_plural = "plaatsen → regio"
+        ordering = ["land", "naam"]
+        unique_together = [("land", "naam")]
 
     def __str__(self):
-        return f"{self.naam} → {self.regio}"
+        return f"{self.naam} ({self.land_id}) → {self.regio}"
 
 
 class Schoolvakantie(models.Model):

@@ -2,7 +2,7 @@
 landen-edge-cases (live / binnenkort / onbekend)."""
 from django.test import TestCase
 
-from core.models import BlogArtikel, Land, NlPlaats, Reisweek
+from core.models import BlogArtikel, Land, Plaats, Regio, Reisweek
 
 
 def _seed_weeks():
@@ -19,7 +19,14 @@ class PageRenderTests(TestCase):
                             weer_beste="Mei, juni en september: zacht en relatief droog.")
         BlogArtikel.objects.create(titel="Testpost", slug="testpost", active=True,
                                    body_html="<p>Hoi</p>", excerpt="Korte intro")
-        NlPlaats.objects.create(naam="Eindhoven", regio="Zuid")
+        nl = Land.objects.get(iso_code="NL")
+        # NL-regio's (kolommen waarop de zoeker highlight) + plaatsen over 3 regio's,
+        # zodat de zoeker-gate (≥3 regio's) aanslaat.
+        for i, naam in enumerate(["Noord", "Midden", "Zuid"]):
+            Regio.objects.create(land=nl, code=f"NL-{naam[:1]}", naam=naam, order=i)
+        Plaats.objects.create(land=nl, naam="Amsterdam", regio="Noord")
+        Plaats.objects.create(land=nl, naam="Utrecht", regio="Midden")
+        Plaats.objects.create(land=nl, naam="Eindhoven", regio="Zuid")
 
     def setUp(self):
         from django.core.cache import cache
@@ -84,12 +91,33 @@ class PageRenderTests(TestCase):
 
     def test_nl_plaats_zoeker(self):
         """NL-pagina: de plaats→regio-zoeker rendert (zoekveld + JSON-payload met
-        de geseede plaatsen). Andere landen krijgen die payload niet."""
+        de plaatsen). De regio-kolommen dragen data-regio voor de highlight."""
         resp = self.client.get("/nederland/")
         self.assertContains(resp, 'data-plaats-zoek')
-        self.assertContains(resp, 'id="nl-plaatsen-data"')
+        self.assertContains(resp, 'id="plaatsen-data"')
         self.assertContains(resp, '"n": "Eindhoven"')
         self.assertContains(resp, '"r": "Zuid"')
+        self.assertContains(resp, 'data-regio="Noord"')
+
+    def test_plaats_zoeker_generiek_land(self):
+        """Niet-NL land met plaatsniveau-data over ≥3 regio's: de zoeker
+        verschijnt ook daar, met data-regio op de off-chips voor de highlight.
+        Bij <3 regio's blijft de zoeker weg."""
+        cz = Land.objects.create(iso_code="CZ", naam="Tsjechië", slug="tsjechie", actief=True)
+        for code, naam in [("CZ-JC", "Zuid-Bohemen"), ("CZ-JM", "Zuid-Moravië"),
+                           ("CZ-ST", "Midden-Bohemen")]:
+            Regio.objects.create(land=cz, code=code, naam=naam)
+            Plaats.objects.create(land=cz, naam=f"Stad-{code}", regio=naam)
+        resp = self.client.get("/tsjechie/")
+        self.assertContains(resp, 'data-plaats-zoek')
+        self.assertContains(resp, 'id="plaatsen-data"')
+        self.assertContains(resp, 'data-regio="Zuid-Bohemen"')
+
+        # Eén regio te weinig -> geen zoeker.
+        Land.objects.create(iso_code="IT", naam="Italië", slug="italie", actief=True,
+                            )  # zonder Plaats-rijen
+        resp_it = self.client.get("/italie/")
+        self.assertNotContains(resp_it, 'data-plaats-zoek')
 
     def test_heading_order(self):
         """Elke pagina heeft precies één h1 en slaat geen heading-niveau over
