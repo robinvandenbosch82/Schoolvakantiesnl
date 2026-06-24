@@ -378,6 +378,8 @@ class Command(BaseCommand):
             "adres_straat": "Hertogstraat 131",
             "adres_postcode": "6511 RZ",
             "adres_plaats": "Nijmegen",
+            "phone": "085 060 0043",
+            "email": "partner@travelnerds.nl",
         }
         changed = []
         for veld, waarde in defaults.items():

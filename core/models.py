@@ -73,11 +73,11 @@ class SiteSettings(models.Model):
     review_score = models.CharField("Reviewscore", max_length=10, default="9,1")
     review_count = models.CharField("Aantal reviews", max_length=20, default="2.840")
 
-    phone = models.CharField("Telefoon", max_length=40, blank=True, default="")
-    show_phone = models.BooleanField("Telefoonnummer tonen", default=False,
+    phone = models.CharField("Telefoon", max_length=40, blank=True, default="085 060 0043")
+    show_phone = models.BooleanField("Telefoonnummer tonen", default=True,
                                      help_text="Uit = nergens een telefoonnummer tonen.")
     whatsapp = models.CharField("WhatsApp-nummer", max_length=40, blank=True, default="")
-    email = models.EmailField("E-mail", default="hallo@schoolvakanties.nl")
+    email = models.EmailField("E-mail", default="partner@travelnerds.nl")
 
     bedrijfsnaam = models.CharField("Bedrijfsnaam (juridisch)", max_length=160, blank=True, default="",
                                     help_text="Rechtspersoon achter de site, bijv. 'Travel Nerds B.V.'.")
