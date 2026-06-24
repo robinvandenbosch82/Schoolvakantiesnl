@@ -8,6 +8,7 @@ from django.urls import include, path, re_path
 from django.views.static import serve as _serve_static
 
 from core.sitemaps import SITEMAPS
+from core.views import news_sitemap
 
 
 def media_serve(request, path, document_root=None):
@@ -33,6 +34,7 @@ def robots_txt(request):
         "Disallow: /admin/",
         "",
         f"Sitemap: {origin}/sitemap.xml",
+        f"Sitemap: {origin}/news-sitemap.xml",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
@@ -41,6 +43,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("sitemap.xml", sitemap, {"sitemaps": SITEMAPS},
          name="django.contrib.sitemaps.views.sitemap"),
+    path("news-sitemap.xml", news_sitemap, name="news_sitemap"),
     path("robots.txt", robots_txt, name="robots_txt"),
 ]
 

@@ -146,7 +146,8 @@ class ExpertAdmin(PexelsPhotoMixin, admin.ModelAdmin):
 
 @admin.register(BlogArtikel)
 class BlogArtikelAdmin(PexelsPhotoMixin, admin.ModelAdmin):
-    list_display = ("titel", "categorie", "author", "reviewer", "datum", "featured", "order", "active")
+    list_display = ("titel", "categorie", "author", "reviewer", "datum", "gepubliceerd_op",
+                    "featured", "order", "active")
     list_editable = ("featured", "order", "active")
     prepopulated_fields = {"slug": ("titel",)}
     search_fields = ("titel", "excerpt")

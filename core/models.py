@@ -297,6 +297,9 @@ class BlogArtikel(PhotoMixin):
     categorie = models.CharField("Categorie", max_length=80, blank=True)
     leestijd = models.CharField("Leestijd", max_length=20, blank=True, help_text="bijv. '5 min'")
     datum = models.CharField("Datum (weergave)", max_length=40, blank=True)
+    gepubliceerd_op = models.DateTimeField("Gepubliceerd op", null=True, blank=True,
+                                           help_text="Echte publicatiedatum (voor de Google "
+                                                     "News-sitemap). Leeg = niet in news-sitemap.")
     author = models.ForeignKey("Expert", verbose_name="Auteur", on_delete=models.SET_NULL,
                                null=True, blank=True, related_name="+")
     reviewer = models.ForeignKey("Expert", verbose_name="Gecontroleerd door", on_delete=models.SET_NULL,

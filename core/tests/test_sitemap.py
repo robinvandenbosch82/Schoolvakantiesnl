@@ -25,3 +25,24 @@ class SitemapTests(TestCase):
         body = self.client.get("/sitemap.xml").content.decode()
         self.assertNotIn("/landen/inactief/", body)
         self.assertNotIn("/blog/verborgen/", body)
+
+    def test_news_sitemap(self):
+        """Google News-sitemap: alleen artikelen van de laatste 2 dagen, met
+        news-namespace + publication_date + title."""
+        import datetime as dt
+        from django.utils import timezone
+        vers = BlogArtikel.objects.create(
+            titel="Vers nieuws", slug="vers-nieuws", active=True, body_html="", excerpt="",
+            gepubliceerd_op=timezone.now())
+        BlogArtikel.objects.create(
+            titel="Oud nieuws", slug="oud-nieuws", active=True, body_html="", excerpt="",
+            gepubliceerd_op=timezone.now() - dt.timedelta(days=10))
+        resp = self.client.get("/news-sitemap.xml")
+        self.assertEqual(resp.status_code, 200)
+        body = resp.content.decode()
+        self.assertIn("http://www.google.com/schemas/sitemap-news/0.9", body)
+        self.assertIn("https://schoolvakanties.nl/blog/vers-nieuws/", body)
+        self.assertIn("<news:title>Vers nieuws</news:title>", body)
+        self.assertIn("<news:publication_date>", body)
+        self.assertNotIn("/blog/oud-nieuws/", body)        # >2 dagen oud -> eruit
+        self.assertNotIn("/blog/t-post/", body)            # geen gepubliceerd_op -> eruit

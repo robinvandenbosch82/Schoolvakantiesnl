@@ -45,6 +45,19 @@ def _datum(raw):
         return ""
 
 
+def _pubdate(raw):
+    """WP post_date ('2023-11-03 10:30:00') -> tijdzone-bewuste datetime (voor de
+    Google News-sitemap). Leeg/onparsebaar -> None."""
+    from django.utils import timezone
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            naive = dt.datetime.strptime((raw or "").strip()[:19], fmt)
+            return timezone.make_aware(naive)
+        except (ValueError, IndexError):
+            continue
+    return None
+
+
 def _geen_streepjes(s):
     """Gedachtestreepjes (—) vervangen door een komma; en-streepjes (reeksen) blijven."""
     return re.sub(r"\s*—\s*", ", ", s or "")
@@ -144,6 +157,7 @@ class Command(BaseCommand):
                     "titel": titel,
                     "categorie": categorie,
                     "datum": _datum(_txt(it, "wp:post_date")),
+                    "gepubliceerd_op": _pubdate(_txt(it, "wp:post_date")),
                     "excerpt": _excerpt(it.findtext("excerpt:encoded", namespaces=NS) or "", content),
                     "body_html": content,
                     "photo_url": thumb,

@@ -853,6 +853,23 @@ def blog_datum_redirect(request, jaar, maand, dag, slug):
     return redirect("/blog/", permanent=True)
 
 
+def news_sitemap(request):
+    """Google News-sitemap: blogartikelen van de laatste 2 dagen (News-spec).
+    Google negeert artikelen ouder dan 2 dagen, dus dit vult zich vanzelf zodra
+    er een nieuw bericht is en is meestal (correct) klein of leeg."""
+    import datetime as _dt
+    from django.utils import timezone
+    grens = timezone.now() - _dt.timedelta(days=2)
+    artikelen = (BlogArtikel.objects.filter(active=True, gepubliceerd_op__gte=grens)
+                 .order_by("-gepubliceerd_op"))
+    items = [{"slug": a.slug, "titel": a.titel, "pubdate": a.gepubliceerd_op.isoformat()}
+             for a in artikelen]
+    return render(request, "sitemap_news.xml",
+                  {"artikelen": items, "origin": settings.SITE_ORIGIN,
+                   "site_name": settings.SITE_NAME},
+                  content_type="application/xml")
+
+
 def kennisbank_redirect(request, rest):
     """Kennisbankartikelen bestaan nu niet; 301 naar de landhome /<land>/.
     Onbekend land -> /landen/. (Komt later terug als echte artikelen.)"""

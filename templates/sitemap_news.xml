@@ -1,0 +1,15 @@
+{% autoescape on %}<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+{% for a in artikelen %}  <url>
+    <loc>{{ origin }}/blog/{{ a.slug }}/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>{{ site_name }}</news:name>
+        <news:language>nl</news:language>
+      </news:publication>
+      <news:publication_date>{{ a.pubdate }}</news:publication_date>
+      <news:title>{{ a.titel }}</news:title>
+    </news:news>
+  </url>
+{% endfor %}</urlset>
+{% endautoescape %}
