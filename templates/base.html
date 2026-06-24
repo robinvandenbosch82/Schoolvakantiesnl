@@ -21,40 +21,13 @@
   <link rel="preload" href="/static/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 
   {# Externe core-CSS: Cloudflare cachet .css aan de edge en de browser cachet ze over pagina's heen. #}
-  <link rel="stylesheet" href="{% static 'css/fonts.css' %}?v=14">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=14">
-  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=14">
-  <link rel="stylesheet" href="{% static 'css/header.css' %}?v=14">
-  <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=14">
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=15">
   {% block head_js %}{% endblock %}
   {% block extra_css %}{% endblock %}
-  <style>/* hidden-attribuut leidend maken boven de .mega/.mobnav display-regels uit header.css */
-    .mega[hidden], .mobnav[hidden] { display: none !important; }
-    .mobnav:not([hidden]) { display: flex !important; top:0; right:0; bottom:0; left:0; height:100dvh; }
-    .mega:not([hidden]) { display: block !important; }
-    /* mobiel hoofdmenu gebruikt echte links (SEO), zelfde stijl als de design-buttons */
-    .mobnav-main a { display:block; text-align:left; padding:14px 12px; font-size:21px;
-      font-weight:700; letter-spacing:-0.02em; color:var(--ink); border-radius:var(--r-sm); text-decoration:none; }
-    .mobnav-main a.on { color:var(--accent-ink); background:var(--accent-soft); }
-    /* breadcrumbs */
-    .crumbs { max-width:var(--maxw); margin:0 auto; padding:16px 26px 0; font-size:13px;
-      color:var(--ink-3); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .crumbs a { color:var(--ink-3); font-weight:600; }
-    .crumbs a:hover { color:var(--accent-ink); }
-    .crumbs .crumb-sep { color:var(--ink-4); }
-    .crumbs [aria-current] { color:var(--ink-2); font-weight:700; }
-    /* realistische Europa-kaart: dunne landgrenzen, grijze context-landen */
-    .country-shape, .country-ctx { stroke:var(--paper); stroke-width:0.8; stroke-linejoin:round; }
-    .country-shape { cursor:pointer; transition:fill .25s ease; }
-    .country-ctx { transition:fill .25s ease; }
-    .country-shape:hover { filter:brightness(0.95); }
-    .country-shape.sel { stroke:var(--ink); stroke-width:1.6; }
-    /* toegankelijkheid: skip-link + zichtbare toetsenbordfocus */
-    .skip-link { position:absolute; left:-9999px; top:0; z-index:1000; background:var(--accent);
-      color:#fff; padding:10px 16px; border-radius:0 0 12px 0; font-weight:700; text-decoration:none; }
-    .skip-link:focus { left:0; }
-    :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
-    main:focus { outline:none; }</style>
 
   <script type="application/ld+json">{{ org_jsonld|safe }}</script>
   {% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}

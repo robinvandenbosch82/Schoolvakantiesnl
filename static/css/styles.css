@@ -158,3 +158,18 @@ img{ display:block; max-width:100%; }
   .nav{ display:none; }
   .section{ padding-block:44px; }
 }
+
+/* ---------- breadcrumbs ---------- */
+.crumbs{ max-width:var(--maxw); margin:0 auto; padding:16px 26px 0; font-size:13px;
+  color:var(--ink-3); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.crumbs a{ color:var(--ink-3); font-weight:600; }
+.crumbs a:hover{ color:var(--accent-ink); }
+.crumbs .crumb-sep{ color:var(--ink-4); }
+.crumbs [aria-current]{ color:var(--ink-2); font-weight:700; }
+
+/* ---------- toegankelijkheid: skip-link + zichtbare toetsenbordfocus ---------- */
+.skip-link{ position:absolute; left:-9999px; top:0; z-index:1000; background:var(--accent);
+  color:#fff; padding:10px 16px; border-radius:0 0 12px 0; font-weight:700; text-decoration:none; }
+.skip-link:focus{ left:0; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+main:focus{ outline:none; }
