@@ -12,7 +12,7 @@
         <div class="foot-contact">
           <a href="mailto:{{ site.email }}"><span class="lbl">Mail</span>{{ site.email }}</a>
           {% if site.show_phone and site.phone %}<a href="tel:{{ site.phone }}"><span class="lbl">Telefoon</span>{{ site.phone }}</a>{% endif %}
-          {% if site.adres_plaats %}<a href="#"><span class="lbl">Adres</span>{{ site.adres_straat }}, {{ site.adres_plaats }}</a>{% endif %}
+          {% if site.adres_plaats %}<a href="https://www.google.com/maps/search/?api=1&query={{ site.adres_straat|add:', '|add:site.adres_postcode|add:' '|add:site.adres_plaats|urlencode }}" target="_blank" rel="noopener"><span class="lbl">Adres</span>{{ site.adres_straat }}, {{ site.adres_plaats }}</a>{% endif %}
         </div>
       </div>
 

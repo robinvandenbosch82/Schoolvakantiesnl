@@ -17,11 +17,16 @@
   {% elif site.default_og_image %}<meta property="og:image" content="{{ site_origin }}{{ site.default_og_image.url }}">{% endif %}
   <meta name="twitter:card" content="summary_large_image">
 
-  {# Self-hosted fonts (geen Google Fonts). Preload met hetzelfde niet-gehashte pad als @font-face (anders mismatch). #}
+  {# Self-hosted fonts (geen Google Fonts). Preload de hoofd-font voor snelle swap. #}
   <link rel="preload" href="/static/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-  {# Core-CSS inline (incl. @font-face): geen render-blocking CSS-verzoeken. #}
-  {% inline_core_css %}
+  {# Externe core-CSS: Cloudflare cachet .css aan de edge en de browser cachet ze over pagina's heen. #}
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}?v=12">
+  <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=12">
   {% block head_js %}{% endblock %}
   {% block extra_css %}{% endblock %}
   <style>/* hidden-attribuut leidend maken boven de .mega/.mobnav display-regels uit header.css */
