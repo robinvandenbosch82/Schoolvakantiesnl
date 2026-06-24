@@ -494,7 +494,100 @@
     });
   }
 
-  function init() { header(); radar(); minimap(); planner(); druktekaart(); blog(); feestInfo(); }
+  // ── NL plaats → regio zoeker (typeahead + highlight) ─────────────────────
+  function plaatsZoeker() {
+    var box = $("[data-plaats-zoek]");
+    if (!box) return;
+    var input = $("[data-pz-input]", box);
+    var sug = $("[data-pz-suggest]", box);
+    var out = $("[data-pz-result]", box);
+    var plaatsen = readJSON("nl-plaatsen-data");
+    if (!input || !sug || !out || !plaatsen || !plaatsen.length) return;
+
+    var cols = $$(".regio-col");
+    var REGIO_UITLEG = {
+      Noord: "Noord-Nederland", Midden: "Midden-Nederland", Zuid: "Zuid-Nederland"
+    };
+    var norm = function (s) {
+      return (s || "").toLowerCase()
+        .replace(/['’`.]/g, "").replace(/\s+/g, " ").trim();
+    };
+    var active = -1, matches = [];
+
+    function clearHi() { cols.forEach(function (c) { c.classList.remove("is-hit"); }); }
+
+    function showResult(p) {
+      clearHi();
+      var hit = cols.filter(function (c) { return c.getAttribute("data-regio") === p.r; })[0];
+      if (hit) {
+        hit.classList.add("is-hit");
+        if (hit.scrollIntoView) hit.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      out.innerHTML = "<strong>" + p.n + "</strong> valt onder schoolvakantieregio " +
+        "<span class=\"pz-regio pz-regio--" + p.r.toLowerCase() + "\">" +
+        (REGIO_UITLEG[p.r] || p.r) + "</span>.";
+      out.hidden = false;
+    }
+
+    function closeSug() {
+      sug.hidden = true; sug.innerHTML = ""; active = -1; matches = [];
+      input.setAttribute("aria-expanded", "false");
+    }
+
+    function render() {
+      var q = norm(input.value);
+      if (q.length < 2) { closeSug(); return; }
+      matches = plaatsen.filter(function (p) { return norm(p.n).indexOf(q) === 0; });
+      if (!matches.length) {
+        matches = plaatsen.filter(function (p) { return norm(p.n).indexOf(q) > -1; });
+      }
+      matches = matches.slice(0, 8);
+      if (!matches.length) { closeSug(); return; }
+      sug.innerHTML = matches.map(function (p, i) {
+        return "<li role=\"option\" id=\"pz-opt-" + i + "\" data-i=\"" + i + "\">" +
+          "<span class=\"pz-nm\">" + p.n + "</span>" +
+          "<span class=\"pz-rg pz-regio--" + p.r.toLowerCase() + "\">" + p.r + "</span></li>";
+      }).join("");
+      sug.hidden = false; active = -1;
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    function setActive(i) {
+      var items = $$("li", sug);
+      if (!items.length) return;
+      active = (i + items.length) % items.length;
+      items.forEach(function (el, j) { el.classList.toggle("is-active", j === active); });
+      input.setAttribute("aria-activedescendant", "pz-opt-" + active);
+    }
+
+    function choose(i) {
+      var p = matches[i];
+      if (!p) return;
+      input.value = p.n;
+      showResult(p);
+      closeSug();
+    }
+
+    input.addEventListener("input", render);
+    input.addEventListener("keydown", function (e) {
+      if (sug.hidden) return;
+      if (e.key === "ArrowDown") { e.preventDefault(); setActive(active + 1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); setActive(active - 1); }
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        choose(active > -1 ? active : 0);
+      } else if (e.key === "Escape") { closeSug(); }
+    });
+    sug.addEventListener("mousedown", function (e) {
+      var li = e.target.closest("li[data-i]");
+      if (li) { e.preventDefault(); choose(parseInt(li.getAttribute("data-i"), 10)); }
+    });
+    document.addEventListener("click", function (e) {
+      if (!box.contains(e.target)) closeSug();
+    });
+  }
+
+  function init() { header(); radar(); minimap(); planner(); druktekaart(); blog(); feestInfo(); plaatsZoeker(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

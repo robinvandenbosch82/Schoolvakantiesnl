@@ -18,7 +18,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from core.models import (Bestemming, BlogArtikel, Expert, Faq, Feestdag, Land,
-                         Page, Reisweek, SectieTekst, SiteSettings, WeerMaand)
+                         NlPlaats, Page, Reisweek, SectieTekst, SiteSettings, WeerMaand)
 
 MAAND_NR = {"jan": 1, "feb": 2, "mrt": 3, "apr": 4, "mei": 5, "jun": 6,
             "jul": 7, "aug": 8, "sep": 9, "okt": 10, "nov": 11, "dec": 12}
@@ -362,10 +362,38 @@ class Command(BaseCommand):
         self._seed_secties()
         self._seed_bedrijf()
         self._seed_legal()
+        self._seed_nl_plaatsen()
         # De blog wordt NIET geseed: de echte artikelen komen uit de WordPress-
         # export via `manage.py import_wp_blog`. We kennen wel auteur + reviewer toe.
         self._seed_blog_redactie()
         self.stdout.write(self.style.SUCCESS("\nSeed klaar."))
+
+    # Gecureerde basisset plaats -> regio (provincie-correct). De volledige lijst
+    # met álle gemeenten (incl. de Gelderland-splitsing) vult `import_nl_plaatsen`
+    # op productie uit OpenHolidays; dit zorgt dat de zoekfunctie meteen werkt.
+    NL_PLAATSEN = {
+        "Noord": ["Groningen", "Leeuwarden", "Assen", "Emmen", "Zwolle", "Deventer",
+                  "Enschede", "Hengelo", "Almelo", "Almere", "Lelystad", "Amsterdam",
+                  "Haarlem", "Zaanstad", "Hilversum", "Alkmaar", "Den Helder", "Hoorn",
+                  "Amstelveen", "Heerhugowaard", "Meppel", "Hoogeveen", "Hardenberg"],
+        "Midden": ["Rotterdam", "Den Haag", "Leiden", "Delft", "Gouda", "Dordrecht",
+                   "Zoetermeer", "Alphen aan den Rijn", "Utrecht", "Amersfoort",
+                   "Nieuwegein", "Veenendaal", "Zeist", "Woerden", "Houten"],
+        "Zuid": ["Middelburg", "Vlissingen", "Goes", "Terneuzen", "Eindhoven", "Tilburg",
+                 "Breda", "'s-Hertogenbosch", "Den Bosch", "Helmond", "Roosendaal",
+                 "Bergen op Zoom", "Oss", "Maastricht", "Venlo", "Roermond", "Heerlen",
+                 "Sittard", "Weert", "Nijmegen"],
+    }
+
+    def _seed_nl_plaatsen(self):
+        n = 0
+        for regio, plaatsen in self.NL_PLAATSEN.items():
+            for naam in plaatsen:
+                _, created = NlPlaats.objects.get_or_create(
+                    naam=naam, defaults={"regio": regio})
+                n += int(created)
+        self.stdout.write(f"NL plaatsen->regio: {n} toegevoegd "
+                          f"({NlPlaats.objects.count()} totaal).")
 
     def _seed_bedrijf(self):
         """Bedrijfsgegevens (Travel Nerds B.V.) in de site-instellingen. Vult

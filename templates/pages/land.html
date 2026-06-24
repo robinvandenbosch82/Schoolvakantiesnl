@@ -205,9 +205,21 @@
   <section class="land-block">
     <div class="section-head"><div><span class="eye">Regio-indeling</span><h2 style="margin-top:8px">{% if land.iso_code == 'DE' %}Hoe is Duitsland ingedeeld?{% elif land.iso_code == 'NL' %}Welke regio is mijn provincie?{% else %}De regio's van {{ land.naam }}{% endif %}</h2></div>{% if regios and land.iso_code != 'NL' %}<p>{{ regios|length }} regio's met (deels) eigen schoolvakanties.</p>{% endif %}</div>
     {% if land.iso_code == 'NL' %}
+      <div class="plaats-zoek" data-plaats-zoek>
+        <label class="pz-label" for="pz-input">Zoek je woonplaats of gemeente</label>
+        <div class="pz-field">
+          <input id="pz-input" type="text" autocomplete="off" spellcheck="false"
+                 placeholder="Bijv. Amsterdam, Eindhoven, Utrecht…"
+                 role="combobox" aria-expanded="false" aria-autocomplete="list"
+                 aria-controls="pz-suggest" data-pz-input>
+          <ul id="pz-suggest" class="pz-suggest" role="listbox" hidden data-pz-suggest></ul>
+        </div>
+        <div class="pz-result" role="status" aria-live="polite" hidden data-pz-result></div>
+      </div>
+      {% if nl_plaatsen_json %}<script type="application/json" id="nl-plaatsen-data">{{ nl_plaatsen_json|safe }}</script>{% endif %}
       <div class="regio-cols">
         {% for r in nl_regio_overzicht %}
-        <div class="regio-col">
+        <div class="regio-col" data-regio="{{ r.naam }}">
           <h3>{{ r.naam }}-Nederland</h3>
           {% if r.provincies %}<div class="prov-chips">{% for p in r.provincies %}<span class="prov-chip">{{ p }}</span>{% endfor %}</div>{% endif %}
           {% if r.uitleg %}<p class="rc-note">{{ r.uitleg }}</p>{% endif %}

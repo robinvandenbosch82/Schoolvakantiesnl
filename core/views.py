@@ -17,7 +17,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 
 from . import europe
-from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, Regio,
+from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, NlPlaats, Regio,
                      Reisweek, Schoolvakantie)
 
 BLOG_CATS = ["Slim plannen", "Bestemmingen", "Met kinderen", "Drukte & prijzen"]
@@ -1072,6 +1072,9 @@ def land_detail(request, slug):
         "nl_regio_overzicht": ([{"naam": r.naam, "uitleg": r.uitleg,
                                  "provincies": NL_REGIO_PROVINCIES.get(r.naam, [])} for r in regios]
                                if land.iso_code == "NL" else None),
+        "nl_plaatsen_json": (json.dumps([{"n": p.naam, "r": p.regio}
+                                         for p in NlPlaats.objects.all()], ensure_ascii=False)
+                             if land.iso_code == "NL" else ""),
         "periods": period_list, "feestdagen": feestdagen, "officieus": officieus,
         "weer_rows": weer_rows, "brw": brw, "brw_max": brw_max, "brw_top": brw_top,
         "kernfeiten": kernfeiten, "andere_landen": andere_landen,

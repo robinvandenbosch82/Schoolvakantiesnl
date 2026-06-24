@@ -2,7 +2,7 @@
 landen-edge-cases (live / binnenkort / onbekend)."""
 from django.test import TestCase
 
-from core.models import BlogArtikel, Land, Reisweek
+from core.models import BlogArtikel, Land, NlPlaats, Reisweek
 
 
 def _seed_weeks():
@@ -19,6 +19,7 @@ class PageRenderTests(TestCase):
                             weer_beste="Mei, juni en september: zacht en relatief droog.")
         BlogArtikel.objects.create(titel="Testpost", slug="testpost", active=True,
                                    body_html="<p>Hoi</p>", excerpt="Korte intro")
+        NlPlaats.objects.create(naam="Eindhoven", regio="Zuid")
 
     def setUp(self):
         from django.core.cache import cache
@@ -80,6 +81,15 @@ class PageRenderTests(TestCase):
         # zichtbare FAQ-sectie + FAQPage-schema.
         self.assertContains(resp, '"@type": "FAQPage"')
         self.assertContains(resp, "Vragen over schoolvakanties in Nederland")
+
+    def test_nl_plaats_zoeker(self):
+        """NL-pagina: de plaats→regio-zoeker rendert (zoekveld + JSON-payload met
+        de geseede plaatsen). Andere landen krijgen die payload niet."""
+        resp = self.client.get("/nederland/")
+        self.assertContains(resp, 'data-plaats-zoek')
+        self.assertContains(resp, 'id="nl-plaatsen-data"')
+        self.assertContains(resp, '"n": "Eindhoven"')
+        self.assertContains(resp, '"r": "Zuid"')
 
     def test_heading_order(self):
         """Elke pagina heeft precies één h1 en slaat geen heading-niveau over

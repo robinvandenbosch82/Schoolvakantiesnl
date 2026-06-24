@@ -191,6 +191,35 @@
 .regio-col{ background:var(--paper); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; }
 .regio-col h3{ font-size:16px; margin-bottom:8px; }
 .regio-col p{ font-size:13.5px; color:var(--ink-3); line-height:1.55; }
+.regio-col{ transition:border-color .2s, box-shadow .2s, background .2s; }
+.regio-col.is-hit{ border-color:var(--accent); background:var(--accent-soft);
+  box-shadow:0 0 0 2px var(--accent-line); }
+
+/* NL plaats → regio zoeker */
+.plaats-zoek{ margin:0 0 20px; max-width:520px; }
+.pz-label{ display:block; font-size:13.5px; font-weight:600; color:var(--ink-2); margin-bottom:6px; }
+.pz-field{ position:relative; }
+.pz-field input{ width:100%; box-sizing:border-box; padding:12px 16px; font-size:15px;
+  font-family:var(--sans); color:var(--ink); background:var(--paper);
+  border:1.5px solid var(--line); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+.pz-field input:focus{ outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-line); }
+.pz-suggest{ position:absolute; z-index:20; left:0; right:0; top:calc(100% + 6px);
+  list-style:none; margin:0; padding:6px; background:var(--paper);
+  border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.12);
+  max-height:320px; overflow:auto; }
+.pz-suggest li{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:9px 12px; border-radius:8px; cursor:pointer; }
+.pz-suggest li.is-active,.pz-suggest li:hover{ background:var(--accent-soft); }
+.pz-nm{ font-size:14.5px; color:var(--ink); }
+.pz-rg{ font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+  padding:2px 8px; border-radius:999px; }
+.pz-result{ margin-top:14px; padding:14px 16px; font-size:14.5px; line-height:1.5;
+  background:var(--accent-soft); border:1px solid var(--accent-line); border-radius:12px; color:var(--ink); }
+.pz-regio{ font-weight:700; padding:1px 8px; border-radius:999px; white-space:nowrap; }
+.pz-regio--noord{ background:#dbeafe; color:#1e40af; }
+.pz-regio--midden{ background:#dcfce7; color:#166534; }
+.pz-regio--zuid{ background:#fee2e2; color:#991b1b; }
 
 /* FAQ accordion (native details) */
 .faq{ display:flex; flex-direction:column; gap:10px; }

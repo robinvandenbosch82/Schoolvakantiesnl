@@ -656,6 +656,24 @@ class Regio(models.Model):
         return f"{self.naam} ({self.land.iso_code})"
 
 
+class NlPlaats(models.Model):
+    """Nederlandse plaats/gemeente -> schoolvakantieregio (Noord/Midden/Zuid),
+    voor de 'zoek je plaats'-functie op /nederland/. Gevuld door
+    `import_nl_plaatsen` (uit OpenHolidays, incl. de Gelderland-splitsing) en met
+    een gecureerde basisset uit de seed; handmatig bij te werken in de admin."""
+    REGIO_CHOICES = [("Noord", "Noord"), ("Midden", "Midden"), ("Zuid", "Zuid")]
+    naam = models.CharField("Plaats / gemeente", max_length=120, unique=True)
+    regio = models.CharField("Regio", max_length=10, choices=REGIO_CHOICES)
+
+    class Meta:
+        verbose_name = "NL plaats → regio"
+        verbose_name_plural = "NL plaatsen → regio"
+        ordering = ["naam"]
+
+    def __str__(self):
+        return f"{self.naam} → {self.regio}"
+
+
 class Schoolvakantie(models.Model):
     """Eén schoolvakantie-periode (OpenHolidays SchoolHoliday-entry). Eén rij per
     voorkomen; landelijke vakanties hebben geen regio's, regionale wél."""
