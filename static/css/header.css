@@ -156,7 +156,7 @@
 /* beste reisweken — score-bars */
 .brw{ padding:22px 24px 18px; }
 .brw-bars{ display:flex; gap:5px; align-items:flex-end; height:170px; }
-.brw-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; height:100%; }
+.brw-col{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; height:100%; }
 .brw-score{ font-family:var(--mono); font-size:11px; font-weight:700; color:var(--ink-3); }
 .brw-col.go .brw-score{ color:var(--rustig-ink, #11825e); }
 .brw-bar{ width:100%; max-width:30px; border-radius:5px 5px 2px 2px; background:var(--line-2); transition:height .2s; }
@@ -202,7 +202,9 @@
   .vg-peak{ display:none; }
   .vg-cta{ margin-left:0; width:100%; }
   .brw-cta{ margin-left:0; width:100%; }
-  .brw-bars{ height:140px; }
+  .brw-bars{ height:140px; gap:3px; }
+  .brw-score{ font-size:9.5px; }
+  .brw-wk{ font-size:9px; }
   .weer-grid{ height:150px; gap:3px; }
   .weer-val{ font-size:10px; }
 }
