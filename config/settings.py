@@ -229,8 +229,16 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "TIMEOUT": 900,
+        "OPTIONS": {"MAX_ENTRIES": 2000},
     }
 }
+
+# Volledige-pagina-cache voor read-only content (home/landen/blog/legal/…). De
+# render zelf is snel (<100ms), maar op productie kosten de ~18 DB-queries een
+# netwerk-roundtrip naar Postgres per request → trage TTFB. Met de page-cache
+# draaien queries+render maar 1× per TTL; bij een admin-edit leegt een signal de
+# cache direct (zie core.signals). Het samenwerken-formulier wordt NIET gecachet.
+PAGE_CACHE_SECONDS = int(os.getenv("PAGE_CACHE_SECONDS", "300"))
 
 # ──────────────────────────────────────────────────────────────────────────
 # Brand / SEO defaults (single source of truth, consumed by base.html)

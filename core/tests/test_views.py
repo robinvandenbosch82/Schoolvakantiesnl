@@ -20,6 +20,10 @@ class PageRenderTests(TestCase):
         BlogArtikel.objects.create(titel="Testpost", slug="testpost", active=True,
                                    body_html="<p>Hoi</p>", excerpt="Korte intro")
 
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()  # page-cache niet tussen tests laten lekken
+
     def assertChrome(self, resp):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'class="topbar"')

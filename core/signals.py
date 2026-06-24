@@ -57,13 +57,37 @@ def _clear_menu_cache(*args, **kwargs):
     cache.delete_many([NAV_CACHE_KEY, FOOTER_CACHE_KEY])
 
 
+def _clear_page_cache(*args, **kwargs):
+    """Leeg de volledige (page-)cache zodat een admin-edit meteen zichtbaar is.
+    LocMemCache.clear() is goedkoop; pagina's renderen daarna opnieuw."""
+    from django.core.cache import cache
+    cache.clear()
+
+
+def _editorial_models():
+    """Admin-bewerkte modellen waarvan een wijziging de page-cache moet legen.
+    Import-gestuurde bulkdata (Schoolvakantie/Feestdag/…) niet — die leunt op de
+    TTL, anders leegt elke geïmporteerde rij de cache duizenden keren."""
+    from core.models import (
+        Bestemming, BlogArtikel, Expert, Faq, Land, Page, Regio, Review,
+        SectieTekst, SiteSettings,
+    )
+    return [Bestemming, BlogArtikel, Expert, Faq, Land, Page, Regio, Review,
+            SectieTekst, SiteSettings]
+
+
 def register():
+    from django.db.models.signals import post_delete
+
     for model in _models():
         post_save.connect(_on_save, sender=model, dispatch_uid=f"photo_{model.__name__}")
 
     # Invalidate the cached nav/footer whenever a menu item changes.
-    from django.db.models.signals import post_delete
-
     from core.models import MenuItem
     post_save.connect(_clear_menu_cache, sender=MenuItem, dispatch_uid="menu_cache_save")
     post_delete.connect(_clear_menu_cache, sender=MenuItem, dispatch_uid="menu_cache_delete")
+
+    # Leeg de page-cache zodra redactionele content wijzigt (directe weergave).
+    for model in _editorial_models():
+        post_save.connect(_clear_page_cache, sender=model, dispatch_uid=f"pgc_save_{model.__name__}")
+        post_delete.connect(_clear_page_cache, sender=model, dispatch_uid=f"pgc_del_{model.__name__}")

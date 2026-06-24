@@ -7,6 +7,11 @@ from core.models import Samenwerkingsaanvraag as Lead
 
 class LeadFormTests(TestCase):
     def setUp(self):
+        # Maak de SiteSettings-singleton vooraf aan: anders maakt de eerste
+        # request 'm lazily aan -> post_save -> page-cache-clear -> wist de
+        # rate-limit-teller midden in de test. (In productie bestaat 'ie al.)
+        from core.models import SiteSettings
+        SiteSettings.load()
         cache.clear()  # rate-limit-teller resetten per test
 
     def _post(self, **extra):

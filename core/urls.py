@@ -4,31 +4,46 @@ Landenpagina's staan op root-niveau (/<slug>/), zoals de geïndexeerde live-site
 /duitsland/, /engeland/, /spanje/… De root-slugroute staat daarom als laatste en
 vangt elke losse segment-URL; vaste routes hierboven hebben voorrang.
 
+Read-only contentpagina's worden server-side gecachet (cache_page) zodat de
+DB-queries + render niet per request gebeuren (snelle TTFB op productie). Het
+samenwerken-formulier (POST/CSRF) en de redirects worden NIET gecachet. Een
+admin-edit leegt de cache direct via core.signals.
+
 Legacy-redirects houden oud verkeer vast:
 - /landen/<slug>/  -> /<slug>/        (oude dev-URL's)
 - /kennisbank/...   -> /<land>/        (kennisbankartikelen zijn er nu niet; komen terug)
 - /blog/jjjj/mm/dd/<slug>/ -> /blog/<slug>/  (oude datum-URL's)
 """
 
+from django.conf import settings
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from . import views
 
+_TTL = settings.PAGE_CACHE_SECONDS
+
+
+def _cached(view):
+    """Server-side page-cache voor een read-only GET-view."""
+    return cache_page(_TTL)(view)
+
+
 urlpatterns = [
-    path("", views.home, name="home"),
-    path("planner/", views.planner, name="planner"),
-    path("druktekaart/", views.druktekaart, name="druktekaart"),
-    path("blog/", views.blog_overzicht, name="blog"),
+    path("", _cached(views.home), name="home"),
+    path("planner/", _cached(views.planner), name="planner"),
+    path("druktekaart/", _cached(views.druktekaart), name="druktekaart"),
+    path("blog/", _cached(views.blog_overzicht), name="blog"),
     path("blog/<int:jaar>/<int:maand>/<int:dag>/<slug:slug>/", views.blog_datum_redirect),
-    path("blog/<slug:slug>/", views.blog_detail, name="blog_detail"),
-    path("over-ons/", views.over_ons, name="over_ons"),
-    path("samenwerken/", views.samenwerken, name="samenwerken"),
-    path("landen/", views.landen_overzicht, name="landen"),
+    path("blog/<slug:slug>/", _cached(views.blog_detail), name="blog_detail"),
+    path("over-ons/", _cached(views.over_ons), name="over_ons"),
+    path("samenwerken/", views.samenwerken, name="samenwerken"),  # POST-formulier: niet cachen
+    path("landen/", _cached(views.landen_overzicht), name="landen"),
     path("landen/<slug:slug>/", views.land_legacy_redirect),
-    path("privacy/", views.privacy, name="privacy"),
-    path("cookies/", views.cookies, name="cookies"),
-    path("voorwaarden/", views.voorwaarden, name="voorwaarden"),
+    path("privacy/", _cached(views.privacy), name="privacy"),
+    path("cookies/", _cached(views.cookies), name="cookies"),
+    path("voorwaarden/", _cached(views.voorwaarden), name="voorwaarden"),
     path("kennisbank/<path:rest>", views.kennisbank_redirect),
     # Root-level landpagina's — moet als laatste (vangt /<slug>/).
-    path("<slug:slug>/", views.land_detail, name="land_detail"),
+    path("<slug:slug>/", _cached(views.land_detail), name="land_detail"),
 ]
