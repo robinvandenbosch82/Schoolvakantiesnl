@@ -279,11 +279,11 @@
 .land-soon-live{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 .live-badge.soon i{ background:var(--ink-4); box-shadow:0 0 0 3px var(--bg-2); animation:none; }
 
-.year-switch{ display:inline-flex; align-items:center; gap:4px; background:var(--paper); border:1px solid var(--line-2); border-radius:14px; padding:5px 5px 5px 14px; box-shadow:var(--shadow-sm); }
-.year-switch .ys-lab{ font-size:12px; font-weight:700; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; margin-right:6px; }
-.year-switch button{ border:none; background:none; padding:8px 13px; border-radius:10px; font-family:var(--mono); font-size:14px; font-weight:700; color:var(--ink-2); transition:.14s; }
-.year-switch button.on{ background:var(--accent); color:#fff; box-shadow:0 3px 10px var(--accent-glow); }
-.year-switch button:not(.on):hover{ background:var(--accent-soft); color:var(--accent-ink); }
+.year-switch{ display:flex; align-items:center; gap:6px; background:var(--paper); border:1px solid var(--line-2); border-radius:14px; padding:5px 5px 5px 14px; box-shadow:var(--shadow-sm); }
+.year-switch .ys-lab{ font-size:12px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; margin-right:4px; }
+.year-switch a{ font-family:var(--mono); font-size:13px; font-weight:700; padding:6px 12px; border-radius:10px; border:1px solid var(--line-2); background:var(--paper); color:var(--ink-2); }
+.year-switch a.on{ background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
+.year-switch a:hover{ border-color:var(--accent-line); }
 .live-badge{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; color:var(--ink-3); padding:8px 14px; border-radius:99px; border:1px solid var(--line-2); background:var(--paper); }
 .live-badge i{ width:9px; height:9px; border-radius:99px; background:var(--rustig); box-shadow:0 0 0 3px var(--rustig-soft); }
 .live-badge.live i{ animation:pulse 2s infinite; }
@@ -336,12 +336,12 @@
 
 /* feestdagen tabel */
 .feest{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:10px; }
-.feest-row{ display:flex; align-items:center; gap:12px; padding:12px 15px; background:var(--paper); border:1px solid var(--line); border-radius:14px; }
+.feest-row{ position:relative; display:flex; align-items:center; gap:12px; padding:12px 15px; background:var(--paper); border:1px solid var(--line); border-radius:14px; }
 .feest-day{ width:38px; height:38px; flex:none; border-radius:11px; background:var(--accent-soft); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--mono); font-size:12px; font-weight:700; text-transform:uppercase; }
 .feest-info{ display:flex; flex-direction:column; min-width:0; }
 .feest-info .nm{ font-size:14px; font-weight:700; }
 .feest-info .dt{ font-size:12.5px; color:var(--ink-3); }
-.feest-note{ font-size:13px; color:var(--ink-3); line-height:1.55; margin-top:14px; background:var(--paper-2); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+.feest-note{ font-size:13px; color:var(--ink-3); line-height:1.55; margin:14px 2px 0; background:var(--paper-2); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
 
 /* studiedagen */
 .studie{ display:grid; grid-template-columns:1.1fr 1fr; gap:20px; align-items:start; }
@@ -352,12 +352,59 @@
 
 /* officieuze feestdagen chips */
 .officieus{ display:flex; flex-wrap:wrap; gap:11px; }
-.off-chip{ display:flex; align-items:center; gap:11px; padding:11px 18px; background:var(--paper); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow-sm); transition:transform .14s; }
+.officieus .off-chip{ padding-right:32px; }
+.off-chip{ position:relative; display:flex; align-items:center; gap:11px; padding:11px 18px; background:var(--paper); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow-sm); transition:transform .14s; }
 .off-chip:hover{ transform:translateY(-2px); box-shadow:var(--shadow); }
 .off-chip .em{ font-size:24px; }
 .off-chip .oc-txt{ display:flex; flex-direction:column; }
 .off-chip .oc-nm{ font-size:14px; font-weight:700; }
 .off-chip .oc-dt{ font-size:12px; color:var(--ink-3); font-family:var(--mono); }
+.off-chip .feest-i{ position:absolute; top:50%; right:8px; transform:translateY(-50%); margin:0; width:18px; height:18px; font-size:10px; }
+
+/* NL-vertaling achter een buitenlandse vakantienaam */
+.vak-nl{ font-weight:600; font-size:0.78em; color:var(--accent-ink); opacity:.85; letter-spacing:0; }
+
+/* info-icoon + tooltip bij feestdagen én officieuze dagen */
+.feest-i{ position:relative; flex:0 0 auto; width:20px; height:20px; border-radius:50%; border:1px solid var(--line-2);
+  background:var(--paper); color:var(--ink-3); font-size:11px; font-weight:700; font-style:italic;
+  line-height:1; cursor:pointer; display:grid; place-items:center; margin-left:auto; align-self:center; }
+.feest-i:hover, .feest-i.open{ background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
+.feest-i::after{ content:attr(data-tip); position:absolute; right:0; bottom:calc(100% + 8px); z-index:30;
+  width:max-content; max-width:260px; padding:10px 12px; border-radius:12px; background:var(--ink);
+  color:var(--paper); font-size:12.5px; font-weight:500; font-style:normal; line-height:1.45; text-align:left;
+  box-shadow:var(--shadow-lg); opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity .15s, transform .15s; pointer-events:none; }
+.feest-i:hover::after, .feest-i.open::after{ opacity:1; visibility:visible; transform:translateY(0); }
+
+/* 'binnenkort'-notitie als er nog geen schoolvakantiedata is */
+.vak-soon{ padding:18px 20px; background:var(--paper-2); border:1px solid var(--line);
+  border-radius:var(--r); font-size:14.5px; color:var(--ink-2); line-height:1.55; max-width:70ch; }
+.vak-soon strong{ color:var(--ink); }
+
+/* NL-regio-overzicht: provincie-chips + uitleg */
+.prov-chips{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
+.prov-chip{ font-size:12.5px; font-weight:600; padding:4px 10px; border-radius:999px;
+  background:var(--accent-soft); color:var(--accent-ink); border:1px solid var(--accent-line); }
+.rc-note{ font-size:13px; color:var(--ink-3); }
+
+/* Frankrijk: zonekaart + legenda */
+.fr-zones-intro{ margin:0 0 18px; max-width:62ch; }
+.fr-zones-intro p{ color:var(--ink-2); }
+.fr-zones{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:26px;
+  align-items:center; margin:0 0 30px; padding:22px; border:1px solid var(--line);
+  border-radius:var(--r-md); background:var(--paper); }
+.fr-zones-map{ min-width:0; }
+.fr-zone-map{ width:100%; height:auto; display:block; }
+.fr-zone-map path{ transition:filter .2s ease; }
+.fr-zone-map path:hover{ filter:brightness(0.94); }
+.fr-zones-legenda{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+.fzl-item{ display:flex; gap:12px; align-items:flex-start; }
+.fzl-chip{ flex:0 0 auto; width:30px; height:30px; border-radius:9px; color:#fff;
+  font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; }
+.fzl-tx{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.fzl-tx b{ font-size:15px; }
+.fzl-reg{ font-size:13px; color:var(--ink-2); }
+.fzl-st{ font-size:12.5px; color:var(--ink-3); }
+@media (max-width:720px){ .fr-zones{ grid-template-columns:1fr; gap:18px; } }
 
 @media(max-width:760px){
   .vakgrid{ grid-template-columns:1fr; }
@@ -704,3 +751,40 @@ img.eeat-av{ background:var(--paper-2); }
   .sw-contact-grid{ grid-template-columns:1fr; gap:26px; padding:26px 22px; }
   .sw-field.two{ grid-template-columns:1fr; }
 }
+
+/* ---------- landen-overzicht (verplaatst uit landen.html) ---------- */
+.landen-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+.landtegel{ display:flex; align-items:center; gap:12px; padding:16px 18px; background:var(--paper);
+  border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow-sm);
+  transition:border-color .15s, box-shadow .15s, transform .15s; }
+.landtegel:hover{ border-color:var(--accent-line); box-shadow:var(--shadow); transform:translateY(-2px); }
+.landtegel.soon{ opacity:.7; }
+.lt-flag{ font-size:26px; }
+.lt-name{ font-weight:700; flex:1; }
+
+/* ---------- planner: invoer-rijen + waarheen-kaarten (verplaatst uit planner.html) ---------- */
+.planner-inputs.card{ flex-direction:column; align-items:stretch; gap:22px; }
+.pl-row{ display:flex; flex-wrap:wrap; gap:16px 34px; align-items:flex-start; }
+.pl-row .inp-block, .pl-row .stepper{ min-width:0; }
+.regio-window{ display:block; margin-top:7px; font-size:12.5px; color:var(--ink-3); }
+[data-regio-seg]{ vertical-align:middle; }
+.waarheen{ margin-top:22px; }
+.wh-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:12px; margin-top:12px; }
+.wh-card{ text-align:left; background:var(--paper); border:1px solid var(--line);
+  border-radius:16px; padding:14px 16px; cursor:pointer; font:inherit;
+  display:flex; flex-direction:column; gap:11px; transition:border-color .14s, box-shadow .14s; }
+.wh-card:hover{ border-color:var(--accent-line); }
+.wh-card.on{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+.wh-card-top{ display:flex; align-items:center; gap:9px; }
+.wh-flag{ font-size:18px; line-height:1; }
+.wh-nm{ font-weight:700; color:var(--ink); flex:1; min-width:0; }
+.wh-score{ font-weight:800; font-size:19px; line-height:1; }
+.wh-score.is-rustig{ color:var(--rustig); } .wh-score.is-matig{ color:var(--matig); } .wh-score.is-druk{ color:var(--druk); }
+.wh-meters{ display:flex; flex-direction:column; gap:6px; }
+.wh-meter{ display:grid; grid-template-columns:34px 1fr; align-items:center; gap:9px; }
+.wh-lab{ font-size:10px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.04em; }
+.wh-card .mini-bar{ height:7px; background:var(--paper-2); border-radius:6px; overflow:hidden; }
+.wh-card .mini-bar i{ display:block; height:100%; border-radius:6px; }
+.wh-back{ font-size:11.5px; color:var(--accent-ink); font-weight:600; }
+.wh-hint{ font-size:12.5px; color:var(--ink-3); }
+.accent-ink{ color:var(--accent-ink); }

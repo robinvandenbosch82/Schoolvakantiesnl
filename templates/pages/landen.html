@@ -17,14 +17,4 @@
   </div>
 </section>
 
-<style>
-  .landen-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-  .landtegel { display:flex; align-items:center; gap:12px; padding:16px 18px; background:var(--paper);
-    border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow-sm);
-    transition:border-color .15s, box-shadow .15s, transform .15s; }
-  .landtegel:hover { border-color:var(--accent-line); box-shadow:var(--shadow); transform:translateY(-2px); }
-  .landtegel.soon { opacity:.7; }
-  .lt-flag { font-size:26px; }
-  .lt-name { font-weight:700; flex:1; }
-</style>
 {% endblock %}

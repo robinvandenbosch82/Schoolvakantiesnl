@@ -1,59 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block extra_css %}
-<style>
-  .year-switch { display:flex; align-items:center; gap:6px; }
-  .year-switch .ys-lab { font-size:12px; color:var(--ink-3); font-weight:600; margin-right:4px; }
-  .year-switch a { font-family:var(--mono); font-size:13px; font-weight:700; padding:6px 12px;
-    border-radius:10px; border:1px solid var(--line-2); background:var(--paper); color:var(--ink-2); }
-  .year-switch a.on { background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
-  .year-switch a:hover { border-color:var(--accent-line); }
-  /* NL-vertaling achter een vakantienaam */
-  .vak-nl { font-weight:600; font-size:0.78em; color:var(--accent-ink); opacity:.85; letter-spacing:0; }
-  /* info-icoon + tooltip (feestdagen én officieuze dagen) */
-  .feest-row, .off-chip { position:relative; }
-  .feest-i { position:relative; flex:0 0 auto; width:20px; height:20px; border-radius:50%; border:1px solid var(--line-2);
-    background:var(--paper); color:var(--ink-3); font-size:11px; font-weight:700; font-style:italic;
-    line-height:1; cursor:pointer; display:grid; place-items:center; margin-left:auto; align-self:center; }
-  .officieus .off-chip { padding-right:32px; }
-  .off-chip .feest-i { position:absolute; top:50%; right:8px; transform:translateY(-50%); margin:0; width:18px; height:18px; font-size:10px; }
-  /* provincie-chips in het NL-regio-overzicht */
-  .prov-chips { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 10px; }
-  .prov-chip { font-size:12.5px; font-weight:600; padding:4px 10px; border-radius:999px;
-    background:var(--accent-soft); color:var(--accent-ink); border:1px solid var(--accent-line); }
-  .rc-note { font-size:13px; color:var(--ink-3); }
-  .feest-i:hover, .feest-i.open { background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-ink); }
-  .feest-i::after { content:attr(data-tip); position:absolute; right:0; bottom:calc(100% + 8px); z-index:30;
-    width:max-content; max-width:260px; padding:10px 12px; border-radius:12px; background:var(--ink);
-    color:var(--paper); font-size:12.5px; font-weight:500; font-style:normal; line-height:1.45; text-align:left;
-    box-shadow:var(--shadow-lg); opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity .15s, transform .15s; pointer-events:none; }
-  .feest-i:hover::after, .feest-i.open::after { opacity:1; visibility:visible; transform:translateY(0); }
-  .feest-note { margin:14px 2px 0; font-size:13px; color:var(--ink-3); }
-  .vak-soon { padding:18px 20px; background:var(--paper-2); border:1px solid var(--line);
-    border-radius:var(--r); font-size:14.5px; color:var(--ink-2); line-height:1.55; max-width:70ch; }
-  .vak-soon strong { color:var(--ink); }
-  /* Frankrijk: zonekaart + legenda */
-  .fr-zones-intro { margin:0 0 18px; max-width:62ch; }
-  .fr-zones-intro p { color:var(--ink-2); }
-  .fr-zones { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:26px;
-    align-items:center; margin:0 0 30px; padding:22px; border:1px solid var(--line);
-    border-radius:var(--r-md); background:var(--paper); }
-  .fr-zones-map { min-width:0; }
-  .fr-zone-map { width:100%; height:auto; display:block; }
-  .fr-zone-map path { transition:filter .2s ease; }
-  .fr-zone-map path:hover { filter:brightness(0.94); }
-  .fr-zones-legenda { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
-  .fzl-item { display:flex; gap:12px; align-items:flex-start; }
-  .fzl-chip { flex:0 0 auto; width:30px; height:30px; border-radius:9px; color:#fff;
-    font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; }
-  .fzl-tx { display:flex; flex-direction:column; gap:2px; min-width:0; }
-  .fzl-tx b { font-size:15px; }
-  .fzl-reg { font-size:13px; color:var(--ink-2); }
-  .fzl-st { font-size:12.5px; color:var(--ink-3); }
-  @media (max-width:720px){ .fr-zones { grid-template-columns:1fr; gap:18px; } }
-</style>
-{% endblock %}
 
 {% block content %}
 {% include "partials/breadcrumb.html" %}
