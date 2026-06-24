@@ -17,14 +17,10 @@
   {% elif site.default_og_image %}<meta property="og:image" content="{{ site_origin }}{{ site.default_og_image.url }}">{% endif %}
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&family=Space+Mono:wght@400;700&display=swap"
-        onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"></noscript>
+  {# Self-hosted fonts (geen Google Fonts). Preload met hetzelfde niet-gehashte pad als @font-face (anders mismatch). #}
+  <link rel="preload" href="/static/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-  {# Core-CSS inline: geen render-blocking CSS-verzoeken (snelle FCP op mobiel). #}
+  {# Core-CSS inline (incl. @font-face): geen render-blocking CSS-verzoeken. #}
   {% inline_core_css %}
   {% block head_js %}{% endblock %}
   {% block extra_css %}{% endblock %}

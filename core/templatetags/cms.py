@@ -24,8 +24,8 @@ register = template.Library()
 # (cruciaal voor de FCP op gethrottelde mobiel). De TTFB is al snel via de
 # page-cache; samen geeft dat snelle TTFB én geen render-blocking. Pagina-
 # specifieke CSS blijft in {% block extra_css %}.
-_CORE_CSS = ["css/tokens.css", "css/styles.css", "css/components.css",
-             "css/header.css", "css/blog.css"]
+_CORE_CSS = ["css/fonts.css", "css/tokens.css", "css/styles.css",
+             "css/components.css", "css/header.css", "css/blog.css"]
 _inline_css_cache = None
 
 

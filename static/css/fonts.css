@@ -1,0 +1,24 @@
+/* Self-hosted fonts — geen Google Fonts (AVG: geen bezoeker-IP's naar Google,
+ * en geen externe origins in het laadpad). Latin-subset (NL é/ë/ï zitten daarin).
+ * Absolute /static/-paden omdat deze CSS inline in de <head> wordt gezet. */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;            /* variabele font, dekt alle gebruikte gewichten */
+  font-display: swap;
+  src: url(/static/fonts/plus-jakarta-sans-latin.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/static/fonts/space-mono-400-latin.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/static/fonts/space-mono-700-latin.woff2) format("woff2");
+}
