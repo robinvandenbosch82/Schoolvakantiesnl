@@ -1,5 +1,5 @@
 /* header.css — mega-menu, hamburger, full-screen mobiel menu, landen-chips.
-   Bouwt voort op de tokens uit tokens.css / styles.css. */
+   Bouwt voort op de tokens uit styles.css. */
 
 /* topbar moet de mega-laag kunnen positioneren */
 .topbar{ position:sticky; }
