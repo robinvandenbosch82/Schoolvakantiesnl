@@ -77,7 +77,7 @@ class SiteSettings(models.Model):
     show_phone = models.BooleanField("Telefoonnummer tonen", default=True,
                                      help_text="Uit = nergens een telefoonnummer tonen.")
     whatsapp = models.CharField("WhatsApp-nummer", max_length=40, blank=True, default="")
-    email = models.EmailField("E-mail", default="partner@travelnerds.nl")
+    email = models.EmailField("E-mail", default="klantenservice@travelnerds.nl")
 
     bedrijfsnaam = models.CharField("Bedrijfsnaam (juridisch)", max_length=160, blank=True, default="",
                                     help_text="Rechtspersoon achter de site, bijv. 'Travel Nerds B.V.'.")

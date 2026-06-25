@@ -276,7 +276,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", "True")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
 # Inbox waar samenwerking-leads heen gaan (Travel Nerds partner-inbox).
-PARTNER_INBOX = os.getenv("PARTNER_INBOX", "partner@travelnerds.nl")
+PARTNER_INBOX = os.getenv("PARTNER_INBOX", "klantenservice@travelnerds.nl")
 
 # ──────────────────────────────────────────────────────────────────────────
 # Security hardening — only switches on outside DEBUG

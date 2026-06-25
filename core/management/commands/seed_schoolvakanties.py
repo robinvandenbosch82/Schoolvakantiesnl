@@ -411,7 +411,7 @@ class Command(BaseCommand):
             "adres_postcode": "6511 RZ",
             "adres_plaats": "Nijmegen",
             "phone": "085 060 0043",
-            "email": "partner@travelnerds.nl",
+            "email": "klantenservice@travelnerds.nl",
         }
         changed = []
         for veld, waarde in defaults.items():
