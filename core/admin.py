@@ -33,6 +33,8 @@ from .models import (
     SectieTekst,
     SiteSettings,
     WeerMaand,
+    Widget,
+    WidgetPagina,
 )
 
 admin.site.site_header = "Schoolvakanties.nl, beheer"
@@ -262,6 +264,33 @@ class PlaatsAdmin(admin.ModelAdmin):
     list_editable = ("regio",)
     search_fields = ("naam", "regio")
     list_select_related = ("land",)
+
+
+class WidgetPaginaInline(admin.TabularInline):
+    model = WidgetPagina
+    extra = 0
+    readonly_fields = ("status", "backlink_ok", "fail_count", "laatst_gecheckt",
+                       "laatst_ok", "grace_mail_op", "aangemaakt")
+    fields = ("url",) + readonly_fields
+
+
+@admin.register(Widget)
+class WidgetAdmin(admin.ModelAdmin):
+    list_display = ("domein", "land", "site_key", "email", "actief", "aangemaakt")
+    list_filter = ("actief", "land")
+    search_fields = ("domein", "site_key", "email")
+    readonly_fields = ("site_key", "aangemaakt")
+    list_select_related = ("land",)
+    inlines = [WidgetPaginaInline]
+
+
+@admin.register(WidgetPagina)
+class WidgetPaginaAdmin(admin.ModelAdmin):
+    list_display = ("url", "widget", "status", "backlink_ok", "fail_count", "laatst_gecheckt")
+    list_filter = ("status", "backlink_ok")
+    search_fields = ("url", "widget__domein")
+    list_select_related = ("widget", "widget__land")
+    readonly_fields = ("laatst_gecheckt", "laatst_ok", "grace_mail_op", "aangemaakt")
 
 
 @admin.register(Schoolvakantie)

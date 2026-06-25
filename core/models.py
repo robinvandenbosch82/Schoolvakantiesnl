@@ -867,3 +867,65 @@ class Samenwerkingsaanvraag(models.Model):
 
     def __str__(self):
         return f"{self.naam}, {self.aangemaakt:%d-%m-%Y}"
+
+
+class Widget(models.Model):
+    """Een embeddable widget-instantie voor een externe partnersite. Self-service
+    aangemaakt (zonder login): de webmaster kiest een land + vult zijn domein in
+    en krijgt een embed-snippet. De `site_key` bindt de widget aan het domein
+    (Origin-check op de data-API). Geen geheim: staat sowieso in de client-HTML."""
+    site_key = models.CharField("Site-key", max_length=24, unique=True, db_index=True)
+    domein = models.CharField("Domein", max_length=190,
+                              help_text="Zonder protocol, bv. example.com.")
+    land = models.ForeignKey(Land, verbose_name="Land", on_delete=models.CASCADE,
+                             related_name="widgets")
+    email = models.EmailField("E-mail (waarschuwingen)", max_length=254, blank=True)
+    actief = models.BooleanField("Actief", default=True)
+    aangemaakt = models.DateTimeField("Aangemaakt", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Widget"
+        verbose_name_plural = "Widgets"
+        ordering = ["-aangemaakt"]
+
+    def __str__(self):
+        return f"{self.domein} → {self.land.naam} ({self.site_key})"
+
+
+class WidgetPagina(models.Model):
+    """Eén pagina-URL waarop een widget staat. Wordt aangemaakt bij registratie en
+    automatisch bijgevuld als de widget op een nieuwe pagina van het geverifieerde
+    domein laadt. `check_backlinks` controleert periodiek of de statische backlink
+    naar de landpagina er (nog) staat en zet de modus.
+
+    - pending : net aangemaakt, nog niet geverifieerd → toont vóór de eerste
+                controle vast de volledige data (geen kale eerste indruk).
+    - actief  : backlink gevonden → volledige data.
+    - teaser  : backlink (herhaald) afwezig → alleen prikkelende halve teaser.
+    """
+    PENDING, ACTIEF, TEASER = "pending", "actief", "teaser"
+    STATUS_CHOICES = [(PENDING, "In afwachting"), (ACTIEF, "Actief"), (TEASER, "Teaser")]
+
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE, related_name="paginas")
+    url = models.URLField("Pagina-URL", max_length=500)
+    status = models.CharField("Status", max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    backlink_ok = models.BooleanField("Backlink gevonden", default=False)
+    fail_count = models.PositiveSmallIntegerField("Mislukte checks op rij", default=0)
+    laatst_gecheckt = models.DateTimeField("Laatst gecheckt", null=True, blank=True)
+    laatst_ok = models.DateTimeField("Laatst backlink gezien", null=True, blank=True)
+    grace_mail_op = models.DateTimeField("Waarschuwingsmail verstuurd", null=True, blank=True)
+    aangemaakt = models.DateTimeField("Aangemaakt", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Widget-pagina"
+        verbose_name_plural = "Widget-pagina's"
+        ordering = ["-aangemaakt"]
+        unique_together = [("widget", "url")]
+
+    def __str__(self):
+        return f"{self.url} [{self.status}]"
+
+    @property
+    def toont_volledig(self):
+        """Volledige data tonen tenzij definitief in teaser-modus."""
+        return self.status != self.TEASER

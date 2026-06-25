@@ -589,7 +589,24 @@
     });
   }
 
-  function init() { header(); radar(); minimap(); planner(); druktekaart(); blog(); feestInfo(); plaatsZoeker(); }
+  // ── Kopieer-knop ([data-copy="#sel"] kopieert dat veld) ──────────────────
+  function copyBtn() {
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-copy]");
+      if (!b) return;
+      var el = $(b.getAttribute("data-copy"));
+      if (!el) return;
+      el.select();
+      var done = function () {
+        var t = b.textContent; b.textContent = "✓ Gekopieerd";
+        setTimeout(function () { b.textContent = t; }, 1800);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(el.value).then(done, done);
+      else { try { document.execCommand("copy"); done(); } catch (err) { /* */ } }
+    });
+  }
+
+  function init() { header(); radar(); minimap(); planner(); druktekaart(); blog(); feestInfo(); plaatsZoeker(); copyBtn(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

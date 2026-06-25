@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import path
 from django.views.decorators.cache import cache_page
 
-from . import views
+from . import views, widget_views
 
 _TTL = settings.PAGE_CACHE_SECONDS
 
@@ -44,6 +44,10 @@ urlpatterns = [
     path("cookies/", _cached(views.cookies), name="cookies"),
     path("voorwaarden/", _cached(views.voorwaarden), name="voorwaarden"),
     path("kennisbank/<path:rest>", views.kennisbank_redirect),
+    # Embeddable widget voor partnersites (vóór de slug-catch-all).
+    path("widget.js", widget_views.widget_js, name="widget_js"),
+    path("widget/data", widget_views.widget_data, name="widget_data"),
+    path("widget/", widget_views.widget_generator, name="widget_generator"),
     # Root-level landpagina's — moet als laatste (vangt /<slug>/).
     path("<slug:slug>/", _cached(views.land_detail), name="land_detail"),
 ]

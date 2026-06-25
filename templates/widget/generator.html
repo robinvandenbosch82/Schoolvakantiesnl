@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gratis schoolvakantie-widget voor je website | Schoolvakanties.nl{% endblock %}
+{% block description %}Plaats gratis een widget met actuele schoolvakanties per land op je eigen site. Kies een land, vul je domein in en kopieer de code. Inclusief bronvermelding.{% endblock %}
+
+{% block content %}
+<div class="page wgen">
+  <header class="wgen-hero">
+    <span class="eye">Gratis widget</span>
+    <h1>Schoolvakantie-widget voor je eigen website</h1>
+    <p class="lead">Toon altijd-actuele schoolvakanties per land op je site. Kies een land,
+      vul je domein in en plak de code. Onze data wordt automatisch bijgewerkt — jij hoeft
+      niets te onderhouden.</p>
+  </header>
+
+  {% if gelukt %}
+    <section class="wgen-card wgen-done">
+      <h2>✓ Je widget is klaar</h2>
+      <p>Plak het onderstaande stukje code op je pagina, precies waar je de vakanties wilt tonen.
+        Hou de <strong>bron-link</strong> erbij — die houdt de widget volledig werkend.</p>
+      <label class="wgen-lbl" for="snippet">Embed-code</label>
+      <textarea id="snippet" class="wgen-code" rows="5" readonly onclick="this.select()">{{ snippet }}</textarea>
+      <button type="button" class="wgen-btn" data-copy="#snippet">Kopieer code</button>
+
+      <div class="wgen-note">
+        <h3>Belangrijk om te weten</h3>
+        <ul>
+          <li>De widget toont de <strong>volledige</strong> vakantiekalender zolang de bron-link
+            (de <code>&lt;a&gt;</code> bovenaan de code) op de pagina staat.</li>
+          <li>Verwijder je die link, dan schakelt de widget over naar een beperkte weergave met
+            een doorklik naar onze site — de data blijft dan dus achter een link.</li>
+          <li>We controleren dit periodiek{% if widget.email %}; valt de link weg, dan krijg je
+            een mailtje op <strong>{{ widget.email }}</strong>{% endif %}.</li>
+        </ul>
+      </div>
+      <p class="wgen-again"><a href="{% url 'widget_generator' %}">Nog een widget maken →</a></p>
+    </section>
+  {% else %}
+    <section class="wgen-card">
+      {% if fout %}<p class="wgen-fout">{{ fout }}</p>{% endif %}
+      <form method="post" class="wgen-form" novalidate>
+        {% csrf_token %}
+        <p class="wgen-hp" aria-hidden="true">
+          <label>Laat dit veld leeg<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </p>
+
+        <label class="wgen-lbl" for="land">Land</label>
+        <select id="land" name="land" required>
+          <option value="">— Kies een land —</option>
+          {% for l in landen %}<option value="{{ l.slug }}">{{ l.naam }}</option>{% endfor %}
+        </select>
+
+        <label class="wgen-lbl" for="domein">Je domein</label>
+        <input id="domein" name="domein" type="text" placeholder="example.com" required>
+        <small class="wgen-hint">Zonder https:// — bijvoorbeeld <code>example.com</code>.</small>
+
+        <label class="wgen-lbl" for="url">Pagina-URL <span class="wgen-opt">(optioneel)</span></label>
+        <input id="url" name="url" type="url" placeholder="https://example.com/schoolvakanties/">
+        <small class="wgen-hint">De pagina waar de widget komt. Laat leeg en we herkennen 'm vanzelf.</small>
+
+        <label class="wgen-lbl" for="email">E-mail <span class="wgen-opt">(optioneel)</span></label>
+        <input id="email" name="email" type="email" placeholder="jij@example.com">
+        <small class="wgen-hint">We mailen je alleen als de bron-link wegvalt.</small>
+
+        <button type="submit" class="wgen-btn">Genereer mijn widget</button>
+      </form>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

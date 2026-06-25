@@ -78,3 +78,22 @@ services:
         fromDatabase:
           name: schoolvakanties-db
           property: connectionString
+
+  # ── Dagelijkse backlink-controle (cron) ─────────────────────────────────
+  # Verifieert of de bron-link nog op elke widget-pagina staat en zet de modus
+  # (volledige data ↔ teaser). Met hysterese + waarschuwingsmail. 06:00 UTC.
+  - type: cron
+    name: backlink-check
+    runtime: python
+    plan: starter
+    region: frankfurt
+    branch: main
+    schedule: "0 6 * * *"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python manage.py check_backlinks"
+    envVars:
+      - fromGroup: schoolvakanties-env
+      - key: DATABASE_URL
+        fromDatabase:
+          name: schoolvakanties-db
+          property: connectionString
