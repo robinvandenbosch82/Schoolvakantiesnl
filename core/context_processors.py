@@ -172,4 +172,6 @@ def site_context(request):
         "europe": europe,
         "europe_popular": [c for c in europe if c["pop"]],
         "org_jsonld": _org_jsonld(site, site_origin, settings.SITE_NAME),
+        # GA4 alleen buiten DEBUG: lokaal/dev-verkeer hoort niet in de statistieken.
+        "ga_measurement_id": "" if settings.DEBUG else settings.GA_MEASUREMENT_ID,
     }

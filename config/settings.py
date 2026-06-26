@@ -249,6 +249,12 @@ SITE_DOMAIN = os.getenv("SITE_DOMAIN", "schoolvakanties.nl")
 # request.get_host() for @id — it is host-dependent (www vs non-www, dev port)
 # and would make the entity graph's identifiers unstable across pages.
 SITE_ORIGIN = os.getenv("SITE_ORIGIN", f"https://{SITE_DOMAIN}").rstrip("/")
+
+# Google Analytics 4 (gtag.js). Het measurement-ID is publiek (staat sowieso in
+# de paginabron), dus een default in de repo is prima; per host te overschrijven
+# via de env-var. Wordt alleen buiten DEBUG ingeladen (zie context_processors),
+# zodat lokaal/dev-verkeer de statistieken niet vervuilt.
+GA_MEASUREMENT_ID = os.getenv("GA_MEASUREMENT_ID", "G-HVDVJEE2JF")
 DEFAULT_SEO_TITLE = "Schoolvakanties Nederland | Schoolvakanties.nl"
 DEFAULT_SEO_DESCRIPTION = (
     "Alle schoolvakanties en feestdagen in Nederland — overzichtelijk per regio "
