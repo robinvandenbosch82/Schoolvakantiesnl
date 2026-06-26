@@ -53,6 +53,7 @@ class StaticViewSitemap(_CanonicalSitemap):
         ("landen", 0.9, "weekly"),
         ("planner", 0.8, "weekly"),
         ("druktekaart", 0.8, "weekly"),
+        ("kennisbank", 0.7, "weekly"),
         ("blog", 0.7, "weekly"),
         ("over_ons", 0.4, "monthly"),
         ("samenwerken", 0.4, "monthly"),
@@ -106,8 +107,24 @@ class BlogSitemap(_CanonicalSitemap):
         return post.gepubliceerd_op or _site_lastmod()
 
 
+class KennisbankSitemap(_CanonicalSitemap):
+    changefreq = "monthly"
+    priority = 0.6
+
+    def items(self):
+        from .models import KennisbankArtikel
+        return list(KennisbankArtikel.objects.filter(active=True).order_by("order"))
+
+    def location(self, art):
+        return reverse("kennisbank_detail", kwargs={"slug": art.slug})
+
+    def lastmod(self, art):
+        return art.gepubliceerd_op or _site_lastmod()
+
+
 SITEMAPS = {
     "static": StaticViewSitemap,
     "landen": LandSitemap,
+    "kennisbank": KennisbankSitemap,
     "blog": BlogSitemap,
 }

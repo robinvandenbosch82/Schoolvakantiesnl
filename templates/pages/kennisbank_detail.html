@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block reviewbar %}{% endblock %}
+
+{% block content %}
+{% include "partials/breadcrumb.html" %}
+<div class="page kb-detail">
+  <a class="back-link" href="/kennisbank/">← Kennisbank</a>
+
+  <header class="art-head">
+    <span class="kb-card-cat">{{ art.categorie }}{% if art.land %} · {{ art.land.naam }}{% endif %}</span>
+    <h1>{{ art.titel }}</h1>
+    {% if art.leestijd %}<div class="post-meta"><span>{{ art.leestijd }} lezen</span></div>{% endif %}
+    {% include "partials/byline.html" with author=art.author reviewer=art.reviewer %}
+  </header>
+
+  <div class="art-layout">
+    <article class="art-body kb-body">
+      {{ art.body_html|safe }}
+
+      {% if art.bron_url %}
+      <p class="kb-bron">Bron: <a href="{{ art.bron_url }}" target="_blank" rel="noopener nofollow">{{ art.bron_url }}</a></p>
+      {% endif %}
+    </article>
+
+    <aside class="art-side">
+      {% if art.toc %}
+      <div class="widget toc">
+        <h2>In dit artikel</h2>
+        <ol>{% for t in art.toc %}<li><a href="#{{ t.id }}">{{ t.titel }}</a></li>{% endfor %}</ol>
+      </div>
+      {% endif %}
+      {% if art.land %}
+      <div class="widget">
+        <h2>Vakantiedata</h2>
+        <p>Bekijk de actuele schoolvakanties en feestdagen van {{ art.land.naam }}.</p>
+        <a class="btn-ghost" href="/{{ art.land.slug }}/">Naar {{ art.land.naam }} →</a>
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+
+  {% if related %}
+  <section class="related">
+    <h2>Lees ook</h2>
+    <div class="kb-grid three">
+      {% for p in related %}
+        <a class="kb-card" href="/kennisbank/{{ p.slug }}/">
+          <span class="kb-card-cat">{{ p.categorie }}{% if p.land %} · {{ p.land.naam }}{% endif %}</span>
+          <h3>{{ p.titel }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

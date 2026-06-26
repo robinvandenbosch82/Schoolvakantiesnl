@@ -66,6 +66,13 @@ class Command(BaseCommand):
             except Exception as exc:  # noqa: BLE001
                 self.stderr.write(self.style.WARNING(f"Plaatsenimport overgeslagen: {exc}."))
 
+        # 3d) Kennisbank-backlog + beschikbare artikelteksten inladen (repo-bestanden).
+        try:
+            self.stdout.write("Kennisbank importeren…")
+            call_command("import_kennisbank")
+        except Exception as exc:  # noqa: BLE001
+            self.stderr.write(self.style.WARNING(f"Kennisbankimport overgeslagen: {exc}."))
+
         # 4) Page-rijen synchroniseren met de routing-registry.
         call_command("sync_pages")
 

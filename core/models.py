@@ -356,20 +356,49 @@ class KennisbankCategorie(models.Model):
 
 
 class KennisbankArtikel(PhotoMixin):
+    """Diepgaand, tijdloos kennisbankartikel (evergreen) — complementair aan de
+    landpagina (die de jaardata/tabellen draagt). Gegenereerd uit de backlog
+    (content/kennisbank/backlog.json) + een per-slug HTML-body in de repo, en
+    ingeladen door `import_kennisbank`. E-E-A-T via author/reviewer + bron."""
+    STATUS_CHOICES = [("concept", "Concept"), ("te_reviewen", "Te reviewen"),
+                      ("gepubliceerd", "Gepubliceerd")]
+
     titel = models.CharField("Titel", max_length=200)
     slug = models.SlugField("Slug", max_length=220, unique=True, blank=True)
-    categorie = models.CharField("Categorie", max_length=80, blank=True)
+    seo_title = models.CharField("SEO-titel", max_length=200, blank=True)
+    categorie = models.CharField("Categorie (cluster)", max_length=80, blank=True)
+    land = models.ForeignKey("Land", verbose_name="Land", on_delete=models.SET_NULL,
+                             null=True, blank=True, related_name="kennisbank",
+                             help_text="Leeg = Europa-breed / niet landgebonden.")
     excerpt = models.TextField("Samenvatting", blank=True)
+    body_html = models.TextField("Inhoud (HTML)", blank=True)
+    toc = models.JSONField("Inhoudsopgave", default=list, blank=True)
     leestijd = models.CharField("Leestijd", max_length=20, blank=True, help_text="bijv. '4 min'")
     gelezen = models.CharField("Aantal keer gelezen", max_length=20, blank=True, help_text="bijv. '12.4k'")
+
+    author = models.ForeignKey("Expert", verbose_name="Auteur", on_delete=models.SET_NULL,
+                               null=True, blank=True, related_name="kb_artikelen")
+    reviewer = models.ForeignKey("Expert", verbose_name="Reviewer", on_delete=models.SET_NULL,
+                                 null=True, blank=True, related_name="kb_reviews")
+    bron_url = models.URLField("Bron-URL", max_length=500, blank=True)
+    gepubliceerd_op = models.DateTimeField("Gepubliceerd op", null=True, blank=True)
+
+    # Redactie/backlog-velden (intern; niet publiek getoond)
+    kb_id = models.CharField("Backlog-ID", max_length=20, blank=True, db_index=True)
+    prioriteit = models.CharField("Prioriteit", max_length=4, blank=True)
+    commerciele_waarde = models.CharField("Commerciële waarde", max_length=10, blank=True)
+    status = models.CharField("Status", max_length=14, choices=STATUS_CHOICES, default="concept")
+    briefing = models.TextField("Redactie-briefing", blank=True,
+                                help_text="Brief + invalshoek + zoekintentie + aanbevolen interne links.")
+
     featured = models.BooleanField("Uitgelicht", default=False)
     order = models.PositiveIntegerField("Volgorde", default=0)
-    active = models.BooleanField("Actief", default=True)
+    active = models.BooleanField("Actief (publiek zichtbaar)", default=False)
 
     class Meta:
         verbose_name = "Kennisbank-artikel"
         verbose_name_plural = "Kennisbank-artikelen"
-        ordering = ["order"]
+        ordering = ["order", "titel"]
 
     def __str__(self):
         return self.titel
@@ -381,6 +410,9 @@ class KennisbankArtikel(PhotoMixin):
 
     def default_photo_alt(self):
         return self.titel
+
+    def get_absolute_url(self):
+        return f"/kennisbank/{self.slug}/"
 
 
 # ── Content-fabriek pages (imported from content-systeem CSV) ───────────────

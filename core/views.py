@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.utils.text import slugify
 
 from . import europe
 from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, Plaats, Regio,
@@ -870,15 +871,103 @@ def news_sitemap(request):
                   content_type="application/xml")
 
 
+def _kb_article_node(art, url):
+    """Article-schema met E-E-A-T (auteur/reviewer, bron, publicatiedatum)."""
+    origin = settings.SITE_ORIGIN
+    node = {
+        "@type": "Article", "@id": url + "#article", "headline": art.titel,
+        "description": art.excerpt or "", "inLanguage": "nl-NL",
+        "mainEntityOfPage": {"@id": url},
+        "isPartOf": {"@id": f"{origin}/#website"},
+        "publisher": {"@id": f"{origin}/#organization"},
+    }
+    if art.gepubliceerd_op:
+        node["datePublished"] = art.gepubliceerd_op.isoformat()
+        node["dateModified"] = art.gepubliceerd_op.isoformat()
+    node["author"] = ({"@type": "Person", "name": art.author.name}
+                      if art.author else {"@id": f"{origin}/#organization"})
+    if art.reviewer:
+        node["reviewedBy"] = {"@type": "Person", "name": art.reviewer.name}
+    if art.bron_url:
+        node["citation"] = art.bron_url
+    return node
+
+
+def kennisbank_index(request):
+    """Kennisbank-hub: categorietegels + land-filter + de gepubliceerde artikelen.
+    Filtert server-side op ?categorie=<slug> en ?land=<slug> (SSR, crawlbaar)."""
+    from .models import KennisbankArtikel, KennisbankCategorie
+
+    artikelen = KennisbankArtikel.objects.filter(active=True).select_related("land")
+    cat_slug = request.GET.get("categorie", "").strip()
+    land_slug = request.GET.get("land", "").strip()
+    actieve_cat = actieve_land = None
+
+    if cat_slug:
+        for a in artikelen:
+            if slugify(a.categorie) == cat_slug:
+                actieve_cat = a.categorie
+                break
+        artikelen = [a for a in artikelen if slugify(a.categorie) == cat_slug]
+    if land_slug:
+        actieve_land = Land.objects.filter(slug=land_slug).first()
+        artikelen = [a for a in artikelen if a.land_id and a.land.slug == land_slug]
+
+    artikelen = list(artikelen)
+    # Landen met ten minste één gepubliceerd artikel (voor de filterbalk).
+    land_ids = {a.land_id for a in KennisbankArtikel.objects.filter(active=True) if a.land_id}
+    filter_landen = list(Land.objects.filter(id__in=land_ids).order_by("naam"))
+
+    return render(request, "pages/kennisbank.html", {
+        "categorieen": KennisbankCategorie.objects.all().order_by("order"),
+        "artikelen": artikelen,
+        "filter_landen": filter_landen,
+        "actieve_cat": actieve_cat, "actieve_land": actieve_land,
+        "seo_title": "Kennisbank schoolvakanties & feestdagen | Schoolvakanties.nl",
+        "seo_description": ("Diepgaande, tijdloze uitleg over schoolvakanties, verlof, "
+                            "regionale spreiding en vakantieculturen in heel Europa."),
+        "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Kennisbank", "url": "/kennisbank/"}],
+        "jsonld": _jsonld([_breadcrumb_node([("Home", "/"), ("Kennisbank", "/kennisbank/")])]),
+    })
+
+
+def kennisbank_detail(request, slug):
+    """Eén kennisbankartikel. Onbekend/concept -> terug naar de hub."""
+    from .models import KennisbankArtikel
+
+    art = KennisbankArtikel.objects.filter(slug=slug, active=True).select_related(
+        "land", "author", "reviewer").first()
+    if not art:
+        return redirect("/kennisbank/")
+    related = list(KennisbankArtikel.objects.filter(active=True, categorie=art.categorie)
+                   .exclude(pk=art.pk)[:3])
+    if len(related) < 3 and art.land_id:
+        related += list(KennisbankArtikel.objects.filter(active=True, land=art.land)
+                        .exclude(pk=art.pk).exclude(pk__in=[r.pk for r in related])[:3 - len(related)])
+    url = _page_url(request)
+    return render(request, "pages/kennisbank_detail.html", {
+        "art": art, "related": related,
+        "seo_title": f"{art.seo_title or art.titel} | Schoolvakanties.nl",
+        "seo_description": art.excerpt,
+        "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Kennisbank", "url": "/kennisbank/"},
+                   {"naam": art.titel, "url": f"/kennisbank/{art.slug}/"}],
+        "jsonld": _jsonld([
+            _breadcrumb_node([("Home", "/"), ("Kennisbank", "/kennisbank/"),
+                              (art.titel, f"/kennisbank/{art.slug}/")]),
+            _kb_article_node(art, url),
+        ]),
+    })
+
+
 def kennisbank_redirect(request, rest):
-    """Kennisbankartikelen bestaan nu niet; 301 naar de landhome /<land>/.
-    Onbekend land -> /landen/. (Komt later terug als echte artikelen.)"""
+    """Vangnet voor oude/onbekende kennisbank-URL's (meerdere segmenten, bv.
+    /kennisbank/<land>/<slug>/): 301 naar de landhome /<land>/, anders de hub."""
     parts = [p for p in rest.split("/") if p]
     if parts:
         landslug = _KB_LAND_ALIAS.get(parts[0], parts[0])
         if landslug in _bekende_landslugs():
             return redirect(f"/{landslug}/", permanent=True)
-    return redirect("/landen/", permanent=True)
+    return redirect("/kennisbank/", permanent=True)
 
 
 def land_detail(request, slug):

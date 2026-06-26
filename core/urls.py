@@ -43,7 +43,9 @@ urlpatterns = [
     path("privacy/", _cached(views.privacy), name="privacy"),
     path("cookies/", _cached(views.cookies), name="cookies"),
     path("voorwaarden/", _cached(views.voorwaarden), name="voorwaarden"),
-    path("kennisbank/<path:rest>", views.kennisbank_redirect),
+    path("kennisbank/", _cached(views.kennisbank_index), name="kennisbank"),
+    path("kennisbank/<slug:slug>/", _cached(views.kennisbank_detail), name="kennisbank_detail"),
+    path("kennisbank/<path:rest>", views.kennisbank_redirect),  # vangnet oude/onbekende URL's
     # Embeddable widget voor partnersites (vóór de slug-catch-all).
     path("widget.js", widget_views.widget_js, name="widget_js"),
     path("widget/data", widget_views.widget_data, name="widget_data"),

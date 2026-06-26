@@ -188,13 +188,24 @@ class KennisbankCategorieAdmin(admin.ModelAdmin):
 
 @admin.register(KennisbankArtikel)
 class KennisbankArtikelAdmin(PexelsPhotoMixin, admin.ModelAdmin):
-    list_display = ("titel", "categorie", "order", "active")
-    list_editable = ("order", "active")
+    list_display = ("titel", "land", "categorie", "prioriteit", "status", "active")
+    list_filter = ("status", "active", "prioriteit", "categorie", "land")
+    list_editable = ("status", "active")
+    list_select_related = ("land",)
     prepopulated_fields = {"slug": ("titel",)}
-    search_fields = ("titel", "excerpt")
-    readonly_fields = ("pexels_widget",)
+    search_fields = ("titel", "excerpt", "kb_id", "briefing")
+    autocomplete_fields = ("land", "author", "reviewer")
+    readonly_fields = ("pexels_widget", "kb_id", "toc")
     pexels_download_subdir = "photos/kennisbank"
     pexels_filename_prefix = "kb"
+    fieldsets = (
+        (None, {"fields": ("titel", "slug", "seo_title", "categorie", "land",
+                           ("prioriteit", "commerciele_waarde", "status", "active"))}),
+        ("Inhoud", {"fields": ("excerpt", "body_html", "toc", "leestijd",
+                               ("author", "reviewer"), "bron_url", "gepubliceerd_op")}),
+        ("Redactie / backlog", {"classes": ("collapse",), "fields": ("kb_id", "briefing", "featured", "order")}),
+        ("Afbeelding", {"classes": ("collapse",), "fields": ("pexels_widget",)}),
+    )
 
 
 class MenuChildInline(admin.TabularInline):
