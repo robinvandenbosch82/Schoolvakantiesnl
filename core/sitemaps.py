@@ -19,6 +19,18 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
 
+def _site_lastmod():
+    """Meest recente site-brede update: laatste data-import of Page-bewerking.
+    Voor de hub-/toolpagina's die geen eigen contentdatum hebben."""
+    from .models import Land, Page
+    kandidaten = [Land.objects.order_by("-imported_at")
+                  .values_list("imported_at", flat=True).first(),
+                  Page.objects.order_by("-updated_at")
+                  .values_list("updated_at", flat=True).first()]
+    kandidaten = [d for d in kandidaten if d]
+    return max(kandidaten) if kandidaten else None
+
+
 class _CanonicalSitemap(Sitemap):
     """Basis die elke URL pint op SITE_ORIGIN's host + https i.p.v. de request-host.
     Houdt de sitemap-URL's gelijk aan de on-page rel=canonical."""
@@ -58,6 +70,11 @@ class StaticViewSitemap(_CanonicalSitemap):
     def changefreq(self, item):
         return item[2]
 
+    def lastmod(self, item):
+        # Hub-/toolpagina's aggregeren site-brede data; gebruik de meest recente
+        # site-update (laatste data-import of Page-bewerking) als versdatum.
+        return _site_lastmod()
+
 
 class LandSitemap(_CanonicalSitemap):
     changefreq = "weekly"
@@ -84,6 +101,9 @@ class BlogSitemap(_CanonicalSitemap):
 
     def location(self, post):
         return reverse("blog_detail", kwargs={"slug": post.slug})
+
+    def lastmod(self, post):
+        return post.gepubliceerd_op or _site_lastmod()
 
 
 SITEMAPS = {

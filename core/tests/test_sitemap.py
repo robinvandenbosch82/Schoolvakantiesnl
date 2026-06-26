@@ -16,10 +16,10 @@ class SitemapTests(TestCase):
 
     def test_bevat_land_blog_en_vaste_paginas(self):
         body = self.client.get("/sitemap.xml").content.decode()
-        self.assertIn("https://schoolvakanties.nl/nederland/", body)
-        self.assertIn("https://schoolvakanties.nl/blog/t-post/", body)
-        self.assertIn("https://schoolvakanties.nl/samenwerken/", body)
-        self.assertIn("https://schoolvakanties.nl/", body)
+        self.assertIn("https://www.schoolvakanties.nl/nederland/", body)
+        self.assertIn("https://www.schoolvakanties.nl/blog/t-post/", body)
+        self.assertIn("https://www.schoolvakanties.nl/samenwerken/", body)
+        self.assertIn("https://www.schoolvakanties.nl/", body)
 
     def test_sluit_inactieve_uit(self):
         body = self.client.get("/sitemap.xml").content.decode()
@@ -41,7 +41,7 @@ class SitemapTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         body = resp.content.decode()
         self.assertIn("http://www.google.com/schemas/sitemap-news/0.9", body)
-        self.assertIn("https://schoolvakanties.nl/blog/vers-nieuws/", body)
+        self.assertIn("https://www.schoolvakanties.nl/blog/vers-nieuws/", body)
         self.assertIn("<news:title>Vers nieuws</news:title>", body)
         self.assertIn("<news:publication_date>", body)
         self.assertNotIn("/blog/oud-nieuws/", body)        # >2 dagen oud -> eruit

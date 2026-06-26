@@ -86,7 +86,7 @@ def _footer_from_db():
     return cols
 
 
-def _org_jsonld(site, origin, name):
+def _org_jsonld(site, origin, name, canonical_url=""):
     """Bouw de Organization + WebSite @graph uit de site-instellingen, zodat
     legalName, adres en KvK/vestigingsnummer in de Knowledge Graph komen."""
     import json
@@ -124,7 +124,18 @@ def _org_jsonld(site, origin, name):
     website = {"@type": "WebSite", "@id": f"{origin}/#website", "name": name,
                "url": f"{origin}/", "publisher": {"@id": f"{origin}/#organization"},
                "inLanguage": "nl-NL"}
-    return json.dumps({"@context": "https://schema.org", "@graph": [org, website]},
+    graph = [org, website]
+    # Per-pagina WebPage-node (entiteitskoppeling). Landpagina's leveren een
+    # rijkere eigen WebPage met hetzelfde @id (dateModified/reviewedBy/about);
+    # Google reconcilieert die op @id, dus dit dekt de overige pagina's (home enz.).
+    if canonical_url:
+        graph.append({
+            "@type": "WebPage", "@id": f"{canonical_url}#webpage", "url": canonical_url,
+            "isPartOf": {"@id": f"{origin}/#website"},
+            "about": {"@id": f"{origin}/#organization"},
+            "inLanguage": "nl-NL",
+        })
+    return json.dumps({"@context": "https://schema.org", "@graph": graph},
                       ensure_ascii=False)
 
 
@@ -171,7 +182,7 @@ def site_context(request):
         "canonical_url": canonical_url,
         "europe": europe,
         "europe_popular": [c for c in europe if c["pop"]],
-        "org_jsonld": _org_jsonld(site, site_origin, settings.SITE_NAME),
+        "org_jsonld": _org_jsonld(site, site_origin, settings.SITE_NAME, canonical_url),
         # GA4 alleen buiten DEBUG: lokaal/dev-verkeer hoort niet in de statistieken.
         "ga_measurement_id": "" if settings.DEBUG else settings.GA_MEASUREMENT_ID,
     }

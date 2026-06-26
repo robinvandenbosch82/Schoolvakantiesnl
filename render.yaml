@@ -23,7 +23,7 @@ envVarGroups:
       - key: ALLOWED_HOSTS
         value: schoolvakanties.nl,www.schoolvakanties.nl,schoolvakanties.onrender.com
       - key: SITE_ORIGIN
-        value: https://schoolvakanties.nl
+        value: https://www.schoolvakanties.nl
       - key: USE_MANIFEST_STATIC
         value: "True"
       - key: PYTHON_VERSION

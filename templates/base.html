@@ -6,7 +6,7 @@
   <title>{% block title %}{{ seo_title|default:default_seo_title }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ seo_description|default:default_seo_description }}{% endblock %}">
   <link rel="canonical" href="{{ canonical_url }}">
-  {% if page.noindex or noindex %}<meta name="robots" content="noindex, follow">{% endif %}
+  {% if page.noindex or noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow">{% endif %}
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="{{ site_name }}">
@@ -14,7 +14,8 @@
   <meta property="og:description" content="{{ seo_description|default:default_seo_description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   {% if og_image %}<meta property="og:image" content="{{ og_image }}">
-  {% elif site.default_og_image %}<meta property="og:image" content="{{ site_origin }}{{ site.default_og_image.url }}">{% endif %}
+  {% elif site.default_og_image %}<meta property="og:image" content="{{ site_origin }}{{ site.default_og_image.url }}">
+  {% else %}<meta property="og:image" content="{{ site_origin }}{% static 'img/og-default.png' %}">{% endif %}
   <meta name="twitter:card" content="summary_large_image">
 
   {# Self-hosted fonts (geen Google Fonts). Preload de hoofd-font voor snelle swap. #}

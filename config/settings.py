@@ -248,7 +248,10 @@ SITE_DOMAIN = os.getenv("SITE_DOMAIN", "schoolvakanties.nl")
 # Canonical origin for structured-data @id's and canonical/OG URLs. NEVER use
 # request.get_host() for @id — it is host-dependent (www vs non-www, dev port)
 # and would make the entity graph's identifiers unstable across pages.
-SITE_ORIGIN = os.getenv("SITE_ORIGIN", f"https://{SITE_DOMAIN}").rstrip("/")
+# De canonical host is www (de site 301't alles naar www en serveert daar 200).
+# Canonical, og:url én de sitemap-locs leiden allemaal van SITE_ORIGIN af, dus
+# www hier houdt ze consistent met wat geserveerd wordt. Per host te overschrijven.
+SITE_ORIGIN = os.getenv("SITE_ORIGIN", f"https://www.{SITE_DOMAIN}").rstrip("/")
 
 # Google Analytics 4 (gtag.js). Het measurement-ID is publiek (staat sowieso in
 # de paginabron), dus een default in de repo is prima; per host te overschrijven
