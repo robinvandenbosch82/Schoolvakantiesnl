@@ -122,9 +122,28 @@ class KennisbankSitemap(_CanonicalSitemap):
         return art.gepubliceerd_op or _site_lastmod()
 
 
+class KennisbankLandSitemap(_CanonicalSitemap):
+    """Categoriepagina per land (/kennisbank/land/<slug>/), alleen landen met
+    ten minste één gepubliceerd artikel."""
+    changefreq = "monthly"
+    priority = 0.5
+
+    def items(self):
+        from .models import KennisbankArtikel, Land
+        ids = {a.land_id for a in KennisbankArtikel.objects.filter(active=True) if a.land_id}
+        return list(Land.objects.filter(id__in=ids).order_by("naam"))
+
+    def location(self, land):
+        return reverse("kennisbank_land", kwargs={"slug": land.slug})
+
+    def lastmod(self, land):
+        return _site_lastmod()
+
+
 SITEMAPS = {
     "static": StaticViewSitemap,
     "landen": LandSitemap,
     "kennisbank": KennisbankSitemap,
+    "kennisbank_land": KennisbankLandSitemap,
     "blog": BlogSitemap,
 }

@@ -893,58 +893,85 @@ def _kb_article_node(art, url):
     return node
 
 
-def _kb_qs(categorie=None, land=None):
-    """Bouw een /kennisbank/-querystring; lege waarden vallen weg."""
-    parts = []
-    if categorie:
-        parts.append(f"categorie={categorie}")
-    if land:
-        parts.append(f"land={land}")
-    return "/kennisbank/" + ("?" + "&".join(parts) if parts else "")
+def _kb_cat_chips(basis, cat_namen, cat_slug):
+    """Onderwerp-filterchips voor een hub- of landpagina (basis = paginapad)."""
+    def href(slug):
+        return basis + (f"?categorie={slug}" if slug else "")
+    chips = [{"label": "Alle onderwerpen", "active": not cat_slug, "href": href(None)}]
+    chips += [{"label": n, "active": slugify(n) == cat_slug, "href": href(slugify(n))}
+              for n in cat_namen]
+    return chips
 
 
 def kennisbank_index(request):
-    """Kennisbank-hub met gecombineerde filters (categorie + land). Beide werken
-    samen en blijven behouden; server-side (SSR, crawlbaar)."""
+    """Kennisbank-hub: onderwerp-filter (chips) + per-land categoriepagina's."""
     from .models import KennisbankArtikel
+
+    # Oude querystring-landfilter naar de echte landpagina sturen (consolidatie).
+    land_q = request.GET.get("land", "").strip()
+    if land_q:
+        land = Land.objects.filter(slug=land_q).first()
+        if land:
+            return redirect(f"/kennisbank/land/{land.slug}/", permanent=True)
 
     gepubliceerd = list(KennisbankArtikel.objects.filter(active=True)
                         .select_related("land").order_by("order", "titel"))
     cat_slug = request.GET.get("categorie", "").strip()
-    land_slug = request.GET.get("land", "").strip()
-
-    # Beschikbare categorieën en landen volgen uit wat daadwerkelijk gepubliceerd is.
     cat_namen = sorted({a.categorie for a in gepubliceerd if a.categorie})
     landen_pub = sorted({a.land for a in gepubliceerd if a.land_id}, key=lambda l: l.naam)
 
     actieve_cat = next((n for n in cat_namen if slugify(n) == cat_slug), None)
-    actieve_land = next((l for l in landen_pub if l.slug == land_slug), None)
+    artikelen = [a for a in gepubliceerd if not actieve_cat or a.categorie == actieve_cat]
 
-    artikelen = [a for a in gepubliceerd
-                 if (not actieve_cat or a.categorie == actieve_cat)
-                 and (not actieve_land or a.land_id == actieve_land.id)]
-
-    # Filterchips: elke chip behoudt de andere actieve filter.
-    cat_chips = [{"label": "Alle onderwerpen", "active": not actieve_cat,
-                  "href": _kb_qs(None, land_slug)}]
-    cat_chips += [{"label": n, "active": n == actieve_cat,
-                   "href": _kb_qs(slugify(n), land_slug)} for n in cat_namen]
-    land_chips = [{"label": "Alle landen", "active": not actieve_land,
-                   "href": _kb_qs(cat_slug, None)}]
-    land_chips += [{"label": f"{l.vlag} {l.naam}".strip(), "active": l.id == getattr(actieve_land, "id", None),
-                    "href": _kb_qs(cat_slug, l.slug)} for l in landen_pub]
+    land_links = [{"label": f"{l.vlag} {l.naam}".strip(),
+                   "href": f"/kennisbank/land/{l.slug}/"} for l in landen_pub]
 
     return render(request, "pages/kennisbank.html", {
         "artikelen": artikelen,
-        "cat_chips": cat_chips, "land_chips": land_chips,
-        "toon_landfilter": len(landen_pub) > 1,
-        "actieve_cat": actieve_cat, "actieve_land": actieve_land,
-        "totaal": len(gepubliceerd),
+        "cat_chips": _kb_cat_chips("/kennisbank/", cat_namen, cat_slug if actieve_cat else ""),
+        "land_links": land_links,
+        "actieve_cat": actieve_cat, "huidig_land": None,
+        "basis_url": "/kennisbank/",
         "seo_title": "Kennisbank schoolvakanties & feestdagen | Schoolvakanties.nl",
         "seo_description": ("Diepgaande, tijdloze uitleg over schoolvakanties, verlof, "
                             "regionale spreiding en vakantieculturen in heel Europa."),
         "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Kennisbank", "url": "/kennisbank/"}],
         "jsonld": _jsonld([_breadcrumb_node([("Home", "/"), ("Kennisbank", "/kennisbank/")])]),
+    })
+
+
+def kennisbank_land(request, slug):
+    """Kennisbank-categoriepagina per land: alle artikelen van dat land, met een
+    onderwerp-filter binnen het land. Eigen indexeerbare URL (SEO)."""
+    from .models import KennisbankArtikel
+
+    land = Land.objects.filter(slug=slug).first()
+    if not land:
+        return redirect("/kennisbank/")
+    gepubliceerd = list(KennisbankArtikel.objects.filter(active=True, land=land)
+                        .order_by("order", "titel"))
+    if not gepubliceerd:
+        return redirect("/kennisbank/")
+
+    basis = f"/kennisbank/land/{land.slug}/"
+    cat_slug = request.GET.get("categorie", "").strip()
+    cat_namen = sorted({a.categorie for a in gepubliceerd if a.categorie})
+    actieve_cat = next((n for n in cat_namen if slugify(n) == cat_slug), None)
+    artikelen = [a for a in gepubliceerd if not actieve_cat or a.categorie == actieve_cat]
+
+    return render(request, "pages/kennisbank.html", {
+        "artikelen": artikelen,
+        "cat_chips": _kb_cat_chips(basis, cat_namen, cat_slug if actieve_cat else ""),
+        "land_links": None,
+        "actieve_cat": actieve_cat, "huidig_land": land,
+        "basis_url": basis,
+        "seo_title": f"Kennisbank schoolvakanties {land.naam} | Schoolvakanties.nl",
+        "seo_description": (f"Diepgaande, tijdloze uitleg over de schoolvakanties, regels en "
+                            f"vakantiecultuur van {land.naam}."),
+        "crumbs": [{"naam": "Home", "url": "/"}, {"naam": "Kennisbank", "url": "/kennisbank/"},
+                   {"naam": land.naam, "url": basis}],
+        "jsonld": _jsonld([_breadcrumb_node([("Home", "/"), ("Kennisbank", "/kennisbank/"),
+                                             (land.naam, basis)])]),
     })
 
 

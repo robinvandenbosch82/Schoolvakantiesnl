@@ -63,11 +63,27 @@ class KennisbankTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Verdieping over schoolvakanties in Nederland")
         self.assertContains(r, "/kennisbank/nederland-verlof/")
-        self.assertContains(r, "/kennisbank/?land=nederland")
+        self.assertContains(r, "/kennisbank/land/nederland/")
         self.assertNotContains(r, "/kennisbank/nederland-concept/")
 
-    def test_gecombineerde_filter(self):
-        """Onderwerp- en landfilter werken samen en behouden elkaar."""
-        r = self.client.get("/kennisbank/?categorie=regels-verlof&land=nederland")
+    def test_landcategoriepagina(self):
+        """Eigen categoriepagina per land toont alleen dat land + onderwerp-filter."""
+        r = self.client.get("/kennisbank/land/nederland/")
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "nederland-verlof")
+        self.assertContains(r, "Kennisbank: schoolvakanties in Nederland")
+        self.assertContains(r, "/kennisbank/nederland-verlof/")
+        self.assertContains(r, '"@type": "BreadcrumbList"')
+        # onderwerp-filter binnen het land werkt
+        f = self.client.get("/kennisbank/land/nederland/?categorie=regels-verlof")
+        self.assertContains(f, "nederland-verlof")
+
+    def test_oude_landquerystring_redirect(self):
+        r = self.client.get("/kennisbank/?land=nederland")
+        self.assertEqual(r.status_code, 301)
+        self.assertEqual(r.headers["Location"], "/kennisbank/land/nederland/")
+
+    def test_landcategorie_zonder_artikelen_redirect(self):
+        Land.objects.create(iso_code="DE", naam="Duitsland", slug="duitsland", actief=True)
+        r = self.client.get("/kennisbank/land/duitsland/")
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r.headers["Location"], "/kennisbank/")

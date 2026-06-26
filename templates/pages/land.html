@@ -255,7 +255,7 @@
   {# KENNISBANK OVER DIT LAND #}
   {% if kennisbank_artikelen %}
   <section class="land-block">
-    <div class="section-head"><div><span class="eye">Kennisbank</span><h2 style="margin-top:8px">Verdieping over schoolvakanties in {{ land.naam }}</h2></div><p><a href="/kennisbank/?land={{ land.slug }}">Alle artikelen voor {{ land.naam }} →</a></p></div>
+    <div class="section-head"><div><span class="eye">Kennisbank</span><h2 style="margin-top:8px">Verdieping over schoolvakanties in {{ land.naam }}</h2></div><p><a href="/kennisbank/land/{{ land.slug }}/">Alle artikelen voor {{ land.naam }} →</a></p></div>
     <div class="kb-grid">
       {% for a in kennisbank_artikelen %}
         <a class="kb-card" href="/kennisbank/{{ a.slug }}/">
