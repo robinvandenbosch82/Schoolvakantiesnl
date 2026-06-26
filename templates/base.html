@@ -6,6 +6,11 @@
   <title>{% block title %}{{ seo_title|default:default_seo_title }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ seo_description|default:default_seo_description }}{% endblock %}">
   <link rel="canonical" href="{{ canonical_url }}">
+
+  {# Favicon — het beeldmerk uit de header (huisje), merkkleur #}
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
   {% if page.noindex or noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow">{% endif %}
 
   <meta property="og:type" content="website">
