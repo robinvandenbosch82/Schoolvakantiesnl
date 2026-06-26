@@ -60,6 +60,14 @@ def _leestijd(html):
     return f"{max(1, round(woorden / 200))} min"
 
 
+def _excerpt(html):
+    """Samenvatting uit de eerste alinea (platte tekst, ~30 woorden)."""
+    m = re.search(r"<p[^>]*>(.*?)</p>", html, flags=re.S | re.I)
+    tekst = re.sub(r"<[^>]+>", "", m.group(1)).strip() if m else ""
+    woorden = tekst.split()
+    return " ".join(woorden[:30]) + ("…" if len(woorden) > 30 else "")
+
+
 class Command(BaseCommand):
     help = "Laad de kennisbank-backlog + beschikbare artikelteksten in de database."
 
@@ -95,6 +103,8 @@ class Command(BaseCommand):
                 art.body_html = html
                 art.toc = toc
                 art.leestijd = _leestijd(html)
+                if not art.excerpt:
+                    art.excerpt = _excerpt(html)
                 art.status = "gepubliceerd"
                 art.active = True
                 if not art.gepubliceerd_op:
