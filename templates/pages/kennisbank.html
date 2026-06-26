@@ -12,34 +12,31 @@
       data; hier lees je het waarom erachter.</p>
   </header>
 
-  {# Categorie-tegels #}
-  <div class="kb-cats">
-    {% for c in categorieen %}
-      <a class="kb-cat" href="{{ c.link }}">
-        <span class="kb-cat-ic kb-ic-{{ c.icon }}" aria-hidden="true"></span>
-        <span class="kb-cat-tx"><b>{{ c.naam }}</b><i>{{ c.aantal }}</i></span>
-      </a>
-    {% endfor %}
+  {# Gecombineerde filter: onderwerp + land werken samen #}
+  <div class="kb-filters">
+    <div class="kb-filter-row">
+      <span class="kb-filter-lbl">Onderwerp</span>
+      <div class="kb-chips">
+        {% for c in cat_chips %}<a class="kb-chip {% if c.active %}on{% endif %}" href="{{ c.href }}">{{ c.label }}</a>{% endfor %}
+      </div>
+    </div>
+    {% if toon_landfilter %}
+    <div class="kb-filter-row">
+      <span class="kb-filter-lbl">Land</span>
+      <div class="kb-chips">
+        {% for c in land_chips %}<a class="kb-chip {% if c.active %}on{% endif %}" href="{{ c.href }}">{{ c.label }}</a>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
   </div>
 
-  {# Land-filter (alleen landen met gepubliceerde artikelen) #}
-  {% if filter_landen %}
-  <div class="kb-filter">
-    <span class="kb-filter-lbl">Filter op land:</span>
-    {% for l in filter_landen %}
-      <a class="kb-chip {% if actieve_land.id == l.id %}on{% endif %}" href="?land={{ l.slug }}">{{ l.vlag }} {{ l.naam }}</a>
-    {% endfor %}
-    {% if actieve_cat or actieve_land %}<a class="kb-chip clear" href="/kennisbank/">× wis filter</a>{% endif %}
-  </div>
-  {% endif %}
+  <p class="kb-count">
+    {{ artikelen|length }} artikel{{ artikelen|length|pluralize:"en" }}
+    {% if actieve_cat %}over <strong>{{ actieve_cat }}</strong>{% endif %}
+    {% if actieve_land %}voor <strong>{{ actieve_land.naam }}</strong>{% endif %}
+    {% if actieve_cat or actieve_land %}· <a href="/kennisbank/">wis filter</a>{% endif %}
+  </p>
 
-  {% if actieve_cat or actieve_land %}
-    <p class="kb-active-filter">{{ artikelen|length }} artikel{{ artikelen|length|pluralize:"en" }}
-      {% if actieve_cat %}in <strong>{{ actieve_cat }}</strong>{% endif %}
-      {% if actieve_land %}voor <strong>{{ actieve_land.naam }}</strong>{% endif %}.</p>
-  {% endif %}
-
-  {# Artikellijst #}
   {% if artikelen %}
   <div class="kb-grid">
     {% for a in artikelen %}
@@ -53,8 +50,8 @@
   </div>
   {% else %}
   <div class="kb-empty">
-    <p>De eerste artikelen verschijnen binnenkort. We bouwen de kennisbank uit met diepgaande,
-      goed onderbouwde stukken per onderwerp en per land.</p>
+    <p>Voor deze selectie staan nog geen artikelen klaar. We breiden de kennisbank doorlopend
+      uit met diepgaande stukken per onderwerp en per land.</p>
   </div>
   {% endif %}
 </div>

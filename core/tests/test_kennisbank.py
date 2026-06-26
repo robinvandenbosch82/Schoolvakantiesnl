@@ -55,3 +55,19 @@ class KennisbankTests(TestCase):
     def test_in_sitemap(self):
         body = self.client.get("/sitemap.xml").content.decode()
         self.assertIn("/kennisbank/nederland-verlof/", body)
+
+    def test_landpagina_toont_kennisbank_blok(self):
+        """De landpagina toont een blok met kennisbankartikelen van dát land,
+        met een link naar de gefilterde hub. Concepten staan er niet in."""
+        r = self.client.get("/nederland/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Verdieping over schoolvakanties in Nederland")
+        self.assertContains(r, "/kennisbank/nederland-verlof/")
+        self.assertContains(r, "/kennisbank/?land=nederland")
+        self.assertNotContains(r, "/kennisbank/nederland-concept/")
+
+    def test_gecombineerde_filter(self):
+        """Onderwerp- en landfilter werken samen en behouden elkaar."""
+        r = self.client.get("/kennisbank/?categorie=regels-verlof&land=nederland")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "nederland-verlof")

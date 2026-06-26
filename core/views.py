@@ -893,36 +893,53 @@ def _kb_article_node(art, url):
     return node
 
 
-def kennisbank_index(request):
-    """Kennisbank-hub: categorietegels + land-filter + de gepubliceerde artikelen.
-    Filtert server-side op ?categorie=<slug> en ?land=<slug> (SSR, crawlbaar)."""
-    from .models import KennisbankArtikel, KennisbankCategorie
+def _kb_qs(categorie=None, land=None):
+    """Bouw een /kennisbank/-querystring; lege waarden vallen weg."""
+    parts = []
+    if categorie:
+        parts.append(f"categorie={categorie}")
+    if land:
+        parts.append(f"land={land}")
+    return "/kennisbank/" + ("?" + "&".join(parts) if parts else "")
 
-    artikelen = KennisbankArtikel.objects.filter(active=True).select_related("land")
+
+def kennisbank_index(request):
+    """Kennisbank-hub met gecombineerde filters (categorie + land). Beide werken
+    samen en blijven behouden; server-side (SSR, crawlbaar)."""
+    from .models import KennisbankArtikel
+
+    gepubliceerd = list(KennisbankArtikel.objects.filter(active=True)
+                        .select_related("land").order_by("order", "titel"))
     cat_slug = request.GET.get("categorie", "").strip()
     land_slug = request.GET.get("land", "").strip()
-    actieve_cat = actieve_land = None
 
-    if cat_slug:
-        for a in artikelen:
-            if slugify(a.categorie) == cat_slug:
-                actieve_cat = a.categorie
-                break
-        artikelen = [a for a in artikelen if slugify(a.categorie) == cat_slug]
-    if land_slug:
-        actieve_land = Land.objects.filter(slug=land_slug).first()
-        artikelen = [a for a in artikelen if a.land_id and a.land.slug == land_slug]
+    # Beschikbare categorieën en landen volgen uit wat daadwerkelijk gepubliceerd is.
+    cat_namen = sorted({a.categorie for a in gepubliceerd if a.categorie})
+    landen_pub = sorted({a.land for a in gepubliceerd if a.land_id}, key=lambda l: l.naam)
 
-    artikelen = list(artikelen)
-    # Landen met ten minste één gepubliceerd artikel (voor de filterbalk).
-    land_ids = {a.land_id for a in KennisbankArtikel.objects.filter(active=True) if a.land_id}
-    filter_landen = list(Land.objects.filter(id__in=land_ids).order_by("naam"))
+    actieve_cat = next((n for n in cat_namen if slugify(n) == cat_slug), None)
+    actieve_land = next((l for l in landen_pub if l.slug == land_slug), None)
+
+    artikelen = [a for a in gepubliceerd
+                 if (not actieve_cat or a.categorie == actieve_cat)
+                 and (not actieve_land or a.land_id == actieve_land.id)]
+
+    # Filterchips: elke chip behoudt de andere actieve filter.
+    cat_chips = [{"label": "Alle onderwerpen", "active": not actieve_cat,
+                  "href": _kb_qs(None, land_slug)}]
+    cat_chips += [{"label": n, "active": n == actieve_cat,
+                   "href": _kb_qs(slugify(n), land_slug)} for n in cat_namen]
+    land_chips = [{"label": "Alle landen", "active": not actieve_land,
+                   "href": _kb_qs(cat_slug, None)}]
+    land_chips += [{"label": f"{l.vlag} {l.naam}".strip(), "active": l.id == getattr(actieve_land, "id", None),
+                    "href": _kb_qs(cat_slug, l.slug)} for l in landen_pub]
 
     return render(request, "pages/kennisbank.html", {
-        "categorieen": KennisbankCategorie.objects.all().order_by("order"),
         "artikelen": artikelen,
-        "filter_landen": filter_landen,
+        "cat_chips": cat_chips, "land_chips": land_chips,
+        "toon_landfilter": len(landen_pub) > 1,
         "actieve_cat": actieve_cat, "actieve_land": actieve_land,
+        "totaal": len(gepubliceerd),
         "seo_title": "Kennisbank schoolvakanties & feestdagen | Schoolvakanties.nl",
         "seo_description": ("Diepgaande, tijdloze uitleg over schoolvakanties, verlof, "
                             "regionale spreiding en vakantieculturen in heel Europa."),
@@ -1162,9 +1179,14 @@ def land_detail(request, slug):
     plaatsen_json = (json.dumps([{"n": p.naam, "r": p.regio} for p in plaatsen],
                                 ensure_ascii=False) if plaats_zoeker else "")
 
+    # Kennisbank-artikelen van dít land (alleen gepubliceerde), voor het blok onderaan.
+    from .models import KennisbankArtikel
+    kennisbank_artikelen = list(KennisbankArtikel.objects.filter(active=True, land=land)
+                                .order_by("order", "titel")[:6])
+
     return render(request, "pages/land.html", {
         "land": land, "regios": regios, "deel_label": deel_label, "bron_kort": bron_kort,
-        "experts": experts,
+        "experts": experts, "kennisbank_artikelen": kennisbank_artikelen,
         "regio_feest_aantal": regio_feest_aantal,
         "jaar": jaar, "beschikbare_jaren": beschikbare_jaren,
         "nl_regio_overzicht": ([{"naam": r.naam, "uitleg": r.uitleg,
