@@ -32,6 +32,32 @@ MND_NL = ["", "januari", "februari", "maart", "april", "mei", "juni", "juli",
 # draaien; lokaal overschrijfbaar met --file.
 DEFAULT_FILE = str(settings.BASE_DIR / "deploy" / "data" / "wp_blog_export.xml")
 
+# Handmatige land-koppeling voor blogs waarvan het land niet via de titel wordt
+# herkend: óf omdat het land niet letterlijk in de titel staat (Veluwe, Limburg,
+# Schotland, Andalusie, Vlamingen), óf omdat de spelling afwijkt ("Italie" zonder
+# trema), óf omdat Nederland bewust uit de automatische match is gehouden.
+# Sleutel = blog-slug, waarde = tuple van land-slugs. Vult de automatische
+# titelmatch aan (unie), zodat bestaande koppelingen blijven staan.
+SLUG_LANDEN = {
+    # Nederland (binnenlandse bestemmingen / NL-schoolvakantie-onderwerpen)
+    "camping-veluwe-met-zwembad-de-voordelen-voor-jong-en-oud": ("nederland",),
+    "camping-zanderij-in-voorthuizen-perfecte-plek-voor-schoolvakanties": ("nederland",),
+    "de-leukste-uitjes-met-kinderen-tijdens-de-schoolvakantie-op-een-rij": ("nederland",),
+    "de-schoolvakanties-van-2024": ("nederland",),
+    "de-toekomst-van-schoolvakanties-wat-als-jij-zelf-de-data-mocht-kiezen": ("nederland",),
+    "indeling-schoolvakantieregios-in-nederland": ("nederland",),
+    "kom-wandelen-door-het-heuvellandschap-van-limburg": ("nederland",),
+    "ontdek-blauwestad-verborgen-parel-in-groningen-en-schitterend-recreatiegebied": ("nederland",),
+    "op-pad-in-de-schoolvakantie": ("nederland",),
+    "zoveel-kost-het-je-om-wel-of-niet-in-de-schoolvakantie-te-reizen": ("nederland",),
+    # Buitenland
+    "gezinsavontuur-in-schotland-ontspannen-treinrondreizen-tijdens-de-schoolvakantie": ("engeland",),
+    "la-dolce-vita-italie-of-een-lange-vakantiepluim": ("italie",),
+    "op-zoek-naar-slimme-inpaktrucs-zo-ga-je-voorbereid-naar-andalusie": ("spanje",),
+    "steun-voor-kortere-zomervakantie-onder-vlamingen-maar-weinig-draagvlak-voor-hoger-loon-leerkrachten": ("belgie",),
+    "wat-we-weten-over-de-duitse-schoolvakanties": ("duitsland",),
+}
+
 
 def _txt(el, path):
     return (el.findtext(path, namespaces=NS) or "").strip()
@@ -114,8 +140,11 @@ class Command(BaseCommand):
         posts.sort(key=lambda it: _txt(it, "wp:post_date"), reverse=True)
 
         # Landnaam → Land (voor het koppelen van buitenlandse bestemmingen).
-        land_by_naam = {l.naam.lower(): l for l in Land.objects.all()
+        alle_landen = list(Land.objects.all())
+        land_by_naam = {l.naam.lower(): l for l in alle_landen
                         if l.naam.lower() != "nederland"}
+        # Slug → Land (voor de handmatige SLUG_LANDEN-override hieronder).
+        land_by_slug = {l.slug: l for l in alle_landen}
 
         # Redactie voor de E-E-A-T byline: auteur + reviewer over de experts
         # verdelen. Cruciaal: de blog wordt na de seed geïmporteerd, dus de
@@ -176,6 +205,11 @@ class Command(BaseCommand):
             obj.landen.clear()
             for naam, land in land_by_naam.items():
                 if re.search(r"\b" + re.escape(naam) + r"\b", titel, re.I):
+                    obj.landen.add(land)
+            # Handmatige aanvulling voor blogs die de titelmatch mist.
+            for land_slug in SLUG_LANDEN.get(slug, ()):
+                land = land_by_slug.get(land_slug)
+                if land:
                     obj.landen.add(land)
 
             gemaakt += created
