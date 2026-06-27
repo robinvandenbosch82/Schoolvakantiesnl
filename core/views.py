@@ -557,13 +557,77 @@ def _blog_sidebar():
 
 
 def blog_overzicht(request):
-    posts = list(BlogArtikel.objects.filter(active=True).order_by("order", "-id"))
-    featured = next((p for p in posts if p.featured), posts[0] if posts else None)
-    rest = [p for p in posts if p != featured]
-    ctx = {"featured": featured, "posts": rest, "cats": BLOG_CATS,
-           "seo_title": "Blog, slim weg met het gezin | Schoolvakanties.nl",
-           "seo_description": "Praktische tips, rustige bestemmingen en slim plannen rond de "
-                              "schoolvakanties. Lees de blog van Schoolvakanties.nl."}
+    from django.core.paginator import Paginator
+
+    base = BlogArtikel.objects.filter(active=True).order_by("order", "-id")
+
+    # Categorie-chips dynamisch uit de echte data: alleen categorieën met genoeg
+    # artikelen, zodat elke chip ook resultaten oplevert (de opgeslagen
+    # categoriewaarden zijn deels rommelig/landgebonden).
+    from collections import Counter
+    cat_counts = Counter(base.values_list("categorie", flat=True))
+    cats = [c for c, n in cat_counts.most_common() if c and n >= 3]
+
+    sel_cat = (request.GET.get("categorie") or "").strip()
+    if sel_cat not in cats:
+        sel_cat = ""
+    sel_land = (request.GET.get("land") or "").strip()
+
+    qs = base
+    if sel_cat:
+        qs = qs.filter(categorie=sel_cat)
+    if sel_land:
+        qs = qs.filter(landen__slug=sel_land)
+
+    is_filtered = bool(sel_cat or sel_land)
+
+    # De uitgelichte tonen we alleen in de ongefilterde weergave en halen we dan
+    # uit de lijst, zodat hij niet dubbel verschijnt. Bij een actief filter telt
+    # hij gewoon mee in de resultaten.
+    featured = None
+    list_qs = qs
+    if not is_filtered:
+        featured = next((p for p in base if p.featured), base.first())
+        if featured:
+            list_qs = qs.exclude(pk=featured.pk)
+
+    paginator = Paginator(list_qs, 8)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    # Querystring (zonder 'page') om filters in de paginatielinks te behouden.
+    params = request.GET.copy()
+    params.pop("page", None)
+    base_qs = params.urlencode()
+
+    landen = (Land.objects.filter(blogartikelen__active=True)
+              .distinct().order_by("naam"))
+
+    titel = "Blog, slim weg met het gezin | Schoolvakanties.nl"
+    if sel_cat:
+        titel = f"Blog: {sel_cat} | Schoolvakanties.nl"
+    if sel_land:
+        land_naam = next((l.naam for l in landen if l.slug == sel_land), sel_land)
+        titel = f"Blog over {land_naam} | Schoolvakanties.nl"
+
+    ctx = {
+        "featured": featured,
+        "posts": page_obj.object_list,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "cats": cats,
+        "landen": landen,
+        "sel_cat": sel_cat,
+        "sel_land": sel_land,
+        "is_filtered": is_filtered,
+        "base_qs": base_qs,
+        "result_count": paginator.count,
+        # Gefilterde en doorgepagineerde weergaven niet indexeren (canonical wijst
+        # al naar /blog/), om index-bloat te voorkomen.
+        "noindex": is_filtered or page_obj.number > 1,
+        "seo_title": titel,
+        "seo_description": "Praktische tips, rustige bestemmingen en slim plannen rond de "
+                           "schoolvakanties. Lees de blog van Schoolvakanties.nl.",
+    }
     ctx.update(_blog_sidebar())
     return render(request, "pages/blog.html", ctx)
 

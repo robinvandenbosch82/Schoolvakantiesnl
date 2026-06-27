@@ -25,13 +25,21 @@
 
   <div class="blog-layout">
     <div>
-      <div class="blog-filters" id="blogFilters">
-        <button class="on" data-cat="Alle">Alle</button>
-        {% for c in cats %}<button data-cat="{{ c }}">{{ c }}</button>{% endfor %}
+      <div class="blog-filters">
+        <a class="{% if not sel_cat %}on{% endif %}" href="/blog/{% if sel_land %}?land={{ sel_land|urlencode }}{% endif %}">Alle</a>
+        {% for c in cats %}<a class="{% if sel_cat == c %}on{% endif %}" href="/blog/?categorie={{ c|urlencode }}{% if sel_land %}&amp;land={{ sel_land|urlencode }}{% endif %}">{{ c|capfirst }}</a>{% endfor %}
       </div>
-      <div class="post-grid" id="postGrid">
+      <div class="blog-filters land">
+        <a class="{% if not sel_land %}on{% endif %}" href="/blog/{% if sel_cat %}?categorie={{ sel_cat|urlencode }}{% endif %}">Alle landen</a>
+        {% for l in landen %}<a class="{% if sel_land == l.slug %}on{% endif %}" href="/blog/?land={{ l.slug|urlencode }}{% if sel_cat %}&amp;categorie={{ sel_cat|urlencode }}{% endif %}">{{ l.naam }}</a>{% endfor %}
+      </div>
+
+      {% if is_filtered %}<p class="blog-count">{{ result_count }} artikel{{ result_count|pluralize:"en" }} gevonden</p>{% endif %}
+
+      {% if posts %}
+      <div class="post-grid">
         {% for p in posts %}
-          <a class="post-card" href="/blog/{{ p.slug }}/" data-cat="{{ p.categorie }}">
+          <a class="post-card" href="/blog/{{ p.slug }}/">
             <div class="post-img"><img src="{% if p.get_photo_url %}{{ p.get_photo_url }}{% else %}{% static 'img/blog/' %}{{ p.slug }}.jpg{% endif %}" alt="{{ p.titel }}" loading="lazy"><span class="post-cat-ov"><span class="cat-chip cat-{{ p.categorie|lower|cut:' '|cut:'&' }}">{{ p.categorie }}</span></span></div>
             <div class="post-card-body">
               <h3>{{ p.titel }}</h3>
@@ -41,6 +49,17 @@
           </a>
         {% endfor %}
       </div>
+
+      {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="pagination" aria-label="Paginering">
+        {% if page_obj.has_previous %}<a class="pg" href="?{% if base_qs %}{{ base_qs }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">← Vorige</a>{% else %}<span class="pg disabled">← Vorige</span>{% endif %}
+        <span class="pg-info">Pagina {{ page_obj.number }} van {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="pg" href="?{% if base_qs %}{{ base_qs }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Volgende →</a>{% else %}<span class="pg disabled">Volgende →</span>{% endif %}
+      </nav>
+      {% endif %}
+      {% else %}
+      <p class="blog-empty">Geen artikelen gevonden voor deze selectie. <a href="/blog/">Bekijk alle artikelen →</a></p>
+      {% endif %}
     </div>
     <aside class="blog-side">
       {% include "partials/blog_sidebar.html" %}
