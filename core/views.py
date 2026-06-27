@@ -21,7 +21,7 @@ from . import europe
 from .models import (Bestemming, BlogArtikel, Faq, Feestdag, Land, Plaats, Regio,
                      Reisweek, Schoolvakantie)
 
-BLOG_CATS = ["Slim plannen", "Bestemmingen", "Met kinderen", "Drukte & prijzen"]
+BLOG_CATS = ["Slim plannen", "Bestemmingen", "Met kinderen", "Drukte & prijzen", "Algemeen"]
 
 
 # ── SEO: JSON-LD helpers ────────────────────────────────────────────────────
@@ -561,12 +561,10 @@ def blog_overzicht(request):
 
     base = BlogArtikel.objects.filter(active=True).order_by("order", "-id")
 
-    # Categorie-chips dynamisch uit de echte data: alleen categorieën met genoeg
-    # artikelen, zodat elke chip ook resultaten oplevert (de opgeslagen
-    # categoriewaarden zijn deels rommelig/landgebonden).
-    from collections import Counter
-    cat_counts = Counter(base.values_list("categorie", flat=True))
-    cats = [c for c, n in cat_counts.most_common() if c and n >= 3]
+    # Categorie-chips uit de vaste, genormaliseerde taxonomie; alleen de
+    # categorieën tonen die ook echt artikelen hebben.
+    aanwezig = set(base.values_list("categorie", flat=True))
+    cats = [c for c in BLOG_CATS if c in aanwezig]
 
     sel_cat = (request.GET.get("categorie") or "").strip()
     if sel_cat not in cats:

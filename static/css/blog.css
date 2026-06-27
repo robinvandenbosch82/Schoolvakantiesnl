@@ -7,6 +7,7 @@
 .cat-bestemmingen { background:var(--rustig-soft); color:var(--rustig-ink); }
 .cat-metkinderen { background:var(--matig-soft); color:var(--matig-ink); }
 .cat-druktebrprijzen, .cat-drukteprijzen { background:var(--druk-soft); color:var(--druk-ink); }
+.cat-algemeen { background:var(--line); color:var(--ink-2); }
 .post-meta { display:flex; flex-wrap:wrap; gap:8px; font-size:13px; color:var(--ink-3); margin-top:12px; }
 .post-meta.big { font-size:14px; margin-top:16px; }
 

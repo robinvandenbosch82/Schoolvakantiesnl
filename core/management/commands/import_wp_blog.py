@@ -38,6 +38,63 @@ DEFAULT_FILE = str(settings.BASE_DIR / "deploy" / "data" / "wp_blog_export.xml")
 # trema), óf omdat Nederland bewust uit de automatische match is gehouden.
 # Sleutel = blog-slug, waarde = tuple van land-slugs. Vult de automatische
 # titelmatch aan (unie), zodat bestaande koppelingen blijven staan.
+# Genormaliseerde, vaste blogcategorieën. De oudere WordPress-import gebruikte
+# rommelige/landgebonden categoriewaarden ('Algemeen', 'finance', 'italie',
+# 'schoolvakanties spanje', ...); we mappen die naar deze schone set. Nieuwere
+# artikelen in de export gebruiken deze waarden al.
+CLEAN_CATS = {"Slim plannen", "Bestemmingen", "Met kinderen",
+              "Drukte & prijzen", "Algemeen"}
+
+# Handmatige categorie-toewijzing per slug voor de artikelen waarvan de
+# opgeslagen categorie niet in CLEAN_CATS zit. Sleutel = blog-slug.
+SLUG_CATEGORIE = {
+    # Bestemmingen (specifieke plekken / bestemmingen)
+    "ga-op-avontuur-met-een-fly-drive-vakantie": "Bestemmingen",
+    "liberte-vakantiehuizen-voor-rust-en-ruimte": "Bestemmingen",
+    "op-zoek-naar-slimme-inpaktrucs-zo-ga-je-voorbereid-naar-andalusie": "Bestemmingen",
+    "een-reis-langs-de-mooiste-wandelroutes-van-europa": "Bestemmingen",
+    "kom-wandelen-door-het-heuvellandschap-van-limburg": "Bestemmingen",
+    "zomervakantie-in-zuid-frankrijk-ontdek-de-charme-van-le-lac-bleu-en-lespinet": "Bestemmingen",
+    "gezinsavontuur-in-schotland-ontspannen-treinrondreizen-tijdens-de-schoolvakantie": "Bestemmingen",
+    "ontsnap-naar-klein-curacao-perfect-voor-een-onvergetelijke-schoolvakantie": "Bestemmingen",
+    "ontdek-blauwestad-verborgen-parel-in-groningen-en-schitterend-recreatiegebied": "Bestemmingen",
+    "camping-veluwe-met-zwembad-de-voordelen-voor-jong-en-oud": "Bestemmingen",
+    "camping-zanderij-in-voorthuizen-perfecte-plek-voor-schoolvakanties": "Bestemmingen",
+    "met-de-trein-naar-zwitserland-een-ontspannen-alternatief-voor-vliegreizen-tijdens-de-schoolvakanties": "Bestemmingen",
+    "ongerepte-wildernis-en-onvergetelijke-safari-een-safarireis-door-botswanas-prachtige-noorden": "Bestemmingen",
+    "op-pad-in-de-schoolvakantie": "Bestemmingen",
+    "top-10-verre-vakantiebestemmingen-tijdens-de-zomervakantie": "Bestemmingen",
+    # Slim plannen (schoolvakantie-planning, data, beleid)
+    "de-toekomst-van-schoolvakanties-wat-als-jij-zelf-de-data-mocht-kiezen": "Slim plannen",
+    "indeling-schoolvakantieregios-in-nederland": "Slim plannen",
+    "waarom-dit-het-perfecte-moment-is-om-je-zomervakantie-voor-2026-te-boeken": "Slim plannen",
+    "de-schoolvakanties-van-2024": "Slim plannen",
+    "wat-we-weten-over-de-duitse-schoolvakanties": "Slim plannen",
+    "steun-voor-kortere-zomervakantie-onder-vlamingen-maar-weinig-draagvlak-voor-hoger-loon-leerkrachten": "Slim plannen",
+    "la-dolce-vita-italie-of-een-lange-vakantiepluim": "Slim plannen",
+    "678": "Slim plannen",
+    # Met kinderen (gezinsactiviteiten)
+    "de-leukste-uitjes-met-kinderen-tijdens-de-schoolvakantie-op-een-rij": "Met kinderen",
+    "zo-organiseer-je-een-uitgebreid-kinderfeestje-tijdens-de-schoolvakantie": "Met kinderen",
+    "overnachten-in-een-boomhut-leuk-voor-kinderen": "Met kinderen",
+    # Drukte & prijzen (kosten, geld, betaalbaar reizen)
+    "zoveel-kost-het-je-om-wel-of-niet-in-de-schoolvakantie-te-reizen": "Drukte & prijzen",
+    "onontdekte-vlieg-bestemmingen-betaalbare-vliegtickets-tijdens-de-drukke-vakantieperiodes": "Drukte & prijzen",
+    "geld-lenen-voor-een-vakantie-slimme-keuzes-voor-extra-vakantieplezier": "Drukte & prijzen",
+    "vakantiegeld-en-beleggen-slimme-avonturen-met-je-geld": "Drukte & prijzen",
+    # Algemeen (onderwijs / werk / overige niet-reisonderwerpen)
+    "een-wereld-in-beweging-vraagt-om-jouw-talent": "Algemeen",
+    "fit-en-zelfverzekerd-op-vakantie-met-medisch-afvallen": "Algemeen",
+    "hoe-maak-je-een-school-klaar-voor-de-toekomst": "Algemeen",
+    "mantelzorg-in-de-schoolvakantie-zo-ontlast-een-zorgwoning-ouders-met-een-zorgvraag-in-de-familie": "Algemeen",
+    "ontslagen-worden-tijdens-de-vakantie-mag-dat": "Algemeen",
+    "tips-voor-een-opgeruimde-en-veilige-leeromgeving": "Algemeen",
+    "opleiding-kiezen-na-de-schoolvakantie-ontdek-de-game-design-opleiding": "Algemeen",
+    "werken-in-het-onderwijs-waarom-schoolvakanties-een-onverwacht-carrierevoordeel-zijn": "Algemeen",
+    "buiten-spelen-wordt-pas-echt-leuk-met-de-juiste-speeltoestellen-op-het-schoolplein": "Algemeen",
+    "op-vakantie-met-je-hond-dit-mag-niet-ontbreken": "Algemeen",
+}
+
 SLUG_LANDEN = {
     # Nederland (binnenlandse bestemmingen / NL-schoolvakantie-onderwerpen)
     "camping-veluwe-met-zwembad-de-voordelen-voor-jong-en-oud": ("nederland",),
@@ -177,8 +234,13 @@ class Command(BaseCommand):
             cats = [c.text for c in it.findall("category")
                     if c.get("domain") == "category" and c.text]
             categorie = cats[0] if cats else ""
-            if categorie.lower() in ("", "uncategorized", "geen categorie", "niet gecategoriseerd"):
-                categorie = "Reistips"
+            # Normaliseren naar de schone taxonomie: eerst een expliciete
+            # slug-override, anders de bestaande waarde als die al schoon is,
+            # anders de restbak 'Algemeen'.
+            if slug in SLUG_CATEGORIE:
+                categorie = SLUG_CATEGORIE[slug]
+            elif categorie not in CLEAN_CATS:
+                categorie = "Algemeen"
 
             obj, created = BlogArtikel.objects.update_or_create(
                 slug=slug,
