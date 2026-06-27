@@ -23,6 +23,17 @@
     <article class="art-body">
       {{ post.body_html|safe }}
 
+      {% if post.landen.all %}
+      <div class="land-cta">
+        <strong>Bekijk de schoolvakanties</strong>
+        <ul>
+          {% for land in post.landen.all %}
+          <li><a href="/{{ land.slug }}/">Schoolvakanties {{ land.naam }} →</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
       <div class="art-share">
         <span>Deel dit artikel</span>
         <div class="share-btns">

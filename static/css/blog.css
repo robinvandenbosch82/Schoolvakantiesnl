@@ -110,6 +110,13 @@
 .art-inline-widget .widget { background:linear-gradient(160deg, var(--accent-soft), var(--paper)); border-color:var(--accent-line); }
 
 /* share */
+.land-cta { margin-top:36px; padding:20px 22px; border:1px solid var(--accent-line); background:var(--accent-soft); border-radius:16px; }
+.land-cta > strong { display:block; font-size:15px; color:var(--ink); margin-bottom:10px; }
+.land-cta ul { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px 18px; }
+.land-cta li { margin:0; }
+.land-cta a { font-size:16px; font-weight:700; color:var(--accent-ink); text-decoration:none; }
+.land-cta a:hover { color:var(--accent); }
+
 .art-share { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:40px; padding-top:24px; border-top:1px solid var(--line); }
 .art-share > span { font-size:14px; font-weight:700; color:var(--ink-2); }
 .share-btns { display:flex; gap:9px; }
