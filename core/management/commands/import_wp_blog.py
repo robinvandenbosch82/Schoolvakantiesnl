@@ -95,6 +95,21 @@ SLUG_CATEGORIE = {
     "op-vakantie-met-je-hond-dit-mag-niet-ontbreken": "Algemeen",
 }
 
+# Inline body-afbeeldingen die naar de (offline) oude WordPress-site hotlinkten,
+# vervangen door lokale Pexels-foto's in static/img/blog/inline/. Sleutel = de
+# dode bron-URL in de body, waarde = lokaal pad onder STATIC_URL. Wordt bij de
+# import op de body toegepast, dus deploy-stabiel.
+INLINE_IMG_REPLACE = {
+    "https://www.schoolvakanties.nl/wp-content/uploads/2025/02/grand-canal-in-venice-with-saint-mary-of-health-basilica-sun-in-italy-1024x682.jpg": "img/blog/inline/ldv-1-venice.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2025/02/happy-kids-playing-with-sand-on-beach-1024x684.jpg": "img/blog/inline/ldv-2-beach.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2025/02/father-plays-guitar-for-kids-at-trailer-camping-1024x681.jpg": "img/blog/inline/ldv-3-camping.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2024/09/traveling-family-looking-on-bled-lake-slovenia-europe-1024x682.jpg": "img/blog/inline/ovb-1-bled.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2024/09/church-of-saint-john-the-theologian-ohrid-north-macedonia--1024x576.jpg": "img/blog/inline/ovb-2-ohrid.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2024/09/kuang-si-waterfa-near-luang-prabang-laos-1024x633.jpg": "img/blog/inline/ovb-3-laos.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2024/09/traveler-enjoying-view-of-sigiriya-rock-in-sri-lanka-1024x682.jpg": "img/blog/inline/ovb-4-sigiriya.jpg",
+    "https://www.schoolvakanties.nl/wp-content/uploads/2024/09/young-woman-in-la-paz-bolivia-1024x682.jpg": "img/blog/inline/ovb-5-lapaz.jpg",
+}
+
 SLUG_LANDEN = {
     # Nederland (binnenlandse bestemmingen / NL-schoolvakantie-onderwerpen)
     "camping-veluwe-met-zwembad-de-voordelen-voor-jong-en-oud": ("nederland",),
@@ -217,6 +232,9 @@ class Command(BaseCommand):
             slug = _txt(it, "wp:post_name") or slugify(titel)
             slug = slug[:220]
             content = _clean_html(it.findtext("content:encoded", namespaces=NS) or "")
+            # Dode hotlinks naar de oude WP-site vervangen door lokale Pexels-foto's.
+            for dead, local in INLINE_IMG_REPLACE.items():
+                content = content.replace(dead, settings.STATIC_URL.rstrip("/") + "/" + local)
 
             # uitgelichte afbeelding: _thumbnail_id → bijlage, anders 1e <img> in tekst
             thumb = ""
