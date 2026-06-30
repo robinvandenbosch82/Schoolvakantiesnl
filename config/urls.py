@@ -8,7 +8,7 @@ from django.urls import include, path, re_path
 from django.views.static import serve as _serve_static
 
 from core.sitemaps import SITEMAPS
-from core.views import news_sitemap
+from core.views import llms_txt, news_sitemap
 
 
 def media_serve(request, path, document_root=None):
@@ -24,15 +24,34 @@ def media_serve(request, path, document_root=None):
     return response
 
 
+# AI-zoekmachines/-crawlers die we expliciet welkom heten (GEO: zonder fetch geen
+# citatie). De allowlist is een positief signaal voor bots die per-UA regels lezen;
+# commerciële scrapers (Bright Data/Oxylabs) negeren robots sowieso, dus de echte
+# poort is de WAF/Cloudflare-config, niet dit bestand.
+AI_USER_AGENTS = [
+    "GPTBot", "OAI-SearchBot", "ChatGPT-User",      # OpenAI / ChatGPT
+    "ClaudeBot", "anthropic-ai", "Claude-Web",        # Anthropic
+    "PerplexityBot", "Perplexity-User",               # Perplexity
+    "Google-Extended",                                 # Google (Gemini/AI Overviews opt-in)
+    "Applebot-Extended",                               # Apple Intelligence
+    "CCBot",                                           # Common Crawl (voedt training)
+]
+
+
 def robots_txt(request):
-    # Advertise the sitemap on the canonical origin (host-independent), and keep
-    # crawlers out of the admin.
+    # Advertise the sitemap on the canonical origin (host-independent), keep
+    # crawlers uit de admin, en sta AI-bots expliciet toe.
     origin = settings.SITE_ORIGIN
     lines = [
         "User-agent: *",
         "Allow: /",
         "Disallow: /admin/",
         "",
+        "# AI-zoekmachines en -crawlers expliciet toegestaan",
+    ]
+    for ua in AI_USER_AGENTS:
+        lines += [f"User-agent: {ua}", "Allow: /", ""]
+    lines += [
         f"Sitemap: {origin}/sitemap.xml",
         f"Sitemap: {origin}/news-sitemap.xml",
     ]
@@ -45,6 +64,7 @@ urlpatterns = [
          name="django.contrib.sitemaps.views.sitemap"),
     path("news-sitemap.xml", news_sitemap, name="news_sitemap"),
     path("robots.txt", robots_txt, name="robots_txt"),
+    path("llms.txt", llms_txt, name="llms_txt"),
 ]
 
 # Serve uploaded/generated media directly from Django, in dev AND production —

@@ -556,6 +556,46 @@ def _blog_sidebar():
     return {"best_week": best, "komend": komend}
 
 
+def llms_txt(request):
+    """llms.txt: een beknopte, machine-leesbare gids voor LLM's (GEO). Volgt de
+    llmstxt.org-conventie: H1 + samenvatting-blockquote + secties met links. Host-
+    onafhankelijk via SITE_ORIGIN, en altijd actueel doordat de landenlijst uit de
+    database komt."""
+    from django.http import HttpResponse
+    o = settings.SITE_ORIGIN
+    landen = Land.objects.order_by("naam")
+    lines = [
+        "# Schoolvakanties.nl",
+        "",
+        "> Schoolvakanties.nl geeft de officiele schoolvakanties en feestdagen per "
+        "land en per regio in Europa, met exacte begin- en einddata per schooljaar. "
+        "Alle data staan als platte tekst in server-side gerenderde pagina's.",
+        "",
+        "Uitgegeven door Travel Nerds B.V. (Nijmegen). Data per land worden jaarlijks "
+        "bijgewerkt; controleer altijd de schoolgids voor de definitieve data.",
+        "",
+        "## Schoolvakanties per land",
+    ]
+    for l in landen:
+        lines.append(f"- [Schoolvakanties {l.naam}]({o}/{l.slug}/): vakantiedata en "
+                     f"feestdagen voor {l.naam}, per regio en per schooljaar.")
+    lines += [
+        "",
+        "## Kennisbank",
+        f"- [Kennisbank schoolvakanties]({o}/kennisbank/): achtergrondartikelen over "
+        "schoolvakanties, vakantieritmes en verlofregels in heel Europa.",
+        "",
+        "## Tools",
+        f"- [Druktekaart]({o}/druktekaart/): wanneer het druk is rond de schoolvakanties.",
+        f"- [Vakantieplanner]({o}/planner/): slim plannen rond de schoolvakanties.",
+        "",
+        "## Blog",
+        f"- [Blog]({o}/blog/): reistips, bestemmingen en slim plannen met het gezin.",
+        "",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain; charset=utf-8")
+
+
 def blog_overzicht(request):
     from django.core.paginator import Paginator
 
